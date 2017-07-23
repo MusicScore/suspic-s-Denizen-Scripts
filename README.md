@@ -20,6 +20,8 @@ Set this to "`true`" so that the addons can create the appropriate file(s) neces
 # How to Install Addons
 To install addons from this repository, simply download all of the relevant **YAML** files from the addon(s) you wish to install and move those files to the folder `/plugins/Denizen/scripts/`. For example, to install FeverDeath, you will want to download the five **YAML** files in the FeverDeath folder that you should be able to see, and move those files to `/plugins/Denizen/scripts/`.
 
+If you choose to download the **ZIP** files of the addons instead, simply extract the compressed archive(s) into the same folder (`/plugins/Denizen/scripts/`).
+
 Something optional that you may wish to do is to create a subfolder named `grandpartyaddons` for the addons first. This is merely for organizational purposes, and is not a required step.
 
 #
