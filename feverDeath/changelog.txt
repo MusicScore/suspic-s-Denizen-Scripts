@@ -1,0 +1,94 @@
+###############################################################################
+#                                                                             #
+#                             FEVERDEATH CHANGELOG                            #
+#                                                                             #
+###############################################################################
+
++-----------------------------------------------------------------------------|
+|  Key/Legend                                                                 |
++-----------------------------------------------------------------------------|
+  
+  + : An addition or bug fix
+  - : A removal, warning, or bug/issue
+  = : No special meaning
+  ? : Unconfirmed bug, issue, or bug fix.
+  
+
++-----------------------------------------------------------------------------|
+|  v0.2.4                                                                     |
++-----------------------------------------------------------------------------|
+  
+  = Fixed bugs
+    + [N/A] The script checker didn't seem to actually work.
+  
+  = Known bugs
+    - [N/A] /suicide, /kill, and other insta-kill commands will definitely
+            glitch out Death's Door. On the other hand, "/effect <player>
+            instant_damage 1 255" doesn't bug it out.
+    ? [N/A] Switching between gamemodes may cause Death's Door to cry.
+  
+  = Known issues
+    - [N/A] Script still doesn't really know what optimization is. There is a
+            noticeable delay between when the script activates and when the
+            player is affected by the script.
+  
+  
++-----------------------------------------------------------------------------|
+|  v0.2.3 : Heaven exists!                                                    |
++-----------------------------------------------------------------------------|
+  
+  + Greater optimization
+    + Scripts do not run as many commands if features are disabled
+  + Better error checking
+  + Afterlife's custom drop mechanics revised
+    + Only drops 25% of the player's lost EXP OR 300 EXP, whichever is less
+    + Only reduces hotbar items' chance of being lost by 20% instead of 50%
+  + If you're missing a file/script, you can't use the addon
+  
+  = Fixed bugs
+    ? [N/A] Afterlife can accidentally drop an infinite amount of EXP.
+    + [N/A] Afterlife allows users to drop ludicrous amounts of EXP.
+  
+  = Known bugs
+    - [N/A] /suicide, /kill, and other insta-kill commands will definitely
+            glitch out Death's Door. On the other hand, "/effect <player>
+            instant_damage 1 255" doesn't bug it out.
+    ? [N/A] Switching between gamemodes may cause Death's Door to cry.
+  
+  = Known issues
+    - [N/A] Script still doesn't really know what optimization is. There is a
+            noticeable delay between when the script activates and when the
+            player is affected by the script.
+  
+  
++-----------------------------------------------------------------------------|
+|  v0.1 : Initial release                                                     |
++-----------------------------------------------------------------------------|
+  
+  + First semi-stable release of Thanatophobia and Death's Door
+  + Experimental module Afterlife introduced
+    + EXP and item loss system introduced
+    - EXP loss is slightly broken
+    - EXP drop is definitely broken
+  
+  = Fixed pre-release bugs
+    + [N/A] Timer for Death's Door not cancelling itself properly.
+    + [N/A] Recovery phase not reacting as intended.
+    + [N/A] Wonky little queues not cancelling themselves.
+    + [N/A] A one-tick queue suddenly decides to become immortal...
+    + [N/A] A little bit of typos in the main script.
+  
+  = Known bugs
+    - [N/A] Afterlife can accidentally drop an infinite amount of EXP.
+    - [N/A] Afterlife can drop one super XP orb if "instant respawn" is set to
+            true.
+    - [N/A] /suicide, /kill, and other insta-kill commands will definitely
+            glitch out Death's Door. On the other hand, "/effect <player>
+            instant_damage 1 255" doesn't bug it out.
+  
+  = Known issues
+    - [N/A] This addon doesn't know what optimization is. It might slow the
+            server along with it.
+    - [N/A] Badly scripted, and written without ever testing it out until the
+            last second.
+

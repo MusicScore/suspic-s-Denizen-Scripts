@@ -1,0 +1,71 @@
+gpa_feverDeath_cmd:
+  type: command
+  debug: false
+  
+  name: feverdeath
+  description: Access to FeverDeath<&sq>s standalone reload feature.
+  usage: /feverdeath reload|version
+  allowed help:
+  - determine '<player.has_permission[gpa.feverdeath.admin]>'
+  tab complete:
+  - if '!<player.has_permission[gpa.feverdeath.admin]>'
+  {
+    - queue 'clear'
+  }
+  - if '<context.args.size>' == '0'
+  {
+    - determine 'reload'
+  }
+  else if '<context.args.size>' == '1' && '<el@val[reload].starts_with[<context.args.get[1]>]>'
+  {
+    - determine 'reload'
+  }
+  
+  script:
+  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_main|gpa_feverDeath_config]>'
+  {
+    - announce '[FeverDeath "gpa_feverDeath_cmd"] WARNING: Missing the main FeverDeath script and/or the FeverDeath configuration builder script!' 'to_console'
+    - if '!<context.server>'
+    {
+      - narrate '[FeverDeath "gpa_feverDeath_cmd"] WARNING: Missing the main FeverDeath script and/or the FeverDeath configuration builder script!'
+    }
+    - queue 'clear'
+  }
+  - if '<context.server>'
+  {
+    - goto 'skip_perm_check'
+  }
+  - if '!<player.has_permission[gpa.feverdeath.admin]>'
+  {
+    - inject 'gpa_feverDeath_generic_def'
+    
+    - if '<yaml[gpa_feverdeath_config].read[general.no permission message]||null>' == 'null'
+    {
+      - define 'error_msg' 'Death cannot be easily conquered...'
+    }
+    else
+    {
+      - define 'error_msg' '<yaml[gpa_feverdeath_config].read[general.no permission message]>'
+    }
+    - narrate '<def[fd_prefix]><def[error_msg]>'
+    - queue 'clear'
+  }
+  - mark 'skip_perm_check'
+  - if '<context.args.size>' > '1'
+  {
+    - narrate '<&c>Too many arguments!'
+    - queue 'clear'
+  }
+  - if '<context.args.get[1]>' == 'reload'
+  {
+    - run 'gpa_feverDeath_config'
+    - narrate '<&c>Reloaded FeverDeath!'
+  }
+  else if '<context.args.get[1]>' == 'version'
+  {
+    - narrate '<&3>GrandPartyAddon: <&b>FeverDeath v0.2.1'
+  }
+  else
+  {
+    - narrate '<&c>Invalid argument!'
+  }
