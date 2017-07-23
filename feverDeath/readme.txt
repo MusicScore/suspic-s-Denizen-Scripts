@@ -10,8 +10,11 @@
   
   The easiest way to contact GrandPartyMask is via Discord (The_Conductor#3584)
   or email (grandpartymask@gmail.com). However, it is usually better if you
-  join the Denizen Discord group (https://discord.gg/Q6pZGSR) for support
+  join the Denizen Discord group ( https://discord.gg/Q6pZGSR ) for support
   regarding his scripts.
+  
+  To report issues with the script, please use the GitHub repository at
+  https://github.com/MusicScore/Denizen-GrandPartyAddons/issues
   
   
 +-----------------------------------------------------------------------------|
@@ -126,8 +129,11 @@
 +-----------------------------------------------------------------------------|
   
   To report bugs and the like, feel free to visit GrandPartyMask's Discord PM
-  or the Denizen Discord group. Later in the future, a GitHub will be set up
-  for incoming issues, general support questions, and feature requests.
+  or the Denizen Discord group.
+  
+  For incoming issues, general support questions, and feature requests, refer
+  to the GitHub repository for all GrandPartyAddons at:
+  https://github.com/MusicScore/Denizen-GrandPartyAddons/issues
   
   When editing the FeverDeath addon, remember that GrandPartyMask is not liable
   for any damage done to your server. The addon itself is always scripted to
