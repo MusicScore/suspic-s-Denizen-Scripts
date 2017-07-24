@@ -774,7 +774,14 @@ gpa_feverDeath_main:
       }
       else if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||null>' == '1'
       {
-        - determine 'passively' '<context.amount.mul[0.9]>'
+        - if '<def[target].health.add[<context.amount>]>' > '<def[target].health.max.mul[0.85]>'
+        {
+          - determine 'passively' '<def[target].health.max.mul[0.85].sub[<def[target].health>]>'
+        }
+        else
+        {
+          - determine 'passively' '<context.amount.mul[0.9]>'
+        }
         - queue 'clear'
       }
     }
