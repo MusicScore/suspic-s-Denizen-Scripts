@@ -224,7 +224,7 @@ gpa_feverDeath_main:
         - define 'dd_recover.time' '60'
       }
       
-      - if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||null>' != '2'
+      - if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' != '2'
       {
         - determine 'passively' '0'
         - define 'cancelled' 'true'
@@ -246,7 +246,7 @@ gpa_feverDeath_main:
         }
         - narrate '<def[dd_prefix]><&c>You are at Death<&sq>s Door! <&f><def[dd_death.msgs].get[<util.random.int[1].to[<def[dd_death.msgs].size>]>].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>' 'targets:<def[target]>'
       }
-      else if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||null>' == '2'
+      else if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' == '2'
       {
         - if '<util.random.int[1].to[10000]>' <= '<def[dd_death.kill].mul[10000]>'
         {
@@ -655,6 +655,7 @@ gpa_feverDeath_main:
         - determine 'passively' 'NO_DROPS'
       }
     }
+    - mark 'skip_al'
         
     on player respawns:
     - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_generic_def|gpa_feverDeath_dd_def|gpa_feverDeath_t_def|gpa_feverDeath_al_def|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]>'
@@ -751,7 +752,7 @@ gpa_feverDeath_main:
       {
         - define 'dd_recover.time' '60'
       }
-      - if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||null>' == '2'
+      - if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' == '2'
       {
         - if '<li@SATIATED|REGEN.contains[<context.reason>]>'
         {
@@ -772,7 +773,7 @@ gpa_feverDeath_main:
           - flag '<def[target]>' 'grandpartyaddons.feverdeath.deaths door.phase:0'
         }
       }
-      else if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||null>' == '1'
+      else if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' == '1'
       {
         - if '<def[target].health.add[<context.amount>]>' > '<def[target].health.max.mul[0.85]>'
         {
@@ -827,26 +828,28 @@ gpa_feverDeath_main:
     }
     
     - inject 'gpa_feverDeath_dd_def'
+    
     - if '<def[dd_enable]>' == 'null'
+    {
+      - goto 'skip_dd'
+    }
+    - if '<def[dd_recover.enable]>' == 'null'
     {
       - goto 'skip_dd'
     }
     
     - if '<def[dd_enable]>'
     {
-      - if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]||null>' == 'null'
+      - if '<player.flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' != '1'
       {
         - flag '<player>' 'grandpartyaddons.feverdeath.deaths door.recovery:0'
       }
-      - if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]>' < '0'
-      {
-        - flag '<player>' 'grandpartyaddons.feverdeath.deaths door.recovery:0'
-      }
-      else if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]>' > '0'
+      else if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]||0>' == '1'
       {
         - run 'gpa_feverDeath_ddRecovery' 'def:<player>|stop' 'id:gpa_feverDeath_dd_recovery_task_stop_<player.uuid>'
       }
     }
+    - mark 'skip_dd'
     
     on player joins:
     - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_generic_def|gpa_feverDeath_dd_def|gpa_feverDeath_t_def|gpa_feverDeath_al_def|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]>'
@@ -855,23 +858,25 @@ gpa_feverDeath_main:
     }
     
     - inject 'gpa_feverDeath_dd_def'
+    
     - if '<def[dd_enable]>' == 'null'
+    {
+      - goto 'skip_dd'
+    }
+    - if '<def[dd_recover.enable]>' == 'null'
     {
       - goto 'skip_dd'
     }
     
     - if '<def[dd_enable]>'
     {
-      - if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]||null>' == 'null'
+      - if '<player.flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' != '1'
       {
         - flag '<player>' 'grandpartyaddons.feverdeath.deaths door.recovery:0'
       }
-      - if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]>' < '0'
+      else if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]||0>' == '1'
       {
-        - flag '<player>' 'grandpartyaddons.feverdeath.deaths door.recovery:0'
-      }
-      else if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]>' > '0'
-      {
-        - run 'gpa_feverDeath_ddRecovery' 'def:<player>|start|<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]>' 'id:gpa_feverDeath_dd_recovery_task_start_<player.uuid>'
+        - run 'gpa_feverDeath_ddRecovery' 'def:<player>|stop' 'id:gpa_feverDeath_dd_recovery_task_stop_<player.uuid>'
       }
     }
+    - mark 'skip_dd'
