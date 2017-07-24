@@ -15,6 +15,27 @@
   
 
 +-----------------------------------------------------------------------------|
+|  v0.2.5                                                                     |
++-----------------------------------------------------------------------------|
+  
+  = Fixed bugs
+    + [N/A] A few fallback values were borked.
+    + [N/A] I definitely wasn't missing a command here and there...
+  
+  = Known bugs
+    - [N/A] /suicide, /kill, and other insta-kill commands will definitely
+            glitch out Death's Door. On the other hand, "/effect <player>
+            instant_damage 1 255" doesn't bug it out.
+    ? [N/A] Switching between gamemodes may cause Death's Door to cry.
+  
+  = Known issues
+    - [N/A] Script still doesn't really know what optimization is. There *may*
+            be a noticeable delay between when the script activates and when
+            the player is affected by the script.
+  
+  
+
++-----------------------------------------------------------------------------|
 |  v0.2.4                                                                     |
 +-----------------------------------------------------------------------------|
   
