@@ -397,6 +397,9 @@ gpa_feverDeath_main:
       
       - narrate '<def[al_enable].not> <def[al_instant].not> <context.cancelled> <def[cancelled]>' 'targets:<server.list_online_players>'
       - adjust '<def[target]>' 'health:<def[target].health.max>'
+      - adjust '<def[target]>' 'food_level:20'
+      - adjust '<def[target]>' 'saturation:5'
+      - adjust '<def[target]>' 'exhaustion:0'
       - cast 'SLOW' '<def[target]>' 'duration:3s' 'power:3'
       - cast 'BLINDNESS' '<def[target]>' 'duration:2.2s' 'power:0'
       - cast 'NIGHT_VISION' '<def[target]>' 'duration:2s' 'power:0'
@@ -415,7 +418,11 @@ gpa_feverDeath_main:
       - if '<def[al_exp.enable]>'
       {
         - experience 'set' '<def[target].xp.total.sub[<def[lost_xp]>]>' 'player:<def[target]>'
-        - define 'dropped_xp' '<def[lost_xp]>'
+        - define 'dropped_xp' '<def[lost_xp].mul[0.25]>'
+        - if '<def[dropped_xp]>' > '300'
+        {
+          - define 'dropped_xp' '300'
+        }
       }
       else
       {
