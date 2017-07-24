@@ -231,7 +231,7 @@ gpa_feverDeath_main:
         - if '<queue.list.contains[q@gpa_feverDeath_dd_recovery_task_start_<def[target].uuid>]>'
         {
           - run 'gpa_feverDeath_ddRecovery' 'def:<player>|stop' 'id:gpa_feverDeath_dd_recovery_task_stop_<def[target].uuid>'
-          - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery:!'
+          - flag '<def[target]>' 'grandpartyaddons.feverdeath.deaths door.recovery:!'
           - if '<server.current_bossbars.contains[feverdeath.dd.recovery.<def[target].uuid>]>'
           {
             - bossbar 'remove' 'feverdeath.dd.recovery.<def[target].uuid>'
@@ -251,7 +251,7 @@ gpa_feverDeath_main:
         - if '<util.random.int[1].to[10000]>' <= '<def[dd_death.kill].mul[10000]>'
         {
           - run 'gpa_feverDeath_ddRecovery' 'def:<player>|stop' 'id:gpa_feverDeath_dd_recovery_task_stop_<def[target].uuid>'
-          - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery:!'
+          - flag '<def[target]>' 'grandpartyaddons.feverdeath.deaths door.recovery:!'
           - if '<server.current_bossbars.contains[feverdeath.dd.recovery.<def[target].uuid>]>'
           {
             - bossbar 'remove' 'feverdeath.dd.recovery.<def[target].uuid>'
@@ -413,12 +413,16 @@ gpa_feverDeath_main:
         - teleport '<def[target]>' '<w@world.spawn_location>'
       }
       
-      - define 'lost_xp' '<def[target].xp.total.mul[<util.random.decimal[<def[al_exp.min]>].to[<def[al_exp.max]>]>]>'
-      
+      - define 'dropped_xp' '<def[target].xp.level.mul[7]>'
+      - if '<def[dropped_xp]>' > '100'
+      {
+        - define 'dropped_xp' '100'
+      }
       - if '<def[al_exp.enable]>'
       {
+        - define 'lost_xp' '<def[target].xp.total.mul[<util.random.decimal[<def[al_exp.min]>].to[<def[al_exp.max]>]>]>'
         - experience 'give' '<def[lost_xp].mul[-1]>' 'player:<def[target]>'
-        - define 'dropped_xp' '<def[lost_xp].mul[0.25]>'
+        - define 'dropped_xp' '<def[lost_xp].mul[0.25].round_down>'
         - if '<def[dropped_xp]>' > '300'
         {
           - define 'dropped_xp' '300'
@@ -426,11 +430,6 @@ gpa_feverDeath_main:
       }
       else
       {
-        - define 'dropped_xp' '<def[target].xp.level.mul[7]>'
-        - if '<def[dropped_xp]>' > '100'
-        {
-          - define 'dropped_xp' '100'
-        }
         - experience 'give' '<def[target].xp.total.mul[-1]>' 'player:<def[target]>'
       }
       - if '<def[al_exp.drop]>'
@@ -601,7 +600,9 @@ gpa_feverDeath_main:
       }
       
       #Afterlife mechanics: instant respawn disabled
-      - define 'lost_xp' '<def[target].xp.total.mul[<util.random.decimal[<def[al_exp.min]>].to[<def[al_exp.max]>]>]>'
+      - determine 'passively' 'KEEP_LEVEL'
+      - determine 'passively' 'KEEP_INV'
+      
       - define 'dropped_xp' '<def[target].xp.level.mul[7]>'
       - if '<def[dropped_xp]>' > '100'
       {
@@ -610,13 +611,17 @@ gpa_feverDeath_main:
       
       - if '<def[al_exp.enable]>'
       {
-        - determine 'passively' 'KEEP_LEVEL'
-        - define 'dropped_xp' '<def[lost_xp].mul[0.25]>'
+        - define 'lost_xp' '<def[target].xp.total.mul[<util.random.decimal[<def[al_exp.min]>].to[<def[al_exp.max]>]>]>'
+        - define 'dropped_xp' '<def[lost_xp].mul[0.25].round_down>'
         - if '<def[dropped_xp]>' > '300'
         {
           - define 'dropped_xp' '300'
         }
         - experience 'give' '<def[lost_xp].mul[-1]>' 'player:<def[target]>'
+      }
+      else
+      {
+        - experience 'give' '<def[target].xp.total.mul[-1]>' 'player:<def[target]>'
       }
       - if '<def[al_exp.drop]>'
       {
@@ -629,7 +634,6 @@ gpa_feverDeath_main:
       
       - if '<def[al_inv.enable]>'
       {
-        - determine 'passively' 'KEEP_INV'
         - define 'player_inv' '<def[target].inventory.list_contents>'
         - define 'inv_loss_chance' '0'
         - define 'inv_lost' 'li@'
