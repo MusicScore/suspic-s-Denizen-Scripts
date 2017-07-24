@@ -24,6 +24,8 @@
     + [N/A] Afterlife's instant respawn drops more EXP than the player lost
     + [N/A] Afterlife instant respawn never fully restored the player's health,
             food level, and saturation. Nor does it remove effects.
+    + [N/A] Experience command improperly used
+    + [N/A] Even more typos!
   
   = Known bugs
     - [N/A] /suicide, /kill, and other insta-kill commands will definitely

@@ -417,7 +417,7 @@ gpa_feverDeath_main:
       
       - if '<def[al_exp.enable]>'
       {
-        - experience 'set' '<def[target].xp.total.sub[<def[lost_xp]>]>' 'player:<def[target]>'
+        - experience 'give' '<def[lost_xp].mul[-1]>' 'player:<def[target]>'
         - define 'dropped_xp' '<def[lost_xp].mul[0.25]>'
         - if '<def[dropped_xp]>' > '300'
         {
@@ -431,7 +431,7 @@ gpa_feverDeath_main:
         {
           - define 'dropped_xp' '100'
         }
-        - experience 'set' '0' 'player:<def[target]>'
+        - experience 'give' '<def[target].xp.total.mul[-1]>' 'player:<def[target]>'
       }
       - if '<def[al_exp.drop]>'
       {
@@ -616,7 +616,7 @@ gpa_feverDeath_main:
         {
           - define 'dropped_xp' '300'
         }
-        - experience 'set' '<def[target].xp.total.sub[<def[lost_xp]>]>' 'player:<def[target]>'
+        - experience 'give' '<def[lost_xp].mul[-1]>' 'player:<def[target]>'
       }
       - if '<def[al_exp.drop]>'
       {
@@ -812,7 +812,7 @@ gpa_feverDeath_main:
         - goto 'skip_t'
       }
       
-      - if '<def[t_percent]>' < '0,01'
+      - if '<def[t_percent]>' < '0.01'
       {
         - define 't_percent' '0.01'
       }
