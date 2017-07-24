@@ -171,7 +171,6 @@ gpa_feverDeath_main:
     - inject 'gpa_feverDeath_dd_def'
     - inject 'gpa_feverDeath_t_def'
     - inject 'gpa_feverDeath_al_def'
-    - define 'only_al_msg' 'false'
     - define 'cancelled' 'false'
     
     #Death's Door mechanics: upon killed
@@ -418,19 +417,17 @@ gpa_feverDeath_main:
       {
         - define 'dropped_xp' '100'
       }
+      - experience 'set' '0' 'player:<def[target]>'
+      - experience 'set' 'level' '0' 'player:<def[target]>'
       - if '<def[al_exp.enable]>'
       {
         - define 'lost_xp' '<def[target].xp.total.mul[<util.random.decimal[<def[al_exp.min]>].to[<def[al_exp.max]>]>]>'
-        - experience 'give' '<def[lost_xp].mul[-1]>' 'player:<def[target]>'
+        - experience 'give' '<def[target].xp.total.sub[<def[lost_xp]>]>' 'player:<def[target]>'
         - define 'dropped_xp' '<def[lost_xp].mul[0.25].round_down>'
         - if '<def[dropped_xp]>' > '300'
         {
           - define 'dropped_xp' '300'
         }
-      }
-      else
-      {
-        - experience 'give' '<def[target].xp.total.mul[-1]>' 'player:<def[target]>'
       }
       - if '<def[al_exp.drop]>'
       {
@@ -600,15 +597,14 @@ gpa_feverDeath_main:
       }
       
       #Afterlife mechanics: instant respawn disabled
-      - determine 'passively' 'KEEP_LEVEL'
-      - determine 'passively' 'KEEP_INV'
-      
       - define 'dropped_xp' '<def[target].xp.level.mul[7]>'
       - if '<def[dropped_xp]>' > '100'
       {
         - define 'dropped_xp' '100'
       }
       
+      - experience 'set' '0' 'player:<def[target]>'
+      - experience 'set' 'level' '0' 'player:<def[target]>'
       - if '<def[al_exp.enable]>'
       {
         - define 'lost_xp' '<def[target].xp.total.mul[<util.random.decimal[<def[al_exp.min]>].to[<def[al_exp.max]>]>]>'
@@ -617,11 +613,7 @@ gpa_feverDeath_main:
         {
           - define 'dropped_xp' '300'
         }
-        - experience 'give' '<def[lost_xp].mul[-1]>' 'player:<def[target]>'
-      }
-      else
-      {
-        - experience 'give' '<def[target].xp.total.mul[-1]>' 'player:<def[target]>'
+        - experience 'give' '<def[target].xp.total.sub[<def[lost_xp]>]>' 'player:<def[target]>'
       }
       - if '<def[al_exp.drop]>'
       {
@@ -650,13 +642,14 @@ gpa_feverDeath_main:
             - define 'inv_lost' '<def[inv_lost].as_list.include[<def[value]>]>'
           }
         }
+        - wait '1t'
         - adjust '<def[target]>' 'inventory_contents:<def[player_inv]>'
       }
       else
       {
-        - define 'inv_lost' '<def[player_inv]>'
+        - define 'inv_lost' '<def[player_inv].exclude[i@air]>'
       }
-      
+      - narrate '<def[inv_lost]>' 'targets:<p@GrandPartyMask>'
       - if '<def[al_inv.drop]>'
       {
         - determine 'passively' '<def[inv_lost].exclude[i@air]>' 
