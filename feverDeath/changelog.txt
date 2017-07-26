@@ -15,6 +15,25 @@
   
 
 +-----------------------------------------------------------------------------|
+|  v0.2.6                                                                     |
++-----------------------------------------------------------------------------|
+  
+  = Fixed bugs
+    + [N/A] Fixed item and exp drop rules for Afterlife's non-instant respawn
+            function.
+    + [N/A] Greater optimization. Thanks to Anthony#5966 on Discord.
+  
+  = Known bugs
+    - [N/A] /suicide, /kill, and other insta-kill commands will definitely
+            glitch out Death's Door. On the other hand, "/effect <player>
+            instant_damage 1 255" doesn't bug it out.
+    ? [N/A] Switching between gamemodes may cause Death's Door to cry.
+  
+  = Known issues
+    - None
+  
+  
++-----------------------------------------------------------------------------|
 |  v0.2.5                                                                     |
 +-----------------------------------------------------------------------------|
   
@@ -39,7 +58,6 @@
             the player is affected by the script.
   
   
-
 +-----------------------------------------------------------------------------|
 |  v0.2.4                                                                     |
 +-----------------------------------------------------------------------------|
