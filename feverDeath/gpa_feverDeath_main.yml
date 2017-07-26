@@ -263,6 +263,12 @@ gpa_feverDeath_main:
           - define 'cancelled' 'true'
           - adjust '<def[target]>' 'health:0.1'
           - playsound '<def[target]>' 'sound:ENTITY_ENDERDRAGON_AMBIENT' 'volume:0.5' 'pitch:1.8'
+          - flag '<def[target]>' 'grandpartyaddons.feverdeath.deaths door.recovery:!'
+          - if '<server.current_bossbars.contains[feverdeath.dd.recovery.<def[target].uuid>]>'
+          {
+            - bossbar 'remove' 'feverdeath.dd.recovery.<def[target].uuid>'
+          }
+          - run 'gpa_feverDeath_ddRecovery' 'def:<player>|stop' 'id:gpa_feverDeath_dd_recovery_task_stop_<def[target].uuid>'
           - if '<def[dd_death.title]>'
           {
             - title 'title:<&r>' 'subtitle:<&4><&l>Death<&sq>s Door' 'fade_in:1t' 'stay:2s' 'fade_out:2s' 'targets:<def[target]>'
@@ -502,6 +508,7 @@ gpa_feverDeath_main:
     - inject 'gpa_feverDeath_generic_def'
     - inject 'gpa_feverDeath_al_def'
     
+    #Afterlife mechanics: instant respawn disabled
     - if '<def[al_enable]>' == 'null'
     {
       - goto 'skip_al'
@@ -596,7 +603,6 @@ gpa_feverDeath_main:
         - define 'al_inv.max' '<def[al_inv.min]>'
       }
       
-      #Afterlife mechanics: instant respawn disabled
       - define 'dropped_xp' '<def[target].xp.level.mul[7]>'
       - if '<def[dropped_xp]>' > '100'
       {
@@ -642,21 +648,27 @@ gpa_feverDeath_main:
             - define 'inv_lost' '<def[inv_lost].as_list.include[<def[value]>]>'
           }
         }
-        - wait '1t'
-        - adjust '<def[target]>' 'inventory_contents:<def[player_inv]>'
       }
       else
       {
         - define 'inv_lost' '<def[player_inv].exclude[i@air]>'
+        - foreach '<def[player_inv]>'
+        {
+          - define 'player_inv' '<def[player_inv].set[i@air].at[<def[loop_index]>]>'
+        }
       }
-      - narrate '<def[inv_lost]>' 'targets:<p@GrandPartyMask>'
       - if '<def[al_inv.drop]>'
       {
-        - determine 'passively' '<def[inv_lost].exclude[i@air]>' 
+        - determine 'passively' '<def[inv_lost]>'
       }
       else
       {
         - determine 'passively' 'NO_DROPS'
+      }
+      - if '<def[al_inv.enable]>'
+      {
+        - wait '1t'
+        - adjust '<def[target]>' 'inventory_contents:<def[player_inv]>'
       }
     }
     - mark 'skip_al'
@@ -675,6 +687,7 @@ gpa_feverDeath_main:
     - inject 'gpa_feverDeath_generic_def'
     - inject 'gpa_feverDeath_al_def'
     
+    #Afterlife mechanics: determine respawn location if instant respawn is disabled
     - if '<def[al_enable]>' == 'null'
     {
       - goto 'skip_al'
@@ -684,7 +697,6 @@ gpa_feverDeath_main:
       - goto 'skip_al'
     }
     
-    #Afterlife mechanics: determine respawn location if instant respawn is disabled
     - if '<def[al_enable]>' && '!<def[al_instant]>'
     {
       - if '<def[al_msg_enable]>' == 'null'
