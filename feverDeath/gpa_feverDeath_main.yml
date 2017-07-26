@@ -98,11 +98,7 @@ gpa_feverDeath_main:
     - define 'dmg_inflict' '<context.final_damage>'
     
     #Death's Door mechanics: recovery phase
-    - if '<def[dd_enable]>' == 'null'
-    {
-      - goto 'skip_dd'
-    }
-    - if '<def[dd_recover.enable]>' == 'null'
+    - if '<list[<def[dd_enable]>|<def[dd_recover.enable]>].contains[null]>'
     {
       - goto 'skip_dd'
     }
@@ -124,11 +120,7 @@ gpa_feverDeath_main:
       {
         - goto 'skip_t'
       }
-      - if '<def[t_msgs.warn]>' == 'null'
-      {
-        - goto 'skip_t'
-      }
-      - if '<def[t_percent]>' == 'null'
+      - if '<list[<def[t_msgs.warn]>|<def[t_percent]>].contains[null]>'
       {
         - goto 'skip_t'
       }
@@ -181,27 +173,7 @@ gpa_feverDeath_main:
     
     - if '<def[dd_enable]>'
     {
-      - if '<def[dd_death.kill]>' == 'null'
-      {
-        - goto 'skip_dd'
-      }
-      - if '<def[dd_death.title]>' == 'null'
-      {
-        - goto 'skip_dd'
-      }
-      - if '<def[dd_death.msgs]>' == 'null'
-      {
-        - goto 'skip_dd'
-      }
-      - if '<def[dd_recover.enable]>' == 'null'
-      {
-        - goto 'skip_dd'
-      }
-      - if '<def[dd_recover.time]>' == 'null'
-      {
-        - goto 'skip_dd'
-      }
-      - if '<def[dd_recover.msgs]>' == 'null'
+      - if '<list[<def[dd_death.kill]>|<def[dd_death.title]>|<def[dd_death.msgs]>|<def[dd_recover.enable]>|<def[dd_recover.time]>|<def[dd_recover.msgs]>].contains[null]>'
       {
         - goto 'skip_dd'
       }
@@ -290,58 +262,14 @@ gpa_feverDeath_main:
     - mark 'skip_t'
     
     #Afterlife mechanics: instant respawn
-    - if '<def[al_enable]>' == 'null'
-    {
-      - goto 'skip_al'
-    }
-    - if '<def[al_instant]>' == 'null'
+    - if '<list[<def[al_enable]>|<def[al_instant]>].contains[null]>'
     {
       - goto 'skip_al'
     }
     
     - if '<def[al_enable]>' && '<def[al_instant]>'
     {
-      - if '<def[al_exp.enable]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_exp.drop]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_exp.min]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_exp.max]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.enable]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.drop]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.hotbar]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.min]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.max]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_msg_enable]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_msgs]>' == 'null'
+      - if '<list[<def[al_exp.enable]>|<def[al_exp.drop]>|<def[al_exp.min]>|<def[al_exp.max]>|<def[al_inv.enable]>|<def[al_inv.drop]>|<def[al_inv.hotbar]>|<def[al_inv.min]>|<def[al_inv.max]>|<def[al_msg_enable]>|<def[al_msgs]>].contains[null]>'
       {
         - goto 'skip_al'
       }
@@ -509,54 +437,14 @@ gpa_feverDeath_main:
     - inject 'gpa_feverDeath_al_def'
     
     #Afterlife mechanics: instant respawn disabled
-    - if '<def[al_enable]>' == 'null'
-    {
-      - goto 'skip_al'
-    }
-    - if '<def[al_instant]>' == 'null'
+    - if '<list[<def[al_enable]>|<def[al_instant]>].contains[null]>'
     {
       - goto 'skip_al'
     }
     
     - if '<def[al_enable]>' && '!<def[al_instant]>'
     {
-      - if '<def[al_exp.enable]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_exp.drop]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_exp.min]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_exp.max]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.enable]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.drop]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.hotbar]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.min]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_inv.max]>' == 'null'
-      {
-        - goto 'skip_al'
-      }
-      - if '<def[al_msgs]>' == 'null'
+      - if '<list[<def[al_exp.enable]>|<def[al_exp.drop]>|<def[al_exp.min]>|<def[al_exp.max]>|<def[al_inv.enable]>|<def[al_inv.drop]>|<def[al_inv.hotbar]>|<def[al_inv.min]>|<def[al_inv.max]>|<def[al_msgs]>].contains[null]>'
       {
         - goto 'skip_al'
       }
@@ -609,8 +497,6 @@ gpa_feverDeath_main:
         - define 'dropped_xp' '100'
       }
       
-      - experience 'set' '0' 'player:<def[target]>'
-      - experience 'set' 'level' '0' 'player:<def[target]>'
       - if '<def[al_exp.enable]>'
       {
         - define 'lost_xp' '<def[target].xp.total.mul[<util.random.decimal[<def[al_exp.min]>].to[<def[al_exp.max]>]>]>'
@@ -619,7 +505,7 @@ gpa_feverDeath_main:
         {
           - define 'dropped_xp' '300'
         }
-        - experience 'give' '<def[target].xp.total.sub[<def[lost_xp]>]>' 'player:<def[target]>'
+        - flag '<def[target]>' 'grandpartyaddons.feverDeath.afterlife_exp:<def[target].xp.total.sub[<def[lost_xp]>]>'
       }
       - if '<def[al_exp.drop]>'
       {
@@ -657,6 +543,7 @@ gpa_feverDeath_main:
           - define 'player_inv' '<def[player_inv].set[i@air].at[<def[loop_index]>]>'
         }
       }
+      - flag '<def[target]>' 'grandpartyaddons.feverDeath.afterlife_inv:<def[player_inv]>'
       - if '<def[al_inv.drop]>'
       {
         - determine 'passively' '<def[inv_lost]>'
@@ -664,11 +551,6 @@ gpa_feverDeath_main:
       else
       {
         - determine 'passively' 'NO_DROPS'
-      }
-      - if '<def[al_inv.enable]>'
-      {
-        - wait '1t'
-        - adjust '<def[target]>' 'inventory_contents:<def[player_inv]>'
       }
     }
     - mark 'skip_al'
@@ -687,23 +569,15 @@ gpa_feverDeath_main:
     - inject 'gpa_feverDeath_generic_def'
     - inject 'gpa_feverDeath_al_def'
     
-    #Afterlife mechanics: determine respawn location if instant respawn is disabled
-    - if '<def[al_enable]>' == 'null'
-    {
-      - goto 'skip_al'
-    }
-    - if '<def[al_instant]>' == 'null'
+    #Afterlife mechanics: determine respawn if instant respawn is disabled
+    - if '<list[<def[al_enable]>|<def[al_instant]>].contains[null]>'
     {
       - goto 'skip_al'
     }
     
     - if '<def[al_enable]>' && '!<def[al_instant]>'
     {
-      - if '<def[al_msg_enable]>' == 'null'
-      {
-        - queue 'clear'
-      }
-      - if '<def[al_bed]>' == 'null'
+      - if '<list[<def[al_msg_enable]>|<def[al_bed]>].contains[null]>'
       {
         - queue 'clear'
       }
@@ -719,6 +593,18 @@ gpa_feverDeath_main:
       - if '<def[al_msg_enable]>'
       {
         - narrate '<def[al_prefix]><&f><def[al_msgs].get[<util.random.int[1].to[<def[al_msgs].size>]>].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>' 'targets:<player>'
+      }
+      - if '<player.has_flag[grandpartyaddons.feverDeath.afterlife_inv]||false>'
+      {
+        - adjust '<player>' 'inventory_contents:<player.flag[grandpartyaddons.feverDeath.afterlife_inv]>'
+        - flag '<player>' 'grandpartyaddons.feverDeath.afterlife_inv:!'
+      }
+      - if '<player.has_flag[grandpartyaddons.feverDeath.afterlife_exp]||false>'
+      {
+        - experience 'set' '0' 'player:<player>'
+        - experience 'set' 'level' '0' 'player:<player>'
+        - experience 'give' '<player.flag[grandpartyaddons.feverDeath.afterlife_exp]>' 'player:<player>'
+        - flag '<player>' 'grandpartyaddons.feverDeath.afterlife_exp:!'
       }
     }
     - mark 'skip_al'
@@ -747,17 +633,9 @@ gpa_feverDeath_main:
     
     - if '<def[dd_enable]>'
     {
-      - if '<def[dd_recover.enable]>' == 'null'
+      - if '<list[<def[dd_recover.enable]>|<def[dd_recover.msgs]>|<def[dd_recover.time]>].contains[null]>'
       {
         - goto 'skip_dd'
-      }
-      - if '<def[dd_recover.msgs]>' == 'null'
-      {
-        - goto 'skip_dd'
-      }
-      - if '<def[dd_recover.time]>' == 'null'
-      {
-        - goto 'skip_to_t'
       }
       
       - if '<def[dd_recover.time]>' < '1'
@@ -804,16 +682,12 @@ gpa_feverDeath_main:
     }
     - mark 'skip_dd'
     
-    - if '<def[t_enable]>' == 'null'
-    {
-      - goto 'skip_t'
-    }
-    - if '<def[t_msgs.recovery]>' == 'null'
+    #Thanatophobia mechanics
+    - if '<list[<def[t_enable]>|<def[t_msgs.recovery]>].contains[null]>'
     {
       - goto 'skip_t'
     }
     
-    #Thanatophobia mechanics
     - if '<def[t_enable]>'
     {
       - if '<def[t_percent]>' == 'null'
@@ -845,11 +719,7 @@ gpa_feverDeath_main:
     
     - inject 'gpa_feverDeath_dd_def'
     
-    - if '<def[dd_enable]>' == 'null'
-    {
-      - goto 'skip_dd'
-    }
-    - if '<def[dd_recover.enable]>' == 'null'
+    - if '<list[<def[dd_enable]>|<def[dd_recover.enable]>].contains[null]>'
     {
       - goto 'skip_dd'
     }
@@ -875,11 +745,7 @@ gpa_feverDeath_main:
     
     - inject 'gpa_feverDeath_dd_def'
     
-    - if '<def[dd_enable]>' == 'null'
-    {
-      - goto 'skip_dd'
-    }
-    - if '<def[dd_recover.enable]>' == 'null'
+    - if '<list[<def[dd_enable]>|<def[dd_recover.enable]>].contains[null]>'
     {
       - goto 'skip_dd'
     }
