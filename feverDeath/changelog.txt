@@ -13,7 +13,29 @@
   = : No special meaning
   ? : Unconfirmed bug, issue, or bug fix.
   
-
+  
++-----------------------------------------------------------------------------|
+|  v0.2.7                                                                     |
++-----------------------------------------------------------------------------|
+  
+  + We've finally nailed it! Well, not really.
+    + /suicide and /kill (Bukkit) will result in normal behavior plus a message
+      if Afterlife is enabled. Thanatophobia and Death's Door do not trigger.
+    + Void damage (via the Vanilla Minecraft /kill command and falling into the
+      void) is almost completely ignored. It results in normal death behavior,
+      plus an Afterlife message if one is enabled.
+  
+  = Fixed bugs
+    + [N/A] /suicide, /kill, and other insta-kill commands will definitely
+            glitch out Death's Door.
+  
+  = Known bugs
+    ? [N/A] Switching between gamemodes may cause Death's Door to cry.
+  
+  = Known issues
+    - None
+  
+  
 +-----------------------------------------------------------------------------|
 |  v0.2.6                                                                     |
 +-----------------------------------------------------------------------------|
