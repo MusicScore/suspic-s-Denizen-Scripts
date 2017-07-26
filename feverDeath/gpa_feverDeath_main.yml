@@ -80,6 +80,27 @@ gpa_feverDeath_main:
     }
     - run 'gpa_feverDeath_config'
     
+    on suicide command:
+    - inject 'gpa_feverDeath_generic_def'
+    - flag '<player>' 'grandpartyaddons.com_listen.suicide'
+    - narrate '<def[fd_prefix]><&c>/suicide <&4>is not the fun way out.' 'targets:<player>'
+    on kill command:
+    - inject 'gpa_feverDeath_generic_def'
+    - if '<context.args.get[1].as_player||null>' == 'null'
+    {
+      - queue 'clear'
+    }
+    else if '<context.args.get[1].as_player||null>' == '<player>'
+    {
+      - flag '<player>' 'grandpartyaddons.com_listen.suicide'
+      - narrate '<def[fd_prefix]><&c>/kill <&4>is not the fun way out.' 'targets:<player>'
+    }
+    else
+    {
+      - flag '<context.args.get[1].as_player>' 'grandpartyaddons.com_listen.suicide'
+      - narrate '<def[fd_prefix]><&4>You were cruelly smitten by <player>.' 'targets:<context.args.get[1].as_player>'
+    }
+    
     on player damaged:
     - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_generic_def|gpa_feverDeath_dd_def|gpa_feverDeath_t_def|gpa_feverDeath_al_def|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]>'
     {
@@ -88,6 +109,10 @@ gpa_feverDeath_main:
     
     - define 'target' '<context.entity.as_player>'
     - if '<def[target].gamemode.id>' == '1' || '<def[target].gamemode.id>' == '3'
+    {
+      - queue 'clear'
+    }
+    - if '<list[suicide|void].contains[<context.cause>]>' || '<player.has_flag[grandpartyaddons.com_listen.suicide]||false>'
     {
       - queue 'clear'
     }
@@ -148,13 +173,12 @@ gpa_feverDeath_main:
       - queue 'clear'
     }
     
-    - if '<context.cause>' == 'suicide'
+    - define 'target' '<context.entity.as_player>'
+    - if '<def[target].gamemode.id>' == '1' || '<def[target].gamemode.id>' == '3'
     {
       - queue 'clear'
     }
-    
-    - define 'target' '<context.entity.as_player>'
-    - if '<def[target].gamemode.id>' == '1' || '<def[target].gamemode.id>' == '3'
+    - if '<list[suicide|void].contains[<context.cause>]>' || '<player.has_flag[grandpartyaddons.com_listen.suicide]||false>'
     {
       - queue 'clear'
     }
@@ -328,7 +352,6 @@ gpa_feverDeath_main:
         - define 'al_inv.max' '<def[al_inv.min]>'
       }
       
-      - narrate '<def[al_enable].not> <def[al_instant].not> <context.cancelled> <def[cancelled]>' 'targets:<server.list_online_players>'
       - adjust '<def[target]>' 'health:<def[target].health.max>'
       - adjust '<def[target]>' 'food_level:20'
       - adjust '<def[target]>' 'saturation:5'
@@ -433,8 +456,25 @@ gpa_feverDeath_main:
     {
       - queue 'clear'
     }
+    - if '<list[suicide|void].contains[<context.cause>]>' || '<player.has_flag[grandpartyaddons.com_listen.suicide]||false>'
+    {
+      - queue 'clear'
+    }
     - inject 'gpa_feverDeath_generic_def'
+    - inject 'gpa_feverDeath_dd_def'
     - inject 'gpa_feverDeath_al_def'
+    
+    #Death's Door mechanics: clear flags
+    - if '<list[<def[dd_enable]>|<def[dd_recover.enable]>].contains[null]>'
+    {
+      - goto 'skip_dd'
+    }
+    - if '<def[dd_enable]>' && '<def[dd_recover.enable]>'
+    {
+      - flag '<def[target]>' 'grandpartyaddons.feverDeath.deaths door.recovery:!'
+      - flag '<def[target]>' 'grandpartyaddons.feverDeath.deaths door.phase:0'
+    }
+    - mark 'skip_dd'
     
     #Afterlife mechanics: instant respawn disabled
     - if '<list[<def[al_enable]>|<def[al_instant]>].contains[null]>'
@@ -560,22 +600,26 @@ gpa_feverDeath_main:
     {
       - queue 'clear'
     }
-    
     - if '<player.gamemode.id>' == '1' || '<player.gamemode.id>' == '3'
     {
       - queue 'clear'
     }
     
     - inject 'gpa_feverDeath_generic_def'
+    - if '<player.has_flag[grandpartyaddons.com_listen.suicide]||false>'
+    {
+      - flag '<player>' 'grandpartyaddons.com_listen.suicide:!'
+      - queue 'clear'
+    }
     - inject 'gpa_feverDeath_al_def'
     
     #Afterlife mechanics: determine respawn if instant respawn is disabled
-    - if '<list[<def[al_enable]>|<def[al_instant]>].contains[null]>'
+    - if '<def[al_enable]>' == 'null'
     {
       - goto 'skip_al'
     }
     
-    - if '<def[al_enable]>' && '!<def[al_instant]>'
+    - if '<def[al_enable]>'
     {
       - if '<list[<def[al_msg_enable]>|<def[al_bed]>].contains[null]>'
       {
