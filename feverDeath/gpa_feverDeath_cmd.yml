@@ -61,6 +61,6 @@ gpa_feverDeath_cmd:
       - run 'gpa_feverDeath_config'
       - narrate '<&c>Reloaded FeverDeath!'
     - case 'version':
-      - narrate '<&3>GrandPartyAddon: <&b>FeverDeath v0.3<&co> <&9>Ice in Hell'
+      - narrate '<&3>GrandPartyAddon: <&b>FeverDeath v0.3'
     - default:
       - narrate '<&c>Invalid argument!'
