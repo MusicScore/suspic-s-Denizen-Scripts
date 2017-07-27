@@ -20,11 +20,12 @@
   
   + We've finally nailed it! Well, not really (again).
     + Greater optimization! Processing power cut nearly in half, thanks to the
-      help of Anthony (Discord: Anthony#5966, GitHub: AnthonyAMC).
+      help of Anthony (Discord: Anthony#5966, GitHub: AnthonyAMC)
     = For the first time, depreciated a part of the scripts. Is that good?
   
   = Fixed bugs
     ? [N/A] Experience reading was totally bonkers.
+    + [N/A] The Death's Door recovery time didn't exactly go.
   
   = Known bugs
     ? [N/A] Switching between gamemodes may cause Death's Door to cry.
