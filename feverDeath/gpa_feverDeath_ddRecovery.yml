@@ -39,6 +39,7 @@
 gpa_feverDeath_ddRecovery:
   type: task
   debug: false
+  speed: 0
   definitions: player|state|duration
   
   script:
@@ -47,35 +48,19 @@ gpa_feverDeath_ddRecovery:
     - announce '[FeverDeath "gpa_feverDeath_ddRecovery"] WARNING: Missing the main FeverDeath script!' 'to_console'
     - queue 'clear'
   }
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_ddRecovery_timer_task]>'
-  {
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery"] WARNING: Missing the FeverDeath recovery phase timer script!' 'to_console'
-    - queue 'clear'
-  }
   - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_config]>'
   {
     - announce '[FeverDeath "gpa_feverDeath_ddRecovery"] WARNING: Missing the FeverDeath configuration builder script!' 'to_console'
     - queue 'clear'
   }
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_dd_def]>'
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery"] WARNING: Missing the FeverDeath Death<&sq>s Door definitions script!' 'to_console'
+  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_ddRecovery_timer_task]>'
+  {
+    - announce '[FeverDeath "gpa_feverDeath_ddRecovery"] WARNING: Missing the FeverDeath recovery phase timer script!' 'to_console'
     - queue 'clear'
   }
   
-  - inject 'gpa_feverDeath_dd_def'
-  - if '<def[player].as_player||null>' == 'null'
-  {
-    - queue 'clear'
-  }
-  - if '<def[state]||null>' == 'null'
-  {
-    - queue 'clear'
-  }
-  - if '<def[state]>' == 'start' && '<def[duration].as_duration||null>' == 'null'
-  {
-    - queue 'clear'
-  }
-  - if '<def[dd_death.title]>' == 'null'
+  - define 'dd_death.title' '<yaml[gpa_feverdeath_config].read[deaths door.death.title enabled].as_boolean||true>'
+  - if '<list[<def[player].as_player||null>|<def[state]||null>|<def[dd_death.title]>].contains[null]>' == 'null'
   {
     - queue 'clear'
   }
@@ -84,10 +69,12 @@ gpa_feverDeath_ddRecovery:
   {
     - queue 'clear'
   }
+  - if '<def[state]>' == 'start' && '<def[duration].as_duration||null>' == 'null'
+  {
+    - queue 'clear'
+  }
   
-  - define 'queue_name' 'gpa_feverDeath_dd_recovery_task_start_<def[player].uuid>'
   - define 'queue_start' '<server.current_time_millis>'
-  
   - if '<def[state]>' == 'start'
   {
     - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery start:<def[queue_start]>'
@@ -109,11 +96,11 @@ gpa_feverDeath_ddRecovery:
     - define 'time_queue' 'gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>'
     - if '<queue.exists[<def[str_queue]>]>' && '<def[str_queue].as_queue.state||null>' == 'running'
     {
-      - define 'duration' '<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery]>'
+      - define 'duration' '<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery].as_duration>'
       - bossbar 'remove' 'feverdeath.dd.recovery.<def[player].uuid>'
       - define 'lost_time' '<server.current_time_millis.sub[<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery start]>].div[1000]>'
       - define 'subtracted_time' '<el@val[<def[lost_time]>].mul[1000].as_duration>'
-      - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery:<def[duration].as_duration.sub[<def[lost_time]>].in_minutes>m'
+      - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery:<def[duration].sub[<def[lost_time]>].in_minutes>m'
       - queue '<def[str_queue].as_queue>' 'clear'
       - queue '<def[time_queue].as_queue>' 'clear'
     }
@@ -123,6 +110,7 @@ gpa_feverDeath_ddRecovery:
 gpa_feverDeath_ddRecovery_timer_task:
   type: task
   debug: false
+  speed: 0
   definitions: player|duration
   
   script:
@@ -141,13 +129,7 @@ gpa_feverDeath_ddRecovery_timer_task:
     - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the FeverDeath configuration builder script!' 'to_console'
     - queue 'clear'
   }
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_dd_def]>'
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the FeverDeath Death<&sq>s Door definitions script!' 'to_console'
-    - queue 'clear'
-  }
   
-  - inject 'gpa_feverDeath_dd_def'
-  - narrate '<def[player]> && <def[duration]>' 'targets:<def[player]>'
   - define 'time_loop' '<def[duration].as_duration.in_seconds.round_up>'
   - while '<def[time_loop].is[OR_MORE].to[0]>'
   {
