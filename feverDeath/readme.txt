@@ -100,13 +100,19 @@
 +-----------------------------------------------------------------------------|
   
   To use FeverDeath as a dependency in your own script(s), you really only need
-  to call the options in the configuration. Thankfully, you don't need to do it
-  yourself. Four task scripts have been written beforehand, giving you full
-  access to every relevant option.
+  to call the options in the configuration. Unlike what versions 0.1 and 0.2
+  told you, you will have to call these options by yourself.
   
-  To check them out, visit the "gpa_feverDeath_def.yml" file. Or, if you
-  downloaded FeverDeath as a single script file, find the
-  "gpa_feverDeath_generic_def" script.
+  To help you out, I've included the depreciated prewritten definitions
+  scripts. They are located in the "gpa_feverDeath_def.yml" file, and have a
+  complete list of definitions/tags that should help you.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  
+  Now, if you wanted to use FeverDeath as a dependency for a plugin (for
+  whatever reason), there's not much I can do to help. For the most part,
+  you'll have to find a way to do it yourself. However, it is possible for a
+  plugin to use FeverDeath as a dependency.
   
   
 +-----------------------------------------------------------------------------|
