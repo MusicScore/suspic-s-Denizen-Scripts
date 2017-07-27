@@ -56,16 +56,11 @@ gpa_feverDeath_cmd:
     - narrate '<&c>Too many arguments!'
     - queue 'clear'
   }
-  - if '<context.args.get[1]>' == 'reload'
-  {
-    - run 'gpa_feverDeath_config'
-    - narrate '<&c>Reloaded FeverDeath!'
-  }
-  else if '<context.args.get[1]>' == 'version'
-  {
-    - narrate '<&3>GrandPartyAddon: <&b>FeverDeath v0.2.1'
-  }
-  else
-  {
-    - narrate '<&c>Invalid argument!'
-  }
+  - choose '<context.args.get[1]>':
+    - case 'reload':
+      - run 'gpa_feverDeath_config'
+      - narrate '<&c>Reloaded FeverDeath!'
+    - case 'version':
+      - narrate '<&3>GrandPartyAddon: <&b>FeverDeath v0.3<&co> <&9>Ice in Hell'
+    - default:
+      - narrate '<&c>Invalid argument!'
