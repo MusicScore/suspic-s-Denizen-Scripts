@@ -130,6 +130,7 @@ gpa_feverDeath_ddRecovery_timer_task:
     - queue 'clear'
   }
   
+  - define 'dd_recover.time' '<yaml[gpa_feverdeath_config].read[deaths door.recovery.duration].as_decimal.max[1].min[60]||1>'
   - define 'time_loop' '<def[duration].as_duration.in_seconds.round_up>'
   - while '<def[time_loop].is[OR_MORE].to[0]>'
   {
