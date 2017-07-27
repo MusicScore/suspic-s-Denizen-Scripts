@@ -15,6 +15,27 @@
   
   
 +-----------------------------------------------------------------------------|
+|  v0.3: Heaven's still there.                                                |
++-----------------------------------------------------------------------------|
+  
+  + We've finally nailed it! Well, not really (again).
+    + Greater optimization! Processing power cut nearly in half, thanks to the
+      help of Anthony (Discord: Anthony#5966, GitHub: AnthonyAMC).
+    = For the first time, depreciated a part of the scripts. Is that good?
+  
+  = Fixed bugs
+    ? [N/A] Experience reading was totally bonkers.
+  
+  = Known bugs
+    ? [N/A] Switching between gamemodes may cause Death's Door to cry.
+    - [N/A] Disabling FeverDeath while a player is in Death's Door can make the
+            script not let the player go.
+  
+  = Known issues
+    - None
+  
+  
++-----------------------------------------------------------------------------|
 |  v0.2.7                                                                     |
 +-----------------------------------------------------------------------------|
   
