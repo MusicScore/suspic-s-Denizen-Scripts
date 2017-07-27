@@ -2,7 +2,7 @@
 ## Contact the Scripter
 The easiest way to contact me is via Discord (The_Conductor#3584) or email (grandpartymask@gmail.com). However, it is usually better if you join the Denizen Discord group ( https://discord.gg/Q6pZGSR ) for support regarding his scripts.
 
-To report issues with the script, please use the GitHub repository at https://github.com/MusicScore/Denizen-GrandPartyAddons/issues
+To report issues with the script, please use this GitHub repository.
 
 ## About
 Currently only supports 1.11+
