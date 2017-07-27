@@ -107,216 +107,96 @@ gpa_feverDeath_config:
     - yaml 'savefile:../GrandPartyAddons/FeverDeath/config.yml' 'id:gpa_feverDeath_config'
   }
   
-  - if '<yaml[gpa_feverDeath_config].read[general.prefix]||null>' == 'null'
+  - yaml 'set' 'general.prefix:<yaml[gpa_feverDeath_config].read[general.prefix]||<def[fd.prefix]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'general.no permission message:<yaml[gpa_feverDeath_config].read[general.no permission message]||<def[fd.no_perm]>>' 'id:gpa_feverDeath_config'
+  
+  - yaml 'set' 'deaths door.prefix:<yaml[gpa_feverDeath_config].read[deaths door.prefix]||<def[dd.prefix]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'deaths door.enabled:<yaml[gpa_feverDeath_config].read[deaths door.enabled].as_boolean||<def[dd.enable]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'deaths door.death.kill chance:<yaml[gpa_feverDeath_config].read[deaths door.death.kill chance].as_decimal.max[0.01].min[1]||<def[dd.dd.chance]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'deaths door.death.title enabled:<yaml[gpa_feverDeath_config].read[deaths door.death.title enabled].as_boolean||<def[dd.dd.enable_title]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'deaths door.death.messages:<yaml[gpa_feverDeath_config].read[deaths door.death.messages].as_list||<def[dd.dd.msgs]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'deaths door.recovery.enabled:<yaml[gpa_feverDeath_config].read[deaths door.recovery.enabled].as_boolean||<def[dd.recovery.enable]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'deaths door.recovery.duration:<yaml[gpa_feverDeath_config].read[deaths door.recovery.duration].as_decimal.max[1].min[60]||<def[dd.recovery.duration]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'deaths door.recovery.messages:<yaml[gpa_feverDeath_config].read[deaths door.recovery.messages].as_list||<def[dd.recovery.msgs]>>' 'id:gpa_feverDeath_config'
+  
+  - yaml 'set' 'thanatophobia.prefix:<yaml[gpa_feverDeath_config].read[thanatophobia.prefix]||<def[t.prefix]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'thanatophobia.enabled:<yaml[gpa_feverDeath_config].read[thanatophobia.enabled].as_boolean||<def[t.enable]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'thanatophobia.health percent:<yaml[gpa_feverDeath_config].read[thanatophobia.health percent].as_decimal.max[0.01].min[1]||<def[t.percent]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'thanatophobia.messages.warning:<yaml[gpa_feverDeath_config].read[thanatophobia.messages.warning].as_list||<def[t.msgs.warn]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'thanatophobia.messages.recovery:<yaml[gpa_feverDeath_config].read[thanatophobia.messages.recovery].as_list||<def[t.msgs.recover]>>' 'id:gpa_feverDeath_config'
+  
+  - yaml 'set' 'afterlife.prefix:<yaml[gpa_feverDeath_config].read[afterlife.prefix]||<def[al.prefix]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.enabled:<yaml[gpa_feverDeath_config].read[afterlife.enabled].as_boolean||<def[al.enable]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.instant respawn:<yaml[gpa_feverDeath_config].read[afterlife.instant respawn].as_boolean||<def[al.instant_respawn]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.bed respawn:<yaml[gpa_feverDeath_config].read[afterlife.bed respawn].as_boolean||<def[al.bed_respawn]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.experience handling.enable custom exp loss:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable custom exp loss].as_boolean||<def[al.exp.enable]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.experience handling.enable player exp drop:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable player exp drop].as_boolean||<def[al.exp.drop]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.experience handling.minimum percent lost:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost].as_decimal.max[0].min[1]||<def[al.exp_percent_min]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.experience handling.maximum percent lost:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.maximum percent lost].as_decimal.max[<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost]>].min[1]||<def[al.exp_percent_max]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.inventory handling.enable custom item loss:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable custom item loss].as_boolean||<def[al.inv.enable]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.inventory handling.enable player item drop:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable player item drop].as_boolean||<def[al.inv.drop]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.inventory handling.enable tougher hotbar:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable tougher hotbar].as_boolean||<def[al.inv.hotbar_persist]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.inventory handling.minimum loss chance:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance].as_decimal.max[0].min[1]||<def[al.inv.percent_min]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.inventory handling.maximum loss chance:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.maximum loss chance].as_decimal.max[<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance]>].min[1]||<def[al.inv.percent_max]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.enable messages:<yaml[gpa_feverDeath_config].read[afterlife.enable messages].as_boolean||<def[al.msgs_enable]>>' 'id:gpa_feverDeath_config'
+  - yaml 'set' 'afterlife.messages:<yaml[gpa_feverDeath_config].read[afterlife.messages].as_list||<def[al.msgs]>>' 'id:gpa_feverDeath_config'
+  
+  - define 'fd_prefix' '<yaml[gpa_feverdeath_config].read[general.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[fd.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - if '<def[fd_prefix]>' == '' || '<def[fd_prefix]>' == 'none'
   {
-    - yaml 'set' 'general.prefix:<def[fd.prefix]>' 'id:gpa_feverDeath_config'
+    - define 'fd_prefix' '<&r>'
+  }
+  else
+  {
+    - define 'fd_prefix' '<def[fd_prefix]><&r> '
   }
   
-  - if '<yaml[gpa_feverDeath_config].read[general.no permission message]||null>' == 'null'
+  - define 'dd_prefix' '<yaml[gpa_feverdeath_config].read[deaths door.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[dd.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - if '<def[dd_prefix]>' == 'default'
   {
-    - yaml 'set' 'general.no permission message:<def[fd.no_perm]>' 'id:gpa_feverDeath_config'
+    - define 'dd_prefix' '<def[fd_prefix]>'
+  }
+  else if '<def[dd_prefix]>' == '' || '<def[dd_prefix]>' == 'none'
+  {
+    - define 'dd_prefix' '<&r>'
+  }
+  else
+  {
+    - define 'dd_prefix' '<def[dd_prefix]><&r> '
   }
   
-  - if '<yaml[gpa_feverDeath_config].read[deaths door.enabled].as_boolean||null>' == 'null'
+  - define 't_prefix' '<yaml[gpa_feverdeath_config].read[thanatophobia.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[t.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - if '<def[t_prefix]>' == 'default'
   {
-    - yaml 'set' 'deaths door.enabled:<def[dd.enable]>' 'id:gpa_feverDeath_config'
+    - define 't_prefix' '<def[fd_prefix]>'
   }
-
-  - if '<yaml[gpa_feverDeath_config].read[deaths door.prefix]||null>' == 'null'
+  else if '<def[t_prefix]>' == '' || '<def[t_prefix]>' == 'none'
   {
-    - yaml 'set' 'deaths door.prefix:<def[dd.prefix]>' 'id:gpa_feverDeath_config'
+    - define 't_prefix' '<&r>'
   }
-  
-  - if '<yaml[gpa_feverDeath_config].read[deaths door.death.kill chance].as_decimal||null>' == 'null'
+  else
   {
-    - yaml 'set' 'deaths door.death.kill chance:<def[dd.dd.chance]>' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[deaths door.death.kill chance].as_decimal>' < '0.01'
-  {
-    - yaml 'set' 'deaths door.death.kill chance:0.01' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[deaths door.death.kill chance].as_decimal>' > '1'
-  {
-    - yaml 'set' 'deaths door.death.kill chance:1' 'id:gpa_feverDeath_config'
+    - define 't_prefix' '<def[t_prefix]><&r> '
   }
   
-  - if '<yaml[gpa_feverDeath_config].read[deaths door.death.title enabled].as_boolean||null>' == 'null'
+  - define 'al_prefix' '<yaml[gpa_feverdeath_config].read[afterlife.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[al.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - if '<def[al_prefix]>' == 'default'
   {
-    - yaml 'set' 'deaths door.death.title enabled:<def[dd.dd.enable_title]>' 'id:gpa_feverDeath_config'
+    - define 'al_prefix' '<def[fd_prefix]>'
+  }
+  else if '<def[al_prefix]>' == '' || '<def[al_prefix]>' == 'none'
+  {
+    - define 'al_prefix' '<&r>'
+  }
+  else
+  {
+    - define 'al_prefix' '<def[al_prefix]><&r> '
   }
   
-  - if '<yaml[gpa_feverDeath_config].read[deaths door.death.messages].as_list||null>' == 'null'
-  {
-    - yaml 'set' 'deaths door.death.messages:<def[dd.dd.msgs]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[deaths door.recovery.enabled].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'deaths door.recovery.enabled:<def[dd.recovery.enable]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[deaths door.recovery.duration].as_decimal||null>' == 'null'
-  {
-    - yaml 'set' 'deaths door.recovery.duration:<def[dd.recovery.duration]>' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[deaths door.recovery.duration].as_decimal.mod[1]>' != '0'
-  {
-    - yaml 'set' 'deaths door.recovery.duration:<yaml[gpa_feverDeath_config].read[deaths door.recovery.duration].round_down>' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[deaths door.recovery.duration].as_decimal>' < '1'
-  {
-    - yaml 'set' 'deaths door.recovery.duration:1' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[deaths door.recovery.duration].as_decimal>' > '60'
-  {
-    - yaml 'set' 'deaths door.recovery.duration:1' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[deaths door.recovery.messages].as_list||null>' == 'null'
-  {
-    - yaml 'set' 'deaths door.recovery.messages:<def[dd.recovery.msgs]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[thanatophobia.enabled].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'thanatophobia.enabled:<def[t.enable]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[thanatophobia.prefix]||null>' == 'null'
-  {
-    - yaml 'set' 'thanatophobia.prefix:<def[t.prefix]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[thanatophobia.health percent].as_decimal||null>' == 'null'
-  {
-    - yaml 'set' 'thanatophobia.health percent:<def[t.percent]>' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[thanatophobia.health percent].as_decimal>' < '0.01'
-  {
-    - yaml 'set' 'thanatophobia.health percent:0' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[thanatophobia.health percent].as_decimal>' > '1'
-  {
-    - yaml 'set' 'thanatophobia.health percent:1' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[thanatophobia.messages.warning].as_list||null>' == 'null'
-  {
-    - yaml 'set' 'thanatophobia.messages.warning:<def[t.msgs.warn]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[thanatophobia.messages.recovery].as_list||null>' == 'null'
-  {
-    - yaml 'set' 'thanatophobia.messages.recovery:<def[t.msgs.recover]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.enabled].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.enabled:<def[al.enable]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.prefix]||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.prefix:<def[al.prefix]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.instant respawn].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.instant respawn:<def[al.instant_respawn]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.bed respawn].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.bed respawn:<def[al.bed_respawn]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable custom exp loss].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.experience handling.enable custom exp loss:<def[al.exp.enable]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable player exp drop].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.experience handling.enable player exp drop:<def[al.exp.drop]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost].as_decimal||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.experience handling.minimum percent lost:<def[al.exp_percent_min]>' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost].as_decimal>' < '0'
-  {
-    - yaml 'set' 'afterlife.experience handling.minimum percent lost:0' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost].as_decimal>' > '1'
-  {
-    - yaml 'set' 'afterlife.experience handling.minimum percent lost:1' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.experience handling.maximum percent lost].as_decimal||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.experience handling.maximum percent lost:<def[al.exp_percent_max]>' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[afterlife.experience handling.maximum percent lost].as_decimal>' < '0'
-  {
-    - yaml 'set' 'afterlife.experience handling.maximum percent lost:0' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[afterlife.experience handling.maximum percent lost].as_decimal>' > '1'
-  {
-    - yaml 'set' 'afterlife.experience handling.maximum percent lost:1' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable custom item loss].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.inventory handling.enable custom item loss:<def[al.inv.enable]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable player item drop].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.inventory handling.enable player item drop:<def[al.inv.drop]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable tougher hotbar].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.inventory handling.enable tougher hotbar:<def[al.inv.hotbar_persist]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance].as_decimal||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.inventory handling.minimum loss chance:<def[al.inv.percent_min]>' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance].as_decimal>' < '0'
-  {
-    - yaml 'set' 'afterlife.inventory handling.minimum loss chance:0' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance].as_decimal>' > '1'
-  {
-    - yaml 'set' 'afterlife.inventory handling.minimum loss chance:1' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.maximum loss chance].as_decimal||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.inventory handling.maximum loss chance:<def[al.inv.percent_max]>' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.maximum loss chance].as_decimal>' < '0'
-  {
-    - yaml 'set' 'afterlife.inventory handling.maximum loss chance:0' 'id:gpa_feverDeath_config'
-  }
-  else if '<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.maximum loss chance].as_decimal>' > '1'
-  {
-    - yaml 'set' 'afterlife.inventory handling.maximum loss chance:1' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.enable messages].as_boolean||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.enable messages:<def[al.msgs_enable]>' 'id:gpa_feverDeath_config'
-  }
-  
-  - if '<yaml[gpa_feverDeath_config].read[afterlife.messages].as_list||null>' == 'null'
-  {
-    - yaml 'set' 'afterlife.messages:<def[al.msgs]>' 'id:gpa_feverDeath_config'
-  }
-  
+  - flag 'server' 'grandpartyaddons.feverDeath.prefix.generic:<def[fd_prefix]>'
+  - flag 'server' 'grandpartyaddons.feverDeath.prefix.deaths door:<def[dd_prefix]>'
+  - flag 'server' 'grandpartyaddons.feverDeath.prefix.thanatophobia:<def[t_prefix]>'
+  - flag 'server' 'grandpartyaddons.feverDeath.prefix.afterlife:<def[al_prefix]>'
   
   - log '' 'type:clear' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
   - log '#####################################################################################' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
