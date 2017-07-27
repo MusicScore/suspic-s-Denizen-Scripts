@@ -8,6 +8,14 @@
 # that should have come with the complete set of FeverDeath script files.
 # 
 # 
+# ----| WARNING: DEPRECIATED SCRIPTS
+# 
+# Since these scripts are not built for optimization and are not used in the
+# FeverDeath main script (gpa_feverDeath_main), these scripts should be
+# considered depreciated and therefore not viable to use. If you wish, you may
+# use these scripts as instructed, although performance and minimal lag are
+# not guaranteed.
+# 
 # 
 # ----| ABOUT THIS SCRIPT
 # 
@@ -63,6 +71,12 @@
 # Use the following definitions in your script to call the various options:
 # - "fd_prefix"            : FeverDeath chat prefix
 # 
+# ----| UPDATE
+# 
+# To call the option in this script, simply use the server flag:
+# 
+#   + <server.flag[grandpartyaddons.feverDeath.prefix.generic]>
+# 
 gpa_feverDeath_generic_def:
   type: task
   debug: false
@@ -106,6 +120,19 @@ gpa_feverDeath_generic_def:
 # - "dd_recover.enable"    : Whether the recovery phase is enabled
 # - "dd_recover.time"      : How long the recovery phase lasts, in minutes
 # - "dd_recover.msgs"      : List of possible recovery chat messages
+# 
+# ----| UPDATE
+# 
+# To call the options in this script, use the following tags:
+# 
+#   + <server.flag[grandpartyaddons.feverDeath.prefix.deaths door]>
+#   + <yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>
+#   + <yaml[gpa_feverdeath_config].read[deaths door.death.kill chance].as_decimal||0.2>
+#   + <yaml[gpa_feverdeath_config].read[deaths door.death.title enabled].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[deaths door.death.messages].as_list||li@&sscSomething is wrong with FeverDeath&dot>
+#   + <yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[deaths door.recovery.duration].as_decimal||1>
+#   + <yaml[gpa_feverdeath_config].read[deaths door.recovery.messages].as_list||li@&sscSomething is wrong with FeverDeath&dot>
 # 
 gpa_feverDeath_dd_def:
   type: task
@@ -163,6 +190,16 @@ gpa_feverDeath_dd_def:
 #                           Thanatophobia
 # - "t_msgs.warn"         : List of possible warning messages
 # - "t_msgs.recovery"     : List of possible recovery messages
+# 
+# ----| UPDATE
+# 
+# To call the options in this script, use the following tags:
+# 
+#   + <server.flag[grandpartyaddons.feverDeath.prefix.thanatophobia]>
+#   + <yaml[gpa_feverdeath_config].read[thanatophobia.enabled].as_boolean||false>
+#   + <yaml[gpa_feverdeath_config].read[thanatophobia.health percent].as_decimal||0.15>
+#   + <yaml[gpa_feverdeath_config].read[thanatophobia.messages.warning].as_list||li@&sscSomething is wrong with FeverDeath&dot>
+#   + <yaml[gpa_feverdeath_config].read[thanatophobia.messages.recovery].as_list||li@&sscSomething is wrong with FeverDeath&dot>
 # 
 gpa_feverDeath_t_def:
   type: task
@@ -227,6 +264,26 @@ gpa_feverDeath_t_def:
 # - "al_msg_enable"        : Whether Afterlife messages are enabled
 # - "al_msgs"              : List of possible respawn messages (typically narrated
 #                            only to the respawning player)
+# 
+# ----| UPDATE
+# 
+# To call the options in this script, use the following tags:
+# 
+#   + <server.flag[grandpartyaddons.feverDeath.prefix.afterlife]>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.enabled].as_boolean||false>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.instant respawn].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.bed respawn].as_boolean||false>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.experience handling.enable custom exp loss].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.experience handling.enable player exp drop].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.experience handling.minimum percent lost].as_decimal.max[0].min[1]||0.25>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.experience handling.maximum percent lost].as_decimal.max[<the previous tag>].min[1]||0.25>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.inventory handling.enable custom item loss].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.inventory handling.enable player item drop].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.inventory handling.enable tougher hotbar].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.inventory handling.minimum loss chance].as_decimal.max[0].min[1]||0.1>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.inventory handling.maximum loss chance].as_decimal.max[<the previous tag>].min[1]||0.2>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.enable messages].as_boolean||true>
+#   + <yaml[gpa_feverdeath_config].read[afterlife.messages].as_list||li@&sscSomething is wrong with FeverDeath&dot>
 # 
 gpa_feverDeath_al_def:
   type: task
