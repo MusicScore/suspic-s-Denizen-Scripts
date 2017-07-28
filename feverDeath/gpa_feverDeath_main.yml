@@ -305,7 +305,6 @@ gpa_feverDeath_main:
           - define 'dropped_xp' '300'
         }
       }
-      - narrate '<def[lost_xp]> <def[giveback_xp]> <def[target].xp.total> <def[dropped_xp]>'
       - give 'xp' 'qty:<def[target].xp.total.mul[-1]>' 'to:<def[target].inventory>'
       - experience 'set' '0' 'player:<def[target]>'
       - experience 'set' 'level' '0' 'player:<def[target]>'
