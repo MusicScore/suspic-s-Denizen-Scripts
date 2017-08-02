@@ -114,7 +114,7 @@ gpa_feverDeath_main:
       - if '<context.args.get[1].as_player.is_online>'
       {
         - flag '<context.args.get[1].as_player>' 'grandpartyaddons.com_listen.suicide'
-        - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&4>You were cruelly smitten by <player>.' 'targets:<context.args.get[1].as_player>'
+        - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&4>You were cruelly smitten by <player.name||the server>.' 'targets:<context.args.get[1].as_player>'
       }
     }
     
