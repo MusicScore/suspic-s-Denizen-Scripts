@@ -50,268 +50,252 @@ gpa_feverDeath_config:
   debug: false
   
   script:
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_main]>'
-  {
-    - announce '[FeverDeath "gpa_feverDeath_config"] WARNING: Missing the main FeverDeath script!' 'to_console'
-    - queue 'clear'
+  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_main]> {
+    - announce '[FeverDeath "gpa_feverDeath_config"] WARNING: Missing the main FeverDeath script!' to_console
+    - queue clear
   }
   
-  - define 'fd.prefix' '&&7/&&4FeverDeath&&7/ &pipe&pipe'
-  - define 'fd.no_perm' 'Death cannot be easily conquered&dot&dot&dot'
+  - define fd.prefix '&&7/&&4FeverDeath&&7/ &pipe&pipe'
+  - define fd.no_perm 'Death cannot be easily conquered&dot&dot&dot'
   
-  - define 'dd.enable' 'false'
-  - define 'dd.prefix' '&&7/&&4Death&sqs Door&&7/ &pipe&pipe'
-  - define 'dd.recovery.enable' 'true'
-  - define 'dd.recovery.duration' '5'
-  - define 'dd.recovery.msgs' 'li@"You&sqre so close to safety&dot&dot&dot"|"It would seem that your wounds were not too threatening&dot"|"You still haven&sqt made it out of the woods&dot Run&dot"|"Let your wounds heal&dot"|"You&sqve already ran a bit&dot Why not some more?"'
-  - define 'dd.dd.chance' '0.20'
-  - define 'dd.dd.enable_title' 'true'
-  - define 'dd.dd.msgs' 'li@"Your vision and hearing are failing you&dot"|"You can run away, or die fighting&dot"|"The Reaper&sqs bell rings&dot And so does your head&dot"|"Your body is too battered to endure much more&dot"|"Another strike and you may as well fall&dot"'
+  - define dd.enable 'false'
+  - define dd.prefix '&&7/&&4Death&sqs Door&&7/ &pipe&pipe'
+  - define dd.recovery.enable 'true'
+  - define dd.recovery.duration '5'
+  - define dd.recovery.msgs 'li@"You&sqre so close to safety&dot&dot&dot"|"It would seem that your wounds were not too threatening&dot"|"You still haven&sqt made it out of the woods&dot Run&dot"|"Let your wounds heal&dot"|"You&sqve already ran a bit&dot Why not some more?"'
+  - define dd.dd.chance '0.20'
+  - define dd.dd.enable_title 'true'
+  - define dd.dd.msgs 'li@"Your vision and hearing are failing you&dot"|"You can run away, or die fighting&dot"|"The Reaper&sqs bell rings&dot And so does your head&dot"|"Your body is too battered to endure much more&dot"|"Another strike and you may as well fall&dot"'
   
-  - define 't.enable' 'false'
-  - define 't.prefix' '&&7/&&4Thanatophobia&&7/ &pipe&pipe'
-  - define 't.percent' '0.15'
-  - define 't.msgs.warn' 'li@"Your heart begins to pump a little slower&dot"|"You are getting closer to dancing with Death&dot"|"You can feel chills running down your spine&dot"|"You are losing time and health&dot"|"You start to wonder if the skies are darkening&dot"'
-  - define 't.msgs.recover' 'li@"That headache is gone&dot"|"Breathe easier, breathe slower&dot"|"Precautions were taken&dot Will your efforts be worth it?"|"Endurance is only half the battle&dot"|"Medical attention was given&sc life was prolonged&dot"'
+  - define t.enable 'false'
+  - define t.prefix '&&7/&&4Thanatophobia&&7/ &pipe&pipe'
+  - define t.percent '0.15'
+  - define t.msgs.warn 'li@"Your heart begins to pump a little slower&dot"|"You are getting closer to dancing with Death&dot"|"You can feel chills running down your spine&dot"|"You are losing time and health&dot"|"You start to wonder if the skies are darkening&dot"'
+  - define t.msgs.recover 'li@"That headache is gone&dot"|"Breathe easier, breathe slower&dot"|"Precautions were taken&dot Will your efforts be worth it?"|"Endurance is only half the battle&dot"|"Medical attention was given&sc life was prolonged&dot"'
   
-  - define 'al.enable' 'false'
-  - define 'al.prefix' '&&7/&&4Afterlife&&7/ &pipe&pipe'
-  - define 'al.exp.enable' 'true'
-  - define 'al.instant_respawn' 'true'
-  - define 'al.bed_respawn' 'false'
-  - define 'al.exp.drop' 'true'
-  - define 'al.exp_percent_min' '0.25'
-  - define 'al.exp_percent_max' '0.25'
-  - define 'al.inv.enable' 'true'
-  - define 'al.inv.drop' 'true'
-  - define 'al.inv.percent_min' '0.10'
-  - define 'al.inv.percent_max' '0.20'
-  - define 'al.inv.hotbar_persist' 'true'
-  - define 'al.msgs_enable' 'true'
-  - define 'al.msgs' 'li@"A second chance, another life!"|"Your heart, once stopped, is beating furiously&dot"|"Another iteration of your many lives&dot"|"This welcome comes at a price&dot"|"It was but a bad dream&dot"'
+  - define al.enable 'false'
+  - define al.prefix '&&7/&&4Afterlife&&7/ &pipe&pipe'
+  - define al.exp.enable 'true'
+  - define al.instant_respawn 'true'
+  - define al.bed_respawn 'false'
+  - define al.exp.drop 'true'
+  - define al.exp_percent_min '0.25'
+  - define al.exp_percent_max '0.25'
+  - define al.inv.enable 'true'
+  - define al.inv.drop 'true'
+  - define al.inv.percent_min '0.10'
+  - define al.inv.percent_max '0.20'
+  - define al.inv.hotbar_persist 'true'
+  - define al.msgs_enable 'true'
+  - define al.msgs 'li@"A second chance, another life!"|"Your heart, once stopped, is beating furiously&dot"|"Another iteration of your many lives&dot"|"This welcome comes at a price&dot"|"It was but a bad dream&dot"'
   
-  - if '!<yaml.list.contains[gpa_feverDeath_config]>'
-  {
-    - yaml 'create' 'id:gpa_feverDeath_config'
+  - if !<yaml.list.contains[gpa_feverDeath_config]> {
+    - yaml create id:gpa_feverDeath_config
   }
-  - if '<server.has_file[../GrandPartyAddons/FeverDeath/config.yml]||false>'
-  {
-    - yaml 'load:../GrandPartyAddons/FeverDeath/config.yml' 'id:gpa_feverDeath_config'
-    - if '!<yaml.list.contains[gpa_feverDeath_config]>'
-    {
-      - yaml 'create' 'id:gpa_feverDeath_config'
+  - if <server.has_file[../GrandPartyAddons/FeverDeath/config.yml]||false> {
+    - yaml load:../GrandPartyAddons/FeverDeath/config.yml id:gpa_feverDeath_config
+    - if !<yaml.list.contains[gpa_feverDeath_config]> {
+      - yaml create id:gpa_feverDeath_config
     }
   }
-  else
-  {
-    - yaml 'savefile:../GrandPartyAddons/FeverDeath/config.yml' 'id:gpa_feverDeath_config'
+  else {
+    - yaml savefile:../GrandPartyAddons/FeverDeath/config.yml id:gpa_feverDeath_config
   }
   
-  - yaml 'set' 'general.prefix:<yaml[gpa_feverDeath_config].read[general.prefix]||<def[fd.prefix]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'general.no permission message:<yaml[gpa_feverDeath_config].read[general.no permission message]||<def[fd.no_perm]>>' 'id:gpa_feverDeath_config'
+  - yaml set 'general.prefix:<yaml[gpa_feverDeath_config].read[general.prefix]||<def[fd.prefix]>>' id:gpa_feverDeath_config
+  - yaml set 'general.no permission message:<yaml[gpa_feverDeath_config].read[general.no permission message]||<def[fd.no_perm]>>' id:gpa_feverDeath_config
   
-  - yaml 'set' 'deaths door.prefix:<yaml[gpa_feverDeath_config].read[deaths door.prefix]||<def[dd.prefix]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'deaths door.enabled:<yaml[gpa_feverDeath_config].read[deaths door.enabled].as_boolean||<def[dd.enable]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'deaths door.death.kill chance:<yaml[gpa_feverDeath_config].read[deaths door.death.kill chance].as_decimal.max[0.01].min[1]||<def[dd.dd.chance]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'deaths door.death.title enabled:<yaml[gpa_feverDeath_config].read[deaths door.death.title enabled].as_boolean||<def[dd.dd.enable_title]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'deaths door.death.messages:<yaml[gpa_feverDeath_config].read[deaths door.death.messages].as_list||<def[dd.dd.msgs]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'deaths door.recovery.enabled:<yaml[gpa_feverDeath_config].read[deaths door.recovery.enabled].as_boolean||<def[dd.recovery.enable]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'deaths door.recovery.duration:<yaml[gpa_feverDeath_config].read[deaths door.recovery.duration].as_decimal.max[1].min[60]||<def[dd.recovery.duration]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'deaths door.recovery.messages:<yaml[gpa_feverDeath_config].read[deaths door.recovery.messages].as_list||<def[dd.recovery.msgs]>>' 'id:gpa_feverDeath_config'
+  - yaml set 'deaths door.prefix:<yaml[gpa_feverDeath_config].read[deaths door.prefix]||<def[dd.prefix]>>' id:gpa_feverDeath_config
+  - yaml set 'deaths door.enabled:<yaml[gpa_feverDeath_config].read[deaths door.enabled].as_boolean||<def[dd.enable]>>' id:gpa_feverDeath_config
+  - yaml set 'deaths door.death.kill chance:<yaml[gpa_feverDeath_config].read[deaths door.death.kill chance].as_decimal.max[0.01].min[1]||<def[dd.dd.chance]>>' id:gpa_feverDeath_config
+  - yaml set 'deaths door.death.title enabled:<yaml[gpa_feverDeath_config].read[deaths door.death.title enabled].as_boolean||<def[dd.dd.enable_title]>>' id:gpa_feverDeath_config
+  - yaml set 'deaths door.death.messages:<yaml[gpa_feverDeath_config].read[deaths door.death.messages].as_list||<def[dd.dd.msgs]>>' id:gpa_feverDeath_config
+  - yaml set 'deaths door.recovery.enabled:<yaml[gpa_feverDeath_config].read[deaths door.recovery.enabled].as_boolean||<def[dd.recovery.enable]>>' id:gpa_feverDeath_config
+  - yaml set 'deaths door.recovery.duration:<yaml[gpa_feverDeath_config].read[deaths door.recovery.duration].as_decimal.max[1].min[60]||<def[dd.recovery.duration]>>' id:gpa_feverDeath_config
+  - yaml set 'deaths door.recovery.messages:<yaml[gpa_feverDeath_config].read[deaths door.recovery.messages].as_list||<def[dd.recovery.msgs]>>' id:gpa_feverDeath_config
   
-  - yaml 'set' 'thanatophobia.prefix:<yaml[gpa_feverDeath_config].read[thanatophobia.prefix]||<def[t.prefix]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'thanatophobia.enabled:<yaml[gpa_feverDeath_config].read[thanatophobia.enabled].as_boolean||<def[t.enable]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'thanatophobia.health percent:<yaml[gpa_feverDeath_config].read[thanatophobia.health percent].as_decimal.max[0.01].min[1]||<def[t.percent]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'thanatophobia.messages.warning:<yaml[gpa_feverDeath_config].read[thanatophobia.messages.warning].as_list||<def[t.msgs.warn]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'thanatophobia.messages.recovery:<yaml[gpa_feverDeath_config].read[thanatophobia.messages.recovery].as_list||<def[t.msgs.recover]>>' 'id:gpa_feverDeath_config'
+  - yaml set 'thanatophobia.prefix:<yaml[gpa_feverDeath_config].read[thanatophobia.prefix]||<def[t.prefix]>>' id:gpa_feverDeath_config
+  - yaml set 'thanatophobia.enabled:<yaml[gpa_feverDeath_config].read[thanatophobia.enabled].as_boolean||<def[t.enable]>>' id:gpa_feverDeath_config
+  - yaml set 'thanatophobia.health percent:<yaml[gpa_feverDeath_config].read[thanatophobia.health percent].as_decimal.max[0.01].min[1]||<def[t.percent]>>' id:gpa_feverDeath_config
+  - yaml set 'thanatophobia.messages.warning:<yaml[gpa_feverDeath_config].read[thanatophobia.messages.warning].as_list||<def[t.msgs.warn]>>' id:gpa_feverDeath_config
+  - yaml set 'thanatophobia.messages.recovery:<yaml[gpa_feverDeath_config].read[thanatophobia.messages.recovery].as_list||<def[t.msgs.recover]>>' id:gpa_feverDeath_config
   
-  - yaml 'set' 'afterlife.prefix:<yaml[gpa_feverDeath_config].read[afterlife.prefix]||<def[al.prefix]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.enabled:<yaml[gpa_feverDeath_config].read[afterlife.enabled].as_boolean||<def[al.enable]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.instant respawn:<yaml[gpa_feverDeath_config].read[afterlife.instant respawn].as_boolean||<def[al.instant_respawn]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.bed respawn:<yaml[gpa_feverDeath_config].read[afterlife.bed respawn].as_boolean||<def[al.bed_respawn]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.experience handling.enable custom exp loss:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable custom exp loss].as_boolean||<def[al.exp.enable]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.experience handling.enable player exp drop:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable player exp drop].as_boolean||<def[al.exp.drop]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.experience handling.minimum percent lost:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost].as_decimal.max[0].min[1]||<def[al.exp_percent_min]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.experience handling.maximum percent lost:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.maximum percent lost].as_decimal.max[<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost]>].min[1]||<def[al.exp_percent_max]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.inventory handling.enable custom item loss:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable custom item loss].as_boolean||<def[al.inv.enable]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.inventory handling.enable player item drop:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable player item drop].as_boolean||<def[al.inv.drop]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.inventory handling.enable tougher hotbar:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable tougher hotbar].as_boolean||<def[al.inv.hotbar_persist]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.inventory handling.minimum loss chance:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance].as_decimal.max[0].min[1]||<def[al.inv.percent_min]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.inventory handling.maximum loss chance:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.maximum loss chance].as_decimal.max[<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance]>].min[1]||<def[al.inv.percent_max]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.enable messages:<yaml[gpa_feverDeath_config].read[afterlife.enable messages].as_boolean||<def[al.msgs_enable]>>' 'id:gpa_feverDeath_config'
-  - yaml 'set' 'afterlife.messages:<yaml[gpa_feverDeath_config].read[afterlife.messages].as_list||<def[al.msgs]>>' 'id:gpa_feverDeath_config'
+  - yaml set 'afterlife.prefix:<yaml[gpa_feverDeath_config].read[afterlife.prefix]||<def[al.prefix]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.enabled:<yaml[gpa_feverDeath_config].read[afterlife.enabled].as_boolean||<def[al.enable]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.instant respawn:<yaml[gpa_feverDeath_config].read[afterlife.instant respawn].as_boolean||<def[al.instant_respawn]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.bed respawn:<yaml[gpa_feverDeath_config].read[afterlife.bed respawn].as_boolean||<def[al.bed_respawn]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.experience handling.enable custom exp loss:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable custom exp loss].as_boolean||<def[al.exp.enable]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.experience handling.enable player exp drop:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable player exp drop].as_boolean||<def[al.exp.drop]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.experience handling.minimum percent lost:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost].as_decimal.max[0].min[1]||<def[al.exp_percent_min]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.experience handling.maximum percent lost:<yaml[gpa_feverDeath_config].read[afterlife.experience handling.maximum percent lost].as_decimal.max[<yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost]>].min[1]||<def[al.exp_percent_max]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.inventory handling.enable custom item loss:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable custom item loss].as_boolean||<def[al.inv.enable]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.inventory handling.enable player item drop:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable player item drop].as_boolean||<def[al.inv.drop]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.inventory handling.enable tougher hotbar:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable tougher hotbar].as_boolean||<def[al.inv.hotbar_persist]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.inventory handling.minimum loss chance:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance].as_decimal.max[0].min[1]||<def[al.inv.percent_min]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.inventory handling.maximum loss chance:<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.maximum loss chance].as_decimal.max[<yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance]>].min[1]||<def[al.inv.percent_max]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.enable messages:<yaml[gpa_feverDeath_config].read[afterlife.enable messages].as_boolean||<def[al.msgs_enable]>>' id:gpa_feverDeath_config
+  - yaml set 'afterlife.messages:<yaml[gpa_feverDeath_config].read[afterlife.messages].as_list||<def[al.msgs]>>' id:gpa_feverDeath_config
   
-  - define 'fd_prefix' '<yaml[gpa_feverdeath_config].read[general.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[fd.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
-  - if '<def[fd_prefix]>' == '' || '<def[fd_prefix]>' == 'none'
-  {
-    - define 'fd_prefix' '<&r>'
+  - define fd_prefix '<yaml[gpa_feverdeath_config].read[general.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[fd.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - if <def[fd_prefix]> == '' || <def[fd_prefix]> == 'none' {
+    - define fd_prefix '<&r>'
   }
-  else
-  {
-    - define 'fd_prefix' '<def[fd_prefix]><&r> '
+  else {
+    - define fd_prefix '<def[fd_prefix]><&r> '
   }
   
-  - define 'dd_prefix' '<yaml[gpa_feverdeath_config].read[deaths door.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[dd.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
-  - if '<def[dd_prefix]>' == 'default'
-  {
-    - define 'dd_prefix' '<def[fd_prefix]>'
+  - define dd_prefix '<yaml[gpa_feverdeath_config].read[deaths door.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[dd.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - if <def[dd_prefix]> == 'default' {
+    - define dd_prefix '<def[fd_prefix]>'
   }
-  else if '<def[dd_prefix]>' == '' || '<def[dd_prefix]>' == 'none'
-  {
-    - define 'dd_prefix' '<&r>'
+  else if <def[dd_prefix]> == '' || <def[dd_prefix]> == 'none' {
+    - define dd_prefix '<&r>'
   }
-  else
-  {
-    - define 'dd_prefix' '<def[dd_prefix]><&r> '
+  else {
+    - define dd_prefix '<def[dd_prefix]><&r> '
   }
   
-  - define 't_prefix' '<yaml[gpa_feverdeath_config].read[thanatophobia.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[t.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
-  - if '<def[t_prefix]>' == 'default'
-  {
-    - define 't_prefix' '<def[fd_prefix]>'
+  - define t_prefix '<yaml[gpa_feverdeath_config].read[thanatophobia.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[t.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - if <def[t_prefix]> == 'default' {
+    - define t_prefix '<def[fd_prefix]>'
   }
-  else if '<def[t_prefix]>' == '' || '<def[t_prefix]>' == 'none'
-  {
-    - define 't_prefix' '<&r>'
+  else if <def[t_prefix]> == '' || <def[t_prefix]> == 'none' {
+    - define t_prefix '<&r>'
   }
-  else
-  {
-    - define 't_prefix' '<def[t_prefix]><&r> '
+  else {
+    - define t_prefix '<def[t_prefix]><&r> '
   }
   
-  - define 'al_prefix' '<yaml[gpa_feverdeath_config].read[afterlife.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[al.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
-  - if '<def[al_prefix]>' == 'default'
-  {
-    - define 'al_prefix' '<def[fd_prefix]>'
+  - define al_prefix '<yaml[gpa_feverdeath_config].read[afterlife.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[al.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - if <def[al_prefix]> == 'default' {
+    - define al_prefix '<def[fd_prefix]>'
   }
-  else if '<def[al_prefix]>' == '' || '<def[al_prefix]>' == 'none'
-  {
-    - define 'al_prefix' '<&r>'
+  else if <def[al_prefix]> == '' || <def[al_prefix]> == 'none' {
+    - define al_prefix '<&r>'
   }
-  else
-  {
-    - define 'al_prefix' '<def[al_prefix]><&r> '
+  else {
+    - define al_prefix '<def[al_prefix]><&r> '
   }
   
-  - flag 'server' 'grandpartyaddons.feverDeath.prefix.generic:<def[fd_prefix]>'
-  - flag 'server' 'grandpartyaddons.feverDeath.prefix.deaths door:<def[dd_prefix]>'
-  - flag 'server' 'grandpartyaddons.feverDeath.prefix.thanatophobia:<def[t_prefix]>'
-  - flag 'server' 'grandpartyaddons.feverDeath.prefix.afterlife:<def[al_prefix]>'
+  - flag server 'grandpartyaddons.feverDeath.prefix.generic:<def[fd_prefix]>'
+  - flag server 'grandpartyaddons.feverDeath.prefix.deaths door:<def[dd_prefix]>'
+  - flag server 'grandpartyaddons.feverDeath.prefix.thanatophobia:<def[t_prefix]>'
+  - flag server 'grandpartyaddons.feverDeath.prefix.afterlife:<def[al_prefix]>'
   
-  - log '' 'type:clear' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '#####################################################################################' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '#                                                                                   #' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '#                                FEVERDEATH CONFIG                                  #' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '#                                                                                   #' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '#####################################################################################' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For string-type options (e.g. <&dq>prefix<&dq>, <&dq>messages<&dq>, etc.), most' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# special characters must be replaced.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# ' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For color codes, use two &<&sq>s instead of just one. For example, <&dq>&&c<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a period, use <&dq>&dot<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a <&sq>, use <&dq>&sq<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a <&dq>, use <&dq>&quo<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a %, use <&dq>&pc<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a |, use <&dq>&pipe<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For an @, use <&dq>&at<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a [, use <&dq>&lb<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a ], use <&dq>&rb<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a <&gt>, use <&dq>&gt<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a <&lt>, use <&dq>&lt<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a :, use <&dq>&co<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For a |, use <&dq>&pipe<&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# For all other Unicode characters, use <&dq><&lt>&chr[UNICODE CODE]<&gt><&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '#   A heart would be <&dq><&lt>&chr[2665]<&gt><&dq>.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# ' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '# ' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log 'general:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #To set no prefix, use "none".' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    prefix: <&sq><yaml[gpa_feverDeath_config].read[general.prefix]><&sq>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #The message to display when a player attempts to use the FeverDeath command' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    # without proper permission.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    no permission message: <&sq><yaml[gpa_feverDeath_config].read[general.no permission message]><&sq>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log 'deaths door:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #Whether to enable Death<&sq>s Door.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    enabled: <yaml[gpa_feverDeath_config].read[deaths door.enabled]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #The prefix to use for messages from Death<&sq>s door.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #To set no prefix, use "none". To use the general prefix, use "default".' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    prefix: <&sq><yaml[gpa_feverDeath_config].read[deaths door.prefix]><&sq>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    death:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #The chance of the player dying after being put in Death<&sq>s Door. Use a' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        # decimal between 0.01 and 1, inclusively.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        kill chance: <yaml[gpa_feverDeath_config].read[deaths door.death.kill chance]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Whether to enable a subtitle for Death<&sq>s Door.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        title enabled: <yaml[gpa_feverDeath_config].read[deaths door.death.title enabled]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #A list of messages to use when the player reaches Death<&sq>s Door.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        messages:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        - <yaml[gpa_feverDeath_config].read[deaths door.death.messages].as_list.separated_by[<&nl>        - ]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    recovery:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Whether to enable the recovery phase from Death<&sq>s Door.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        enabled: <yaml[gpa_feverDeath_config].read[deaths door.recovery.enabled]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #How long should the recovery phase be, in minutes. The number must be a' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        # decimal between 1 and 60, inclusively.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        duration: <yaml[gpa_feverDeath_config].read[deaths door.recovery.duration]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #A list of messages to use when the player recovers from Death<&sq>s Door.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        messages:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        - <yaml[gpa_feverDeath_config].read[deaths door.recovery.messages].as_list.separated_by[<&nl>        - ]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log 'thanatophobia:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #Whether to enable Thanatophobia.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    enabled: <yaml[gpa_feverDeath_config].read[thanatophobia.enabled]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #The prefix to use for messages from Thanatophobia.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #To set no prefix, use "none". To use the general prefix, use "default".' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    prefix: <&sq><yaml[gpa_feverDeath_config].read[thanatophobia.prefix]><&sq>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #How much HP the player must have to trigger Thanatophobia, as a percent.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #Use a decimal between 0.01 and 1, inclusively.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    health percent: <yaml[gpa_feverDeath_config].read[thanatophobia.health percent]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    messages:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #A list of messages to use when the player triggers Thanatophobia.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        warning:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        - <yaml[gpa_feverDeath_config].read[thanatophobia.messages.warning].as_list.separated_by[<&nl>        - ]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #A list of messages to use when the player regains enough HP.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        recovery:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        - <yaml[gpa_feverDeath_config].read[thanatophobia.messages.recovery].as_list.separated_by[<&nl>        - ]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log 'afterlife:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #Whether to enable Afterlife.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    enabled: <yaml[gpa_feverDeath_config].read[afterlife.enabled]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #The prefix to use for messages from Afterlife.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #To set no prefix, use "none". To use the general prefix, use "default".' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    prefix: <&sq><yaml[gpa_feverDeath_config].read[afterlife.prefix]><&sq>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #Whether to enable instant respawn.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    instant respawn: <yaml[gpa_feverDeath_config].read[afterlife.instant respawn]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #Whether to set the player<&sq>s bed as the spawnpoint.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #If disabled, the world spawnpoint will be used instead (/setworldspawn).' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    bed respawn: <yaml[gpa_feverDeath_config].read[afterlife.bed respawn]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    experience handling:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Whether to enable custom EXP loss.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        enable custom exp loss: <yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable custom exp loss]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Whether to allow EXP drops from players.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #If custom EXP loss is enabled, only 25% of the player<&sq>s lost EXP OR 300' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        # EXP will be dropped, whichever is smaller.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        enable player exp drop: <yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable player exp drop]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #The minimum and maximum allowed lost EXP, as a percent.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Use a decimal between 0 and 1, inclusively.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        minimum percent lost: <yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        maximum percent lost: <yaml[gpa_feverDeath_config].read[afterlife.experience handling.maximum percent lost]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    inventory handling:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Whether to enable custom item loss.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        enable custom item loss: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable custom item loss]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Whether to allow item drops from players.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        enable player item drop: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable player item drop]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Whether to reduce the hotbar<&sq>s chance of loss by 20%.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        enable tougher hotbar: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable tougher hotbar]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #The minimum and maximum chance of losing each item, as a percent.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        #Use a decimal between 0 and 1, inclusively.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        minimum loss chance: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '        maximum loss chance: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.maximum loss chance]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #Whether to send messages to plaeyrs upon respawn.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    enable messages: <yaml[gpa_feverDeath_config].read[afterlife.enable messages]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    #A list of messages to use when the player respawns.' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    messages:' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '    - <yaml[gpa_feverDeath_config].read[afterlife.messages].as_list.separated_by[<&nl>    - ]>' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
-  - log '' 'type:none' 'file:./plugins/GrandPartyAddons/FeverDeath/config.yml'
+  - log '' type:clear file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '#####################################################################################' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '#                                                                                   #' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '#                                FEVERDEATH CONFIG                                  #' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '#                                                                                   #' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '#####################################################################################' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For string-type options (e.g. <&dq>prefix<&dq>, <&dq>messages<&dq>, etc.), most' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# special characters must be replaced.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# ' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For color codes, use two &<&sq>s instead of just one. For example, <&dq>&&c<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a period, use <&dq>&dot<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a <&sq>, use <&dq>&sq<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a <&dq>, use <&dq>&quo<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a %, use <&dq>&pc<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a |, use <&dq>&pipe<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For an @, use <&dq>&at<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a [, use <&dq>&lb<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a ], use <&dq>&rb<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a <&gt>, use <&dq>&gt<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a <&lt>, use <&dq>&lt<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a :, use <&dq>&co<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For a |, use <&dq>&pipe<&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# For all other Unicode characters, use <&dq><&lt>&chr[UNICODE CODE]<&gt><&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '#   A heart would be <&dq><&lt>&chr[2665]<&gt><&dq>.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# ' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '# ' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log 'general:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #To set no prefix, use "none".' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    prefix: <&sq><yaml[gpa_feverDeath_config].read[general.prefix]><&sq>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #The message to display when a player attempts to use the FeverDeath command' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    # without proper permission.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    no permission message: <&sq><yaml[gpa_feverDeath_config].read[general.no permission message]><&sq>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log 'deaths door:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #Whether to enable Death<&sq>s Door.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    enabled: <yaml[gpa_feverDeath_config].read[deaths door.enabled]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #The prefix to use for messages from Death<&sq>s door.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #To set no prefix, use "none". To use the general prefix, use "default".' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    prefix: <&sq><yaml[gpa_feverDeath_config].read[deaths door.prefix]><&sq>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    death:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #The chance of the player dying after being put in Death<&sq>s Door. Use a' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        # decimal between 0.01 and 1, inclusively.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        kill chance: <yaml[gpa_feverDeath_config].read[deaths door.death.kill chance]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Whether to enable a subtitle for Death<&sq>s Door.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        title enabled: <yaml[gpa_feverDeath_config].read[deaths door.death.title enabled]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #A list of messages to use when the player reaches Death<&sq>s Door.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        messages:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        - <yaml[gpa_feverDeath_config].read[deaths door.death.messages].as_list.separated_by[<&nl>        - ]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    recovery:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Whether to enable the recovery phase from Death<&sq>s Door.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        enabled: <yaml[gpa_feverDeath_config].read[deaths door.recovery.enabled]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #How long should the recovery phase be, in minutes. The number must be a' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        # decimal between 1 and 60, inclusively.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        duration: <yaml[gpa_feverDeath_config].read[deaths door.recovery.duration]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #A list of messages to use when the player recovers from Death<&sq>s Door.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        messages:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        - <yaml[gpa_feverDeath_config].read[deaths door.recovery.messages].as_list.separated_by[<&nl>        - ]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log 'thanatophobia:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #Whether to enable Thanatophobia.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    enabled: <yaml[gpa_feverDeath_config].read[thanatophobia.enabled]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #The prefix to use for messages from Thanatophobia.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #To set no prefix, use "none". To use the general prefix, use "default".' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    prefix: <&sq><yaml[gpa_feverDeath_config].read[thanatophobia.prefix]><&sq>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #How much HP the player must have to trigger Thanatophobia, as a percent.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #Use a decimal between 0.01 and 1, inclusively.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    health percent: <yaml[gpa_feverDeath_config].read[thanatophobia.health percent]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    messages:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #A list of messages to use when the player triggers Thanatophobia.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        warning:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        - <yaml[gpa_feverDeath_config].read[thanatophobia.messages.warning].as_list.separated_by[<&nl>        - ]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #A list of messages to use when the player regains enough HP.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        recovery:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        - <yaml[gpa_feverDeath_config].read[thanatophobia.messages.recovery].as_list.separated_by[<&nl>        - ]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log 'afterlife:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #Whether to enable Afterlife.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    enabled: <yaml[gpa_feverDeath_config].read[afterlife.enabled]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #The prefix to use for messages from Afterlife.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #To set no prefix, use "none". To use the general prefix, use "default".' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    prefix: <&sq><yaml[gpa_feverDeath_config].read[afterlife.prefix]><&sq>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #Whether to enable instant respawn.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    instant respawn: <yaml[gpa_feverDeath_config].read[afterlife.instant respawn]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #Whether to set the player<&sq>s bed as the spawnpoint.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #If disabled, the world spawnpoint will be used instead (/setworldspawn).' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    bed respawn: <yaml[gpa_feverDeath_config].read[afterlife.bed respawn]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    experience handling:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Whether to enable custom EXP loss.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        enable custom exp loss: <yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable custom exp loss]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Whether to allow EXP drops from players.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #If custom EXP loss is enabled, only 25% of the player<&sq>s lost EXP OR 300' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        # EXP will be dropped, whichever is smaller.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        enable player exp drop: <yaml[gpa_feverDeath_config].read[afterlife.experience handling.enable player exp drop]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #The minimum and maximum allowed lost EXP, as a percent.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Use a decimal between 0 and 1, inclusively.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        minimum percent lost: <yaml[gpa_feverDeath_config].read[afterlife.experience handling.minimum percent lost]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        maximum percent lost: <yaml[gpa_feverDeath_config].read[afterlife.experience handling.maximum percent lost]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    inventory handling:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Whether to enable custom item loss.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        enable custom item loss: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable custom item loss]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Whether to allow item drops from players.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        enable player item drop: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable player item drop]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Whether to reduce the hotbar<&sq>s chance of loss by 20%.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        enable tougher hotbar: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.enable tougher hotbar]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #The minimum and maximum chance of losing each item, as a percent.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        #Use a decimal between 0 and 1, inclusively.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        minimum loss chance: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.minimum loss chance]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '        maximum loss chance: <yaml[gpa_feverDeath_config].read[afterlife.inventory handling.maximum loss chance]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #Whether to send messages to plaeyrs upon respawn.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    enable messages: <yaml[gpa_feverDeath_config].read[afterlife.enable messages]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    #A list of messages to use when the player respawns.' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    messages:' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '    - <yaml[gpa_feverDeath_config].read[afterlife.messages].as_list.separated_by[<&nl>    - ]>' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/FeverDeath/config.yml

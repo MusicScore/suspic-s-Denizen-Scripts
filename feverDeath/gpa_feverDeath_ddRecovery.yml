@@ -41,70 +41,54 @@ gpa_feverDeath_ddRecovery:
   debug: false
   speed: 0
   definitions: player|state|duration
-  
   script:
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_main]>'
-  {
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery"] WARNING: Missing the main FeverDeath script!' 'to_console'
-    - queue 'clear'
+  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_main]> {
+    - announce '[FeverDeath] WARNING: Missing the main FeverDeath script!' to_console
+    - queue clear
   }
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_config]>'
-  {
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery"] WARNING: Missing the FeverDeath configuration builder script!' 'to_console'
-    - queue 'clear'
+  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config]> {
+    - announce '[FeverDeath] WARNING: Missing the FeverDeath configuration builder script!' 'to_console'
+    - queue clear
   }
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_ddRecovery_timer_task]>'
-  {
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery"] WARNING: Missing the FeverDeath recovery phase timer script!' 'to_console'
-    - queue 'clear'
+  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_ddRecovery_timer_task]> {
+    - announce '[FeverDeath] WARNING: Missing the FeverDeath recovery phase timer script!' 'to_console'
+    - queue clear
   }
-  
-  - define 'dd_death.title' '<yaml[gpa_feverdeath_config].read[deaths door.death.title enabled].as_boolean||true>'
-  - if '<list[<def[player].as_player||null>|<def[state]||null>|<def[dd_death.title]>].contains[null]>' == 'null'
-  {
-    - queue 'clear'
+  - define dd_death.title '<yaml[gpa_feverdeath_config].read[deaths door.death.title enabled].as_boolean||true>'
+  - if <list[<def[player].as_player||null>|<def[state]||null>|<def[dd_death.title]>].contains[null]> {
+    - queue clear
   }
-  
-  - if '!<li@start|stop.contains[<def[state]>]>'
-  {
-    - queue 'clear'
+  - if !<li@start|stop.contains[<def[state]>]> {
+    - queue clear
   }
-  - if '<def[state]>' == 'start' && '<def[duration].as_duration||null>' == 'null'
-  {
-    - queue 'clear'
-  }
-  
-  - define 'queue_start' '<server.current_time_millis>'
-  - if '<def[state]>' == 'start'
-  {
-    - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery start:<def[queue_start]>'
-    - run 'gpa_feverDeath_ddRecovery_timer_task' 'def:<def[player]>|<def[duration]>' 'id:gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>'
-    - wait '<def[duration].as_duration.in_seconds.round_up>s'
-    - bossbar 'remove' 'feverdeath.dd.recovery.<def[player].uuid>'
-    - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery start:!'
-    - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery:0'
-    - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.phase:0'
-    - if '<def[dd_death.title]>'
-    {
-      - title 'title:<&r>' 'subtitle:<&a>Full recovery from Death<&sq>s Door' 'fade_in:0.5s' 'stay:2s' 'fade_out:0.5s' 'targets:<def[player]>'
+  - define queue_start '<server.current_time_millis>'
+  - if <def[state]> == 'start' {
+    - if <def[duration].as_duration||null> == 'null' {
+      - queue clear
     }
-    - queue 'clear'
-  }
-  else if '<def[state]>' == 'stop'
-  {
-    - define 'str_queue' 'gpa_feverDeath_dd_recovery_task_start_<def[player].uuid>'
-    - define 'time_queue' 'gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>'
-    - if '<queue.exists[<def[str_queue]>]>' && '<def[str_queue].as_queue.state||null>' == 'running'
-    {
-      - define 'duration' '<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery].as_duration>'
-      - bossbar 'remove' 'feverdeath.dd.recovery.<def[player].uuid>'
-      - define 'lost_time' '<server.current_time_millis.sub[<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery start]>].div[1000]>'
-      - define 'subtracted_time' '<el@val[<def[lost_time]>].mul[1000].as_duration>'
-      - flag '<def[player]>' 'grandpartyaddons.feverdeath.deaths door.recovery:<def[duration].sub[<def[lost_time]>].in_minutes>m'
-      - queue '<def[str_queue].as_queue>' 'clear'
-      - queue '<def[time_queue].as_queue>' 'clear'
+    - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery start:<def[queue_start]>'
+    - run gpa_feverDeath_ddRecovery_timer_task def:<def[player]>|<def[duration]> id:gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>
+    - wait <def[duration].as_duration.in_seconds.round_up>s
+    - bossbar remove feverdeath.dd.recovery.<def[player].uuid>
+    - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery start:!'
+    - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery:0'
+    - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.phase:0'
+    - if <def[dd_death.title]> {
+      - title 'title:<&r>' 'subtitle:<&a>Full recovery from Death<&sq>s Door' fade_in:0.5s stay:2s fade_out:0.5s targets:<def[player]>
     }
-    - queue 'clear'
+  }
+  else if <def[state]> == 'stop' {
+    - define str_queue 'gpa_feverDeath_dd_recovery_task_start_<def[player].uuid>'
+    - define time_queue 'gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>'
+    - if <queue.exists[<def[str_queue]>]> && <def[str_queue].as_queue.state||null> == 'running' {
+      - bossbar remove feverdeath.dd.recovery.<def[player].uuid>
+      - define duration '<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery].as_duration>'
+      - define lost_time '<server.current_time_millis.sub[<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery start]>].div[1000]>'
+      - define subtracted_time '<el@val[<def[lost_time]>].as_duration>'
+      - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery:<def[duration].sub[<def[lost_time]>].in_minutes>m'
+      - queue <def[str_queue].as_queue> clear
+      - queue <def[time_queue].as_queue> clear
+    }
   }
 
 gpa_feverDeath_ddRecovery_timer_task:
@@ -112,29 +96,23 @@ gpa_feverDeath_ddRecovery_timer_task:
   debug: false
   speed: 0
   definitions: player|duration
-  
   script:
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_main]>'
-  {
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the main FeverDeath script!' 'to_console'
-    - queue 'clear'
+  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_main]> {
+    - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the main FeverDeath script!' to_console
+    - queue clear
   }
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_ddRecovery]>'
-  {
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the FeverDeath recovery phase script!' 'to_console'
-    - queue 'clear'
+  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_ddRecovery]> {
+    - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the FeverDeath recovery phase script!' to_console
+    - queue clear
   }
-  - if '!<server.list_scripts.parse[name].contains[gpa_feverDeath_config]>'
-  {
-    - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the FeverDeath configuration builder script!' 'to_console'
-    - queue 'clear'
+  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config]> {
+    - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the FeverDeath configuration builder script!' to_console
+    - queue clear
   }
-  
-  - define 'dd_recover.time' '<yaml[gpa_feverdeath_config].read[deaths door.recovery.duration].as_decimal.max[1].min[60]||1>'
-  - define 'time_loop' '<def[duration].as_duration.in_seconds.round_up>'
-  - while '<def[time_loop].is[OR_MORE].to[0]>'
-  {
-    - bossbar 'update' 'feverdeath.dd.recovery.<def[player].uuid>' 'players:<def[player]>' 'progress:<def[time_loop].sub[1].div[<def[dd_recover.time].as_decimal.mul[60]>]>'
-    - define 'time_loop' '<def[time_loop].sub[1]>'
-    - wait '1s'
+  - define dd_recover.time '<yaml[gpa_feverdeath_config].read[deaths door.recovery.duration].as_decimal.max[1].min[60]||1>'
+  - define time_loop '<def[duration].as_duration.in_seconds.round_up>'
+  - while <def[time_loop].is[OR_MORE].to[0]> {
+    - bossbar update feverdeath.dd.recovery.<def[player].uuid> players:<def[player]> progress:<def[time_loop].sub[1].div[<def[dd_recover.time].as_decimal.mul[60]>]>
+    - define time_loop '<def[time_loop].sub[1]>'
+    - wait 1s
   }
