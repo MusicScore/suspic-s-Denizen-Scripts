@@ -83,7 +83,7 @@ gpa_feverDeath_main:
     }
     - run gpa_feverDeath_config
 
-    on suicide command:
+    on suicide|esuicide command:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
@@ -100,7 +100,7 @@ gpa_feverDeath_main:
     - flag <player> 'grandpartyaddons.cmd_listen.suicide'
     - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&c>/suicide <&4>is not the fun way out.' 'targets:<player>'
 
-    on kill command:
+    on kill|ekill command:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
