@@ -87,6 +87,16 @@ gpa_feverDeath_main:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
+    - if !<server.list_plugin_names.contains[Essentials]> || <context.server> {
+      - queue clear
+    }
+    - if <context.server> {
+      - goto skip_perm_check
+    }
+    - if !<player.has_permission[essentials.suicide]> {
+      - queue clear
+    }
+    - mark skip_perm_check
     - flag <player> 'grandpartyaddons.cmd_listen.suicide'
     - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&c>/suicide <&4>is not the fun way out.' 'targets:<player>'
 
@@ -94,17 +104,27 @@ gpa_feverDeath_main:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
+    - if !<server.list_plugin_names.contains[Essentials]> {
+      - queue clear
+    }
+    - if !<context.server> {
+      - if !<player.has_permission[essentials.kill]> {
+        - queue clear
+      }
+    }
     - define target '<context.args.get[1].as_player>'
     - if <def[target]||null> == 'null' {
       - queue clear
     }
-    else if <def[target]||null> == <player> {
-      - flag <player> 'grandpartyaddons.cmd_listen.suicide'
-      - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&c>/kill <&4>is not the fun way out.'
+    - if <def[target].has_permission[essentials.kill.exempt]> && !<player.has_permission[essentials.kill.force]> {
+      - queue clear
     }
-    else {
-      - if <def[target].is_online> {
-        - flag <def[target]> 'grandpartyaddons.cmd_listen.suicide'
+    - if <def[target].is_online> {
+      - flag <def[target]> 'grandpartyaddons.cmd_listen.suicide'
+      - if <def[target]> == <player> {
+        - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&c>/kill <&4>is not the fun way out.'
+      }
+      else {
         - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&4>You were cruelly smitten by <player.name||the server>.' targets:<def[target]>
       }
     }
