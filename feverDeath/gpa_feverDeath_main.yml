@@ -56,6 +56,7 @@
 #      edit the scripts!
 # 
 
+
 gpa_feverDeath_main:
   type: world
   debug: false
@@ -90,13 +91,9 @@ gpa_feverDeath_main:
     - if !<server.list_plugin_names.contains[Essentials]> || <context.server> {
       - queue clear
     }
-    - if <context.server> {
-      - goto skip_perm_check
-    }
     - if !<player.has_permission[essentials.suicide]> {
       - queue clear
     }
-    - mark skip_perm_check
     - flag <player> 'grandpartyaddons.cmd_listen.suicide'
     - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&c>/suicide <&4>is not the fun way out.' 'targets:<player>'
 
@@ -134,10 +131,10 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define target '<context.entity.as_player>'
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
+    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
       - queue clear
     }
-    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+    - if <list[1|3].contains[<def[target].gamemode.id>]> {
       - queue clear
     }
     - define dmg_inflict '<context.final_damage>'
@@ -168,10 +165,10 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define target '<context.entity.as_player>'
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
+    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
       - queue clear
     }
-    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+    - if <list[1|3].contains[<def[target].gamemode.id>]> {
       - queue clear
     }
     - define cancelled 'false'
@@ -319,10 +316,10 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define target '<context.entity.as_player>'
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
+    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
       - queue clear
     }
-    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+    - if <list[1|3].contains[<def[target].gamemode.id>]> {
       - queue clear
     }
     #Death's Door mechanics: clear flags
@@ -396,11 +393,11 @@ gpa_feverDeath_main:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
-      - queue clear
-    }
     - if <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
       - flag <player> 'grandpartyaddons.cmd_listen.suicide:!'
+      - queue clear
+    }
+    - if <list[1|3].contains[<def[target].gamemode.id>]> {
       - queue clear
     }
     #Afterlife mechanics: determine respawn if instant respawn is disabled
@@ -436,9 +433,9 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define target '<context.entity.as_player>'
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
-      - queue clear
-    }
+#    - if <list[1|3].contains[<def[target].gamemode.id>]> {
+#      - queue clear
+#    }
     #Death's Door mechanics: recovery
     - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
     - if <def[dd_enable]> {
