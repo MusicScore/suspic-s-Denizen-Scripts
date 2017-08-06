@@ -88,7 +88,7 @@ gpa_feverDeath_main:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
-    - if !<server.list_plugin_names.contains[Essentials]> || <context.server> {
+    - if <server.list_files[../].filter[starts_with[Essentials]].is_empty> || <context.server> {
       - queue clear
     }
     - if !<player.has_permission[essentials.suicide]> {
@@ -101,7 +101,7 @@ gpa_feverDeath_main:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
-    - if !<server.list_plugin_names.contains[Essentials]> {
+    - if <server.list_files[../].filter[starts_with[Essentials]].is_empty> {
       - queue clear
     }
     - if !<context.server> {
