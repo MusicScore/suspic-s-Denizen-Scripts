@@ -88,7 +88,7 @@ gpa_feverDeath_main:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
-    - if <server.list_files[../].filter[starts_with[Essentials]].is_empty> || <context.server> {
+    - if <server.list_files[../].filter[starts_with[Essentials].ends_with[.jar]].is_empty> || <context.server> {
       - queue clear
     }
     - if !<player.has_permission[essentials.suicide]> {
@@ -101,7 +101,7 @@ gpa_feverDeath_main:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
-    - if <server.list_files[../].filter[starts_with[Essentials]].is_empty> {
+    - if <server.list_files[../].filter[starts_with[Essentials].ends_with[.jar]].is_empty> {
       - queue clear
     }
     - if !<context.server> {
@@ -241,7 +241,7 @@ gpa_feverDeath_main:
         - teleport <def[target]> <def[target].bed_spawn.center>
       }
       else {
-        - teleport <def[target]> <server.flag[spawn_location.<def[target].groups.last>]||<server.flag[spawn_location.default]||<w@world.spawn_location.center>>>
+        - teleport <def[target]> <server.flag[essentials_spawn_location.<def[target].groups.last>]||<server.flag[essentials_spawn_location.default]||<w@world.spawn_location.center>>>
       }
       - define dropped_xp '<def[target].xp.level.mul[7]>'
       - if <def[dropped_xp]> > 100 {
@@ -410,7 +410,7 @@ gpa_feverDeath_main:
         - determine passively '<player.bed_spawn.center>'
       }
       else {
-        - determine passively '<server.flag[spawn_location.<def[target].groups.last>]||<server.flag[spawn_location.default]||<w@world.spawn_location.center>>>'
+        - determine passively '<server.flag[essentials_spawn_location.<def[target].groups.last>]||<server.flag[essentials_spawn_location.default]||<w@world.spawn_location.center>>>'
       }
       - if <def[al_msg_enable]> {
         - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.afterlife]><&f><def[al_msgs].get[<util.random.int[1].to[<def[al_msgs].size>]>].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>' targets:<player>
