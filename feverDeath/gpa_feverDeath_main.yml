@@ -238,7 +238,7 @@ gpa_feverDeath_main:
       - cast NIGHT_VISION <def[target]> duration:2s power:0
       - define al_bed '<yaml[gpa_feverdeath_config].read[afterlife.bed respawn].as_boolean||false>'
       - if <def[al_bed]> {
-        - teleport <def[target]> <def[target].bed_spawn.center<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>>
+        - teleport <def[target]> <def[target].bed_spawn.center||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>>
       }
       else {
         - teleport <def[target]> <server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>
