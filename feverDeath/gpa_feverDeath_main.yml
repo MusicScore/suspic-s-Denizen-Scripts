@@ -238,10 +238,10 @@ gpa_feverDeath_main:
       - cast NIGHT_VISION <def[target]> duration:2s power:0
       - define al_bed '<yaml[gpa_feverdeath_config].read[afterlife.bed respawn].as_boolean||false>'
       - if <def[al_bed]> {
-        - teleport <def[target]> <def[target].bed_spawn.center>
+        - teleport <def[target]> <def[target].bed_spawn.center<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>>
       }
       else {
-        - teleport <def[target]> <server.flag[essentials_spawn_location.<def[target].groups.last>]||<server.flag[essentials_spawn_location.default]||<w@world.spawn_location.center>>>
+        - teleport <def[target]> <server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>
       }
       - define dropped_xp '<def[target].xp.level.mul[7]>'
       - if <def[dropped_xp]> > 100 {
@@ -407,10 +407,10 @@ gpa_feverDeath_main:
       - define al_msg_enable '<yaml[gpa_feverdeath_config].read[afterlife.enable messages].as_boolean||true>'
       - define al_msgs '<yaml[gpa_feverdeath_config].read[afterlife.messages].as_list||li@&sscSomething is wrong with FeverDeath&dot>'
       - if <def[al_bed]> {
-        - determine passively '<player.bed_spawn.center>'
+        - determine passively '<player.bed_spawn.center||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>>'
       }
       else {
-        - determine passively '<server.flag[essentials_spawn_location.<def[target].groups.last>]||<server.flag[essentials_spawn_location.default]||<w@world.spawn_location.center>>>'
+        - determine passively '<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>'
       }
       - if <def[al_msg_enable]> {
         - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.afterlife]><&f><def[al_msgs].get[<util.random.int[1].to[<def[al_msgs].size>]>].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>' targets:<player>
