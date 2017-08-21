@@ -22,6 +22,7 @@
 +-----------------------------------------------------------------------------|
   
   Currently only supports 1.11+
+  Minor support for 1.8.8-1.12 via optional dependency
   
   Inspired by the indie game "Darkest Dungeon", this addon aims to modify how
   player death (not mob death!) works in Minecraft.
@@ -68,7 +69,7 @@
   Required dependencies:
   - Denizen (plugin)
   Optional dependencies:
-  - none
+  - GrandPartyUtilities Version Checker (script)
   
   When installing Denizen, please use the latest DEVELOPMENT version!
   
