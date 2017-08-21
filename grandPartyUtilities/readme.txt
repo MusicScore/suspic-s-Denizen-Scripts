@@ -63,8 +63,8 @@
   
   Go to the folder "/plugins/Denizen/scripts". Drop any GrandPartyUtilities
   scripts you want into that folder. However, remember that in most cases it is
-  recommended to also have "gpu_MAIN.yml", otherwise you will not be able to
-  access certain configurable options without directly editing the scripts.
+  recommended to also have "gpa_gpu_main.yml", otherwise you will not be able
+  to access certain configurable options without directly editing the scripts.
   
   If your server is still running, simply use this command to load the addon:
     /denizen reload scripts
