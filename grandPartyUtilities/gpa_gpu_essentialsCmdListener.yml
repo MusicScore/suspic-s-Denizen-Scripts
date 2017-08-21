@@ -51,7 +51,7 @@ gpa_gpu_essentialsCmdListener:
     - if !<player.has_permission[essentials.setspawn]> {
       - queue clear
     }
-    - define spawn_loc '<player.location.simple.add[0.5,0,0.5].with_pose[<player.location.pitch.round_to[2]>,<player.location.yaw.round_to[2]>]>'
+    - define spawn_loc '<player.location.center.sub[0.5,0.5,0.5].with_pose[<player.location.pitch.round_to[2]>,<player.location.yaw.round_to[2]>]>'
     - if <context.args.get[1]||default> == default {
       - adjust <player.location.world> 'spawn_location:<def[spawn_loc]>'
       - flag server 'grandpartyaddons.gpu.essentials_spawn_location.worlds.<def[spawn_loc].world.name>:<def[spawn_loc]>'
@@ -66,7 +66,7 @@ gpa_gpu_essentialsCmdListener:
     - if !<player.has_permission[essentials.setwarp]> {
       - queue clear
     }
-    - define pl_loc '<player.location.simple.add[0.5,0,0.5].with_pose[<player.location.pitch.round_to[2]>,<player.location.yaw.round_to[2]>]>'
+    - define pl_loc '<player.location.center.sub[0.5,0.5,0.5].with_pose[<player.location.pitch.round_to[2]>,<player.location.yaw.round_to[2]>]>'
     - flag server 'grandpartyaddons.gpu.essentials_warps.<context.args.get[1]>:<def[pl_loc]>'
 
     # Remove warps from recorded list
