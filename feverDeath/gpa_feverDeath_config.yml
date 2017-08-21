@@ -8,7 +8,6 @@
 # that should have come with the complete set of FeverDeath script files.
 # 
 # 
-# 
 # ----| ABOUT THIS SCRIPT
 # 
 # A task meant to handle generating and reloading the configuration file for
@@ -41,6 +40,7 @@
 # None of the four above steps can be skipped without editing this script.
 # Information on support for edited scripts can be found in the readme.txt
 # file.
+# 
 # 
 
 

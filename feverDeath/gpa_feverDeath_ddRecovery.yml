@@ -8,7 +8,6 @@
 # that should have come with the complete set of FeverDeath script files.
 # 
 # 
-# 
 # ----| ABOUT THIS SCRIPT
 # 
 # A task that externally handles timing the FeverDeath Death's Door recovery
@@ -34,6 +33,7 @@
 # no reason why you should. The FeverDeath Death's Door recovery function is
 # the only thing that requires this script.
 # 
+# 
 
 
 gpa_feverDeath_ddRecovery:
@@ -50,12 +50,12 @@ gpa_feverDeath_ddRecovery:
     - announce '[FeverDeath] WARNING: Missing the FeverDeath configuration builder script!' 'to_console'
     - queue clear
   }
-  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_ddRecovery_timer_task]> {
+  - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_ddRecovery_timer_task]> && <proc[gpa_gpu_versionCheck]||5> >= 1 {
     - announce '[FeverDeath] WARNING: Missing the FeverDeath recovery phase timer script!' 'to_console'
     - queue clear
   }
   - define dd_death.title '<yaml[gpa_feverdeath_config].read[deaths door.death.title enabled].as_boolean||true>'
-  - if <list[<def[player].as_player||null>|<def[state]||null>|<def[dd_death.title]>].contains[null]> {
+  - if <li@<def[player].as_player||null>|<def[state]||null>|<def[dd_death.title]>.contains[null]> {
     - queue clear
   }
   - if !<li@start|stop.contains[<def[state]>]> {
@@ -67,26 +67,34 @@ gpa_feverDeath_ddRecovery:
       - queue clear
     }
     - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery start:<def[queue_start]>'
-    - run gpa_feverDeath_ddRecovery_timer_task def:<def[player]>|<def[duration]> id:gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>
+    - if <proc[gpa_gpu_versionCheck]||5> >= 1 {
+      - run gpa_feverDeath_ddRecovery_timer_task def:<def[player]>|<def[duration]> id:gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>
+    }
     - wait <def[duration].as_duration.in_seconds.round_up>s
-    - bossbar remove feverdeath.dd.recovery.<def[player].uuid>
+    - if <proc[gpa_gpu_versionCheck]||5> >= 1 {
+      - bossbar remove feverdeath.dd.recovery.<def[player].uuid>
+    }
     - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery start:!'
+    - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery_stack:1'
     - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery:0'
     - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.phase:0'
     - if <def[dd_death.title]> {
       - title 'title:<&r>' 'subtitle:<&a>Full recovery from Death<&sq>s Door' fade_in:0.5s stay:2s fade_out:0.5s targets:<def[player]>
     }
+    - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.deaths door]><&a>Full recovery!' targets:<def[player]>
   }
   else if <def[state]> == 'stop' {
     - define str_queue 'gpa_feverDeath_dd_recovery_task_start_<def[player].uuid>'
-    - define time_queue 'gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>'
     - if <queue.exists[<def[str_queue]>]> && <def[str_queue].as_queue.state||null> == 'running' {
-      - bossbar remove feverdeath.dd.recovery.<def[player].uuid>
       - define duration '<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery].as_duration>'
       - define lost_time '<server.current_time_millis.sub[<def[player].flag[grandpartyaddons.feverdeath.deaths door.recovery start]>].div[1000]>'
       - define subtracted_time '<el@val[<def[lost_time]>].as_duration>'
       - flag <def[player]> 'grandpartyaddons.feverdeath.deaths door.recovery:<def[duration].sub[<def[lost_time]>].in_minutes>m'
       - queue <def[str_queue].as_queue> clear
+      - if <proc[gpa_gpu_versionCheck]||5> >= 1 {
+        - define time_queue 'gpa_feverDeath_dd_recovery_task_timer_<def[player].uuid>'
+        - bossbar remove feverdeath.dd.recovery.<def[player].uuid>
+      }
       - queue <def[time_queue].as_queue> clear
     }
   }
@@ -107,6 +115,9 @@ gpa_feverDeath_ddRecovery_timer_task:
   }
   - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config]> {
     - announce '[FeverDeath "gpa_feverDeath_ddRecovery_timer_task"] WARNING: Missing the FeverDeath configuration builder script!' to_console
+    - queue clear
+  }
+  - if <proc[gpa_gpu_versionCheck]||5> < 1 {
     - queue clear
   }
   - define dd_recover.time '<yaml[gpa_feverdeath_config].read[deaths door.recovery.duration].as_decimal.max[1].min[60]||1>'

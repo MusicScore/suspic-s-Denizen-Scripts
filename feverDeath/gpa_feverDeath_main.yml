@@ -8,7 +8,6 @@
 # that should have come with the complete set of FeverDeath script files.
 # 
 # 
-# 
 # ----| ABOUT THIS SCRIPT
 # 
 # Welcome to the main file for FeverDeath! This file handles the actual
@@ -55,6 +54,7 @@
 #    - Just make this entire addon completely customizable without having to
 #      edit the scripts!
 # 
+# 
 
 
 gpa_feverDeath_main:
@@ -77,7 +77,7 @@ gpa_feverDeath_main:
     - wait 1t
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - narrate '<&c>[FeverDeath] WARNING: Not all FeverDeath scripts are detected! Disabling FeverDeath.'
-      - if <context.sender> != 'server' {
+      - if <context.sender> != 'CONSOLE' {
         - announce '<&c>[FeverDeath] WARNING: Not all FeverDeath scripts are detected! Disabling FeverDeath.' 'to_console'
       }
       - queue clear
@@ -88,20 +88,20 @@ gpa_feverDeath_main:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
-    - if <server.list_files[../].filter[starts_with[Essentials].ends_with[.jar]].is_empty> || <context.server> {
+    - if <server.list_files[../].filter[ends_with[.jar]].filter[starts_with[Essentials]].is_empty> || <context.server> {
       - queue clear
     }
     - if !<player.has_permission[essentials.suicide]> {
       - queue clear
     }
     - flag <player> 'grandpartyaddons.cmd_listen.suicide'
-    - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&c>/suicide <&4>is not the fun way out.' 'targets:<player>'
+    - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.generic]><&c>/suicide <&4>is not the fun way out.' targets:<player>
 
     on kill|ekill command:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
-    - if <server.list_files[../].filter[starts_with[Essentials].ends_with[.jar]].is_empty> {
+    - if <server.list_files[../].filter[ends_with[.jar]].filter[starts_with[Essentials]].is_empty> {
       - queue clear
     }
     - if !<context.server> {
@@ -131,10 +131,10 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define target '<context.entity.as_player>'
-    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+    - if <li@suicide|void.contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
       - queue clear
     }
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
+    - if <li@1|3.contains[<def[target].gamemode.id>]> {
       - queue clear
     }
     - define dmg_inflict '<context.final_damage>'
@@ -142,7 +142,7 @@ gpa_feverDeath_main:
     - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
     - define dd_recover.enable '<yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>'
     - if <def[dd_enable]> && <def[dd_recover.enable]> && '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' == 1 {
-      - define dmg_inflict '<context.final_damage.mul[1.1]>'
+      - define dmg_inflict '<context.final_damage.mul[<def[target].flag[grandpartyaddons.feverdeath.deaths door.recovery_stack].mul[0.1].add[1]||1.1>]>'
     }
     - determine passively '<def[dmg_inflict]>'
     #Thanatophobia mechanics: warning
@@ -165,10 +165,10 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define target '<context.entity.as_player>'
-    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+    - if <li@suicide|void.contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
       - queue clear
     }
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
+    - if <li@1|3.contains[<def[target].gamemode.id>]> {
       - queue clear
     }
     - define cancelled 'false'
@@ -184,7 +184,7 @@ gpa_feverDeath_main:
         - if <def[dd_recover.enable]> && <queue.list.contains[q@gpa_feverDeath_dd_recovery_task_start_<def[target].uuid>]> {
           - run gpa_feverDeath_ddRecovery def:<player>|stop id:gpa_feverDeath_dd_recovery_task_stop_<def[target].uuid>
           - flag <def[target]> 'grandpartyaddons.feverdeath.deaths door.recovery:!'
-          - if <server.current_bossbars.contains[feverdeath.dd.recovery.<def[target].uuid>]> {
+          - if <proc[gpa_gpu_versionCheck]||5> >= 1 && <server.current_bossbars.contains[feverdeath.dd.recovery.<def[target].uuid>]> {
             - bossbar remove feverdeath.dd.recovery.<def[target].uuid>
           }
         }
@@ -237,11 +237,19 @@ gpa_feverDeath_main:
       - cast BLINDNESS <def[target]> duration:3s power:0
       - cast NIGHT_VISION <def[target]> duration:2s power:0
       - define al_bed '<yaml[gpa_feverdeath_config].read[afterlife.bed respawn].as_boolean||false>'
-      - if <def[al_bed]> {
-        - teleport <def[target]> <def[target].bed_spawn.center||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>>
+      - define s_loc '<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>'
+      - define s_loc_sc '<el@val[<def[s_loc].sub[10,20,10]>|<def[s_loc].sub[10,20,10]>].as_cuboid.spawnable_blocks.sort_by_number[distance[<def[s_loc]>]]>'
+      - if <def[s_loc_sc].is_empty> {
+        - define s_loc_safe '<def[s_loc]>'
       }
       else {
-        - teleport <def[target]> <server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>
+        - define s_loc_safe '<def[s_loc_sc].get[1]||<def[s_loc]>>'
+      }
+      - if <def[al_bed]> {
+        - teleport <def[target]> <def[target].bed_spawn.add[0.5,0,0.5]||<def[s_loc_safe]>>
+      }
+      else {
+        - teleport <def[target]> <def[s_loc_safe]>
       }
       - define dropped_xp '<def[target].xp.level.mul[7]>'
       - if <def[dropped_xp]> > 100 {
@@ -316,10 +324,10 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define target '<context.entity.as_player>'
-    - if <list[suicide|void].contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+    - if <li@suicide|void.contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
       - queue clear
     }
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
+    - if <li@1|3.contains[<def[target].gamemode.id>]> {
       - queue clear
     }
     #Death's Door mechanics: clear flags
@@ -397,7 +405,7 @@ gpa_feverDeath_main:
       - flag <player> 'grandpartyaddons.cmd_listen.suicide:!'
       - queue clear
     }
-    - if <list[1|3].contains[<def[target].gamemode.id>]> {
+    - if <li@1|3.contains[<player.gamemode.id>]> {
       - queue clear
     }
     #Afterlife mechanics: determine respawn if instant respawn is disabled
@@ -406,11 +414,25 @@ gpa_feverDeath_main:
       - define al_bed '<yaml[gpa_feverdeath_config].read[afterlife.bed respawn].as_boolean||false>'
       - define al_msg_enable '<yaml[gpa_feverdeath_config].read[afterlife.enable messages].as_boolean||true>'
       - define al_msgs '<yaml[gpa_feverdeath_config].read[afterlife.messages].as_list||li@&sscSomething is wrong with FeverDeath&dot>'
-      - if <def[al_bed]> {
-        - determine passively '<player.bed_spawn.center||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>>'
+      - define s_loc '<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<player.groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.add[0.5,0,0.5]>>>'
+      - define s_loc_sc '<el@val[<def[s_loc].sub[10,20,10]>|<def[s_loc].sub[10,20,10]>].as_cuboid.spawnable_blocks.sort_by_number[distance[<def[s_loc]>]]>'
+      - if <def[s_loc_sc].is_empty> {
+        - define s_loc_safe '<def[s_loc]>'
       }
       else {
-        - determine passively '<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>'
+        - define s_loc_safe '<def[s_loc_sc].get[1]||<def[s_loc]>>'
+      }
+      - if <def[al_bed]> {
+        - teleport <player> <player.bed_spawn.add[0.5,0,0.5]||<def[s_loc_safe]>>
+      }
+      else {
+        - teleport <player> <def[s_loc_safe]>
+      }
+      - if <def[al_bed]> {
+        - determine passively '<player.bed_spawn.add[0.5,0,0.5]||<def[s_loc_safe]>>'
+      }
+      else {
+        - determine passively '<def[s_loc_safe]>'
       }
       - if <def[al_msg_enable]> {
         - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.afterlife]><&f><def[al_msgs].get[<util.random.int[1].to[<def[al_msgs].size>]>].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>' targets:<player>
@@ -433,26 +455,27 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define target '<context.entity.as_player>'
-#    - if <list[1|3].contains[<def[target].gamemode.id>]> {
-#      - queue clear
-#    }
     #Death's Door mechanics: recovery
     - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
     - if <def[dd_enable]> {
       - define dd_recover.enable '<yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>'
       - if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' == 2 {
         - if <li@SATIATED|REGEN.contains[<context.reason>]> {
-          - determine passively 0
-          - queue clear
+          - determine '0'
         }
         - if <def[dd_recover.enable]> {
           - define dd_death.title '<yaml[gpa_feverdeath_config].read[deaths door.death.title enabled].as_boolean||true>'
           - define dd_recover.time '<yaml[gpa_feverdeath_config].read[deaths door.recovery.duration].as_decimal.max[1].min[60]||1>'
           - define dd_recover.msgs '<yaml[gpa_feverdeath_config].read[deaths door.recovery.messages].as_list||li@&sscSomething is wrong with FeverDeath&dot>'
-          - bossbar create feverdeath.dd.recovery.<def[target].uuid> players:<def[target]> 'title:<&c>Death<&sq>s Door Debuff Timer' progress:1 color:RED style:SOLID flags:CREATE_FOG
+          - if <proc[gpa_gpu_versionCheck]||5> >= 1 {
+            - bossbar create feverdeath.dd.recovery.<def[target].uuid> players:<def[target]> 'title:<&c>Death<&sq>s Door Debuff Timer' progress:1 color:RED style:SOLID flags:CREATE_FOG
+          }
           - flag <def[target]> 'grandpartyaddons.feverdeath.deaths door.phase:1'
           - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.deaths door]><&7><def[dd_recover.msgs].get[<util.random.int[1].to[<def[dd_recover.msgs].size>]>].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>' targets:<def[target]>
           - flag <def[target]> 'grandpartyaddons.feverdeath.deaths door.recovery:<def[dd_recover.time]>m'
+          - if <def[target].flag[grandpartyaddons.feverdeath.deaths door.recovery_stack]||0> < 6 {
+            - flag <def[target]> 'grandpartyaddons.feverdeath.deaths door.recovery_stack:++'
+          }
           - run gpa_feverDeath_ddRecovery 'def:<def[target]>|start|<def[target].flag[grandpartyaddons.feverdeath.deaths door.recovery]>' id:gpa_feverDeath_dd_recovery_task_start_<def[target].uuid>
           - queue clear
         }
@@ -461,11 +484,12 @@ gpa_feverDeath_main:
         }
       }
       else if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' == 1 {
-        - if <def[target].health.add[<context.amount>]> > <def[target].health.max.mul[0.85]> {
-          - determine passively '<def[target].health.max.mul[0.85].sub[<def[target].health>]>'
+        - define h_limit '<def[target].health.max.mul[<def[target].flag[grandpartyaddons.feverdeath.deaths door.recovery_stack].mul[-0.15].add[1]||0.85>]>'
+        - if <def[target].health.add[<context.amount>]> > <def[h_limit]> {
+          - determine passively '<def[h_limit]>'
         }
         else {
-          - determine passively '<context.amount.mul[0.9]>'
+          - determine passively '<context.amount.mul[<def[target].flag[grandpartyaddons.feverdeath.deaths door.recovery_stack].mul[-0.1].add[1]||0.9>]>'
         }
         - queue clear
       }

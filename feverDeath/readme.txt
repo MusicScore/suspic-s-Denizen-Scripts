@@ -104,15 +104,8 @@
   told you, you will have to call these options by yourself.
   
   To help you out, I've included the depreciated prewritten definitions
-  scripts. They are located in the "gpa_feverDeath_def.yml" file, and have a
+  scripts. They are located in the "gpa_feverDeath_def.txt" file, and have a
   complete list of definitions/tags that should help you.
-  
- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  
-  Now, if you wanted to use FeverDeath as a dependency for a plugin (for
-  whatever reason), there's not much I can do to help. For the most part,
-  you'll have to find a way to do it yourself. However, it is possible for a
-  plugin to use FeverDeath as a dependency.
   
   
 +-----------------------------------------------------------------------------|

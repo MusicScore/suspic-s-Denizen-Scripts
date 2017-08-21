@@ -1,3 +1,30 @@
+###############################################################################
+#                                                                             #
+#                            FEVERDEATH: COMMANDS                             #
+#                                                                             #
+###############################################################################
+# 
+# For a detailed description of FeverDeath, please check out the readme.txt
+# that should have come with the complete set of FeverDeath script files.
+# 
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# Command scripts to add very minor in-game functionality to FeverDeath.
+# 
+# 
+# ----| USAGE
+# 
+# Run these command in-game:
+# 
+#   + /feverdeath reload
+#     - Reloads the FeverDeath configuration
+#   + /feverdeath version
+#     - Prints out the FeverDeath version
+# 
+# 
+
+
 gpa_feverDeath_cmd:
   type: command
   debug: false
@@ -5,7 +32,7 @@ gpa_feverDeath_cmd:
   description: Access to FeverDeath<&sq>s standalone reload feature.
   usage: /feverdeath reload|version
   allowed help:
-  - determine <player.has_permission[gpa.feverdeath.admin]>
+  - determine <player.is_op||<player.has_permission[gpa.feverdeath.admin]||<context.server>>>
   tab complete:
   - if !<player.has_permission[gpa.feverdeath.admin]> {
     - queue clear
