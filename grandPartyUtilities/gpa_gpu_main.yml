@@ -1,0 +1,123 @@
+###############################################################################
+#                                                                             #
+#                          GRANDPARTYUTILITIES: MAIN                          #
+#                                                                             #
+###############################################################################
+# 
+# The main GrandPartyUtilities script.
+# 
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# The main component of GrandPartyUtilities. Comes with a config generator
+# that contains options for all GrandPartyUtilities scripts, even if those
+# scripts are not installed.
+# 
+# 
+# ----| HOW TO USE
+# 
+# To grab an offline player's name, use these tags:
+# 
+#   + <p@player.flag[display_name.prefix]>
+#   + <p@player.flag[display_name.suffix]>
+#   + <p@player.flag[display_name.nickname]>
+# 
+# To simplify a location to the format "l@#.5,#.0,#.5,#.##,#.##,world", use
+# this tag:
+# 
+#   + <proc[gpa_gpu_locationSimplifier].context[<location>]>
+# 
+# Other than that, all features should work right out of the box.
+# 
+# 
+# ----| CAVEATS
+# 
+# Even though this script supports 1.8.8 to 1.12, it requires the latest
+# developmental version of Denizen.
+# 
+# 
+
+
+gpa_gpu_MAIN:
+  type: world
+  debug: false
+  events:
+    on shutdown:
+    - execute as_server 'denizen save'
+
+    on script reload:
+    - run gpa_gpu_config
+    - if '<yaml[gpa_gpu_config].read[general.enable debug].not||false>' {
+      - queue clear
+    }
+    - define d_list 'li@<&nl><&a>[GrandPartyUtilities] <&f>Reloading all components of GrandPartyUtilities<&dot><&dot><&dot>'
+    - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
+      - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected version checker<&dot> Registered version ID<&co> <proc[gpa_gpu_versionCheck]><&dot>]>'
+      - flag server 'grandpartyaddons.server_version:<proc[gpa_gpu_versionCheck]>'
+    }
+    - if <server.list_scripts.contains[s@gpa_gpu_essentialsCmdListener]> {
+      - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected <&7>gpa_gpu_essentialsCmdListener<&f><&dot>]>'
+    }
+    - if !<def[d_list].is_empty> {
+      - define d_list '<def[d_list].include[<&r>]>'
+    }
+    - if <context.sender> != 'CONSOLE' {
+      - announce '<def[d_list].separated_by[<&nl>]><&a>[GrandPartyUtilities] <&f>Loaded all detected components of GrandPartyUtilities.' to_console
+    }
+    - narrate '<def[d_list].separated_by[<&nl>]><&a>[GrandPartyUtilities] <&f>Loaded all detected components of GrandPartyUtilities.'
+
+    on player joins:
+    - flag <player> 'display_name.prefix:<player.chat_prefix>'
+    - flag <player> 'display_name.suffix:<player.chat_suffix>'
+    - flag <player> 'display_name.nickname:<player.name.display.replace[<player.chat_prefix>].with[].replace[<player.chat_suffix>].with[]>'
+
+    on player quits:
+    - flag <player> 'display_name.prefix:<player.chat_prefix>'
+    - flag <player> 'display_name.suffix:<player.chat_suffix>'
+    - flag <player> 'display_name.nickname:<player.name.display.replace[<player.chat_prefix>].with[].replace[<player.chat_suffix>].with[]>'
+
+gpa_gpu_config:
+  type: task
+  speed: 0
+  debug: false
+  script:
+  - define debug_enable 'false'
+  - define essentials.clear_func 'true'
+  - define essentials.ping 'true'
+  - if !<yaml.list.contains[gpa_gpu_config]> {
+    - yaml create id:gpa_gpu_config
+  }
+  - if <server.has_file[../GrandPartyAddons/GrandPartyUtilities/config.yml]||false> {
+    - yaml load:../GrandPartyAddons/GrandPartyUtilities/config.yml id:gpa_gpu_config
+    - if !<yaml.list.contains[gpa_gpu_config]> {
+      - yaml create id:gpa_gpu_config
+    }
+  }
+  else {
+    - yaml savefile:../GrandPartyAddons/GrandPartyUtilities/config.yml id:gpa_gpu_config
+  }
+  # Run through each value and see if any are invalid
+  - yaml set 'enable debug:<yaml[gpa_gpu_config].read[general.enable debug].as_boolean||<def[debug_enable]>>' id:gpa_gpu_config
+  - yaml set 'essentials cmd listener.add more functionality to clearinventory:<yaml[gpa_gpu_config].read[essentials cmd listener.add more functionality to clearinventory].as_boolean||<def[essentials.clear_func]>>' id:gpa_gpu_config
+  - yaml set 'essentials cmd listener.return ping number:<yaml[gpa_gpu_config].read[essentials cmd listener.return ping number].as_boolean||<def[essentials.ping]>>' id:gpa_gpu_config
+  # Generate/Regenerate config file
+  - log '' type:clear file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '#####################################################################################' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '#                                                                                   #' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '#                            GRANDPARTYUTILITIES CONFIG                             #' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '#                                                                                   #' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '#####################################################################################' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '# ' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '# Access to configurable options for all GrandPartyUtilities scripts. If you do not' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '# have a certain script, the respective option will do nothing.' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '# ' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '# ' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log 'general:' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '    enable debug: <yaml[gpa_gpu_config].read[general.enable debug]>' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log 'essentials cmd listener:' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '    add more functionality to clearinventory: <yaml[gpa_gpu_config].read[essentials cmd listener.add more functionality to clearinventory]>' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '    return ping number: ' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml

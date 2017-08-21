@@ -1,0 +1,82 @@
+###############################################################################
+#                                                                             #
+#                   GRANDPARTYUTILITIES: MC VERSION CHECKER                   #
+#                                                                             #
+###############################################################################
+# 
+# This script does not require "gpa_gpu_main.yml" to work.
+# 
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# This script simply returns a value representing the Minecraft version your
+# server is running.
+# 
+# This script is NOT dynamic. If you have a version that is between 1.8.8 and
+# the latest version and this script returns an incorrect value, PLEASE contact
+# MusicInsane on GitHub. Feel free to edit this script to add in values that
+# you need, but it would be appreciated if you made an issue or pull request on
+# the GrandPartyAddons GitHub regarding support of certain versions.
+# 
+# 
+# ----| HOW TO USE
+# 
+# Simply use the tag
+#   - <proc[gpu_versionCheck]>
+# 
+# This tag will automatically return a value based on the Spigot version you're
+# running. The values are as follows:
+#   - -1  : A version of Spigot unsupported by the latest Denizen Developmental
+#           build or is not detected by this script.
+#   - 0   : 1.8.8 (only the final Spigot build!)
+#   - 1   : 1.9
+#   - 2   : 1.9.2 to 1.9.4
+#   - 3   : 1.10 to 1.10.2
+#   - 4   : 1.11
+#   - 5   : 1.11.1 to 1.11.2
+#   - 6   : 1.12
+# 
+# 
+# ----| NOTES
+# 
+# The only reason why this script is not dynamic is because some Minecraft
+# updates have changes that causes it to be incompatible with the previous
+# update (for example, 1.11.1 adds Iron Nuggets while 1.11 does not have that
+# item). It's not possible to write a script that accurately predicts exactly
+# which Minecraft versions have incompatible features with previous versions.
+# 
+# 
+
+
+gpa_gpu_versionCheck:
+  type: procedure
+  debug: false
+  script:
+  - choose <server.bukkit_version.before[-]>:
+    - case 1.8.8:
+      - if '<server.version.before[ ]>' != 'git-Spigot-21fe707-e1ebe52' {
+        - determine '-1'
+      }
+      - determine '0'
+    - case 1.9:
+      - determine '1'
+    - case 1.9.2:
+      - determine '2'
+    - case 1.9.4:
+      - determine '2'
+    - case 1.10:
+      - determine '3'
+    - case 1.10.2:
+      - determine '3'
+    - case 1.11:
+      - determine '4'
+    - case 1.11.1:
+      - determine '5'
+    - case 1.11.2:
+      - determine '5'
+    - case 1.12:
+      - determine '6'
+    - case 1.12.1:
+      - determine '6'
+    - default:
+      - determine '-1'
