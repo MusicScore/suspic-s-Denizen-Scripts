@@ -19,6 +19,7 @@
 +-----------------------------------------------------------------------------|
   
   + Added in a safer spawn location checker. Well, as safe as it can get...
+  = Changed a few defaults in the config
   
   
 +-----------------------------------------------------------------------------|
