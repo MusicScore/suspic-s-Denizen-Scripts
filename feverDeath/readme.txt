@@ -49,6 +49,8 @@
   If the recovery phase is fully waited out without returning to Death's Door,
   the above debuffs will be removed.
   
+  The recovery phase effects can be stacked up to 6 times!
+  
   
   +======= Afterlife ======+
   
