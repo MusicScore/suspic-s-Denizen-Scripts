@@ -22,13 +22,6 @@
 #   + <p@player.flag[display_name.suffix]>
 #   + <p@player.flag[display_name.nickname]>
 # 
-# To simplify a location to the format "l@#.5,#.0,#.5,#.##,#.##,world", use
-# this tag:
-# 
-#   + <proc[gpa_gpu_locationSimplifier].context[<location>]>
-# 
-# Other than that, all features should work right out of the box.
-# 
 # 
 # ----| CAVEATS
 # 
@@ -46,7 +39,7 @@ gpa_gpu_MAIN:
     - execute as_server 'denizen save'
 
     on script reload:
-    - run gpa_gpu_config
+    - ~run gpa_gpu_config
     - if '<yaml[gpa_gpu_config].read[general.enable debug].not||false>' {
       - queue clear
     }
@@ -85,21 +78,21 @@ gpa_gpu_config:
   - define essentials.clear_func 'true'
   - define essentials.ping 'true'
   - if !<yaml.list.contains[gpa_gpu_config]> {
-    - yaml create id:gpa_gpu_config
+    - yaml create id:gpa_grandpartyutilities_config
   }
   - if <server.has_file[../GrandPartyAddons/GrandPartyUtilities/config.yml]||false> {
-    - yaml load:../GrandPartyAddons/GrandPartyUtilities/config.yml id:gpa_gpu_config
+    - yaml load:../GrandPartyAddons/GrandPartyUtilities/config.yml id:gpa_grandpartyutilities_config
     - if !<yaml.list.contains[gpa_gpu_config]> {
-      - yaml create id:gpa_gpu_config
+      - yaml create id:gpa_grandpartyutilities_config
     }
   }
   else {
-    - yaml savefile:../GrandPartyAddons/GrandPartyUtilities/config.yml id:gpa_gpu_config
+    - yaml savefile:../GrandPartyAddons/GrandPartyUtilities/config.yml id:gpa_grandpartyutilities_config
   }
   # Run through each value and see if any are invalid
-  - yaml set 'enable debug:<yaml[gpa_gpu_config].read[general.enable debug].as_boolean||<def[debug_enable]>>' id:gpa_gpu_config
-  - yaml set 'essentials cmd listener.add more functionality to clearinventory:<yaml[gpa_gpu_config].read[essentials cmd listener.add more functionality to clearinventory].as_boolean||<def[essentials.clear_func]>>' id:gpa_gpu_config
-  - yaml set 'essentials cmd listener.return ping number:<yaml[gpa_gpu_config].read[essentials cmd listener.return ping number].as_boolean||<def[essentials.ping]>>' id:gpa_gpu_config
+  - yaml set 'enable debug:<yaml[gpa_gpu_config].read[general.enable debug].as_boolean||<def[debug_enable]>>' id:gpa_grandpartyutilities_config
+  - yaml set 'essentials cmd listener.add more functionality to clearinventory:<yaml[gpa_gpu_config].read[essentials cmd listener.add more functionality to clearinventory].as_boolean||<def[essentials.clear_func]>>' id:gpa_grandpartyutilities_config
+  - yaml set 'essentials cmd listener.return ping number:<yaml[gpa_gpu_config].read[essentials cmd listener.return ping number].as_boolean||<def[essentials.ping]>>' id:gpa_grandpartyutilities_config
   # Generate/Regenerate config file
   - log '' type:clear file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '#####################################################################################' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
@@ -115,9 +108,13 @@ gpa_gpu_config:
   - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log 'general:' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '    # Prints out debug on loaded GrandPartyUtilities scripts when the main script is' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '    # reloaded via <&dq>/denizen reload<&dq>' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '    enable debug: <yaml[gpa_gpu_config].read[general.enable debug]>' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log 'essentials cmd listener:' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '    # Override /essentials:clearinventory to also clear armor and offhand slot' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '    add more functionality to clearinventory: <yaml[gpa_gpu_config].read[essentials cmd listener.add more functionality to clearinventory]>' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+  - log '    # Return a number when using /essentials:ping instead of returning <&dq>Pong!<&dq>.' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '    return ping number: ' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
