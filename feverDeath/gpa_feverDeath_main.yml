@@ -423,12 +423,6 @@ gpa_feverDeath_main:
         - define s_loc_safe '<def[s_loc_sc].get[1]||<def[s_loc]>>'
       }
       - if <def[al_bed]> {
-        - teleport <player> <player.bed_spawn.add[0.5,0,0.5]||<def[s_loc_safe]>>
-      }
-      else {
-        - teleport <player> <def[s_loc_safe]>
-      }
-      - if <def[al_bed]> {
         - determine passively '<player.bed_spawn.add[0.5,0,0.5]||<def[s_loc_safe]>>'
       }
       else {
