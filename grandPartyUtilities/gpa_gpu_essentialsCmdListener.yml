@@ -85,13 +85,22 @@ gpa_gpu_essentialsCmdListener:
       - queue clear
     }
     - if !<player.has_permission[essentials.clearinventory]||true> && !<context.server> {
-      - queue clear
+      - narrate '<&c>Error<&co> <&4>You do not have permission to clear inventories.'
+      - determine 'FULFILLED'
     }
     - if <context.args.get[1]||<player||null>> == '*' {
+      - if !<context.server> && !<player.has_permission[essentials.clearinventory.all]||false> {
+        - narrate '<&c>Error<&co> <&4>You do not have permission to clear all player<&sq> inventories.'
+        - determine 'FULFILLED'
+      }
       - define target '<server.list_online_players>'
     }
     else {
       - define target '<context.args.get[1].as_player||<player||null>>'
+      - if !<context.server> && <def[target]||null> != <player||null> && !<player.has_permission[essentials.clearinventory.others]||false> {
+        - narrate '<&c>Error<&co> <&4>You do not have permission to clear other player<&sq> inventories.'
+        - determine 'FULFILLED'
+      }
     }
     - if <context.server.and[<def[target].is_online.not||true>]> {
       - narrate '<&c>Error<&co> <&4>Player not found.'
@@ -99,46 +108,57 @@ gpa_gpu_essentialsCmdListener:
     }
     - if <li@*|**|null.contains[<context.args.get[2]||null>]> {
       - adjust <def[target]> 'inventory_contents:'
-      - determine 'FULFILLED'
     }
-    - if !<li@*|**.contains[<context.args.get[2]>]> && !<server.list_materials.exclude[air].include[*|**].contains[<context.args.get[2].before_last[:].as_material.name||null>]> {
+    else if !<li@*|**.contains[<context.args.get[2]>]> && !<server.list_materials.exclude[air].include[*|**].contains[<context.args.get[2].before_last[:].as_material.name||null>]> {
       - narrate '<&c>Error<&co> <&4>Unknown item name<&co> <context.args.get[2]>.'
-      - determine 'FULFILLED'
     }
-    - foreach <def[target].as_list> {
-      - define cl_t '<def[value]>'
-      - define cl_list 'li@'
-      - define cl_count '<context.args.get[3]||10000>'
-      - foreach <def[cl_t].inventory.list_contents> {
-        - if <def[value].material> == '<context.args.get[2].replace[:].with[,].as_material>' {
-          - if <def[cl_count]> == 0 {
-            - define cl_list '<def[cl_list].include[<def[value]>]>'
-          }
-          else if <def[cl_count]> < <def[value].quantity> {
-            - adjust <def[value]> 'quantity:<def[value].quantity.sub[<def[cl_count]>]>' 'save:ri'
-            - define cl_list '<def[cl_list].include[<entry[ri].result>]>'
-            - define cl_count '0'
-          }
-          else if <def[cl_count]> == <def[value].quantity> {
-            - define cl_list '<def[cl_list].include[i@air]>'
+    else {
+      - foreach <def[target].as_list> {
+        - define cl_t '<def[value]>'
+        - define cl_list 'li@'
+        - define cl_count '<context.args.get[3]||10000>'
+        - define cl_taken '0'
+        - foreach <def[cl_t].inventory.list_contents> {
+          - if <def[value].material> == '<context.args.get[2].replace[:].with[,].as_material>' {
+            - if <def[cl_count]> == 0 {
+              - define cl_list '<def[cl_list].include[<def[value]>]>'
+            }
+            else if <def[cl_count]> < <def[value].quantity> {
+              - adjust <def[value]> 'quantity:<def[value].quantity.sub[<def[cl_count]>]>' 'save:ri'
+              - define cl_list '<def[cl_list].include[<entry[ri].result>]>'
+              - define cl_taken '<def[cl_taken].add[<def[cl_count]>]>'
+              - define cl_count '0'
+            }
+            else if <def[cl_count]> == <def[value].quantity> {
+              - define cl_list '<def[cl_list].include[i@air]>'
+              - define cl_taken '<def[cl_taken].add[<def[cl_count]>]>'
+              - define cl_count '0'
+            }
+            else {
+              - define cl_count '<def[cl_count].sub[<def[value].quantity>]>'
+              - define cl_list '<def[cl_list].include[i@air]>'
+              - define cl_taken '<def[cl_taken].add[<def[value].quantity>]>'
+            }
           }
           else {
-            - define cl_count '<def[cl_count].sub[<def[value].quantity>]>'
-            - define cl_list '<def[cl_list].include[i@air]>'
+            - define cl_list '<def[cl_list].include[<def[value]>]>'
           }
+          - foreach next
+        }
+        - adjust <def[cl_t]> 'inventory_contents:<def[cl_list]>'
+        - if <server.list_materials.exclude[air].contains[<context.args.get[2].before_last[:].as_material.name||null>]> {
+          - narrate '<&6>Cleared <&a><def[cl_taken]> <context.args.get[2].before_last[:].as_material.name> <&6>from <def[cl_t].name>.'
         }
         else {
-          - define cl_list '<def[cl_list].include[<def[value]>]>'
+          - narrate '<&6>Cleared inventory of <def[cl_t].name>.'
         }
-        - foreach next
       }
-      - narrate '<def[cl_count]> <def[cl_list]>'
-      - adjust <def[cl_t]> 'inventory_contents:<def[cl_list]>'
     }
+    - mark 
+    - determine 'FULFILLED'
     ######################
     # /ci <player|*> <item:data|*|**> <amount>
     ######################
-    - determine 'FULFILLED'
 
     # Improve /ping
     on ping|echo|eecho|eping|pong|epong command:
