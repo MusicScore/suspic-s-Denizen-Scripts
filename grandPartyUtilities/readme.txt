@@ -115,10 +115,10 @@
   to the GitHub repository for all GrandPartyAddons at:
   https://github.com/MusicScore/Denizen-GrandPartyAddons/issues
   
-  When editing the FeverDeath addon, remember that GrandPartyMask is not liable
-  for any damage done to your server. The addon itself is always scripted to
-  be as harmless as possible. If your edited version does not react in expected
-  ways, please first find support in the Denizen Discord group before resorting
-  to GrandPartyMask himself.
+  When editing the GrandPartyUtilities addon, remember that GrandPartyMask is
+  not liable for any damage done to your server. The addon itself is always
+  scripted to be as harmless as possible. If your edited version does not react
+  in expected ways, please first find support in the Denizen Discord group
+  before resorting to GrandPartyMask himself.
   
   
