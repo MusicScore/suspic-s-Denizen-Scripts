@@ -154,7 +154,6 @@ gpa_gpu_essentialsCmdListener:
         }
       }
     }
-    - mark 
     - determine 'FULFILLED'
     ######################
     # /ci <player|*> <item:data|*|**> <amount>
