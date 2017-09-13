@@ -84,23 +84,8 @@
   
   You can use server version checker by using the procedure tag
   "<proc[gpu_versionCheck]>".
-  
-  
-+-----------------------------------------------------------------------------|
-|  Commands and Permissions                                                   |
-+-----------------------------------------------------------------------------|
-  
-  COMMANDS:
-    /feverdeath version
-      - prints the version of the addon
-    
-    /feverdeath reload
-      - reloads the configuration
-  
-  PERMISSIONS:
-    gpa.feverdeath.admin
-  
-  
+
+
 +-----------------------------------------------------------------------------|
 |  Bugs, Support, and Editing the GrandPartyUtilities Addon                   |
 +-----------------------------------------------------------------------------|
