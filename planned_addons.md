@@ -6,7 +6,7 @@ A list of planned addons that will be added to this repository.
 3. [Portal Catalyst](#portal-catalyst)
 4. [GrandRPG](#grandrpg)
 ## Advanced Lights
-Add more light sources using custom player heads. Most player heads will come from [Freshcoal Heads](heads.freshcoal.com), and other sources which will be given proper credit.
+Add more light sources using custom player heads. Most player heads will come from [Freshcoal Heads](https://heads.freshcoal.com), and other sources which will be given proper credit.
 - Candles and lanterns confirmed
 - Possible heads: *mini-glowstone, lava*
 - Perhaps add furniture-type light sources?
