@@ -1,22 +1,33 @@
 # Planned Addons
 A list of planned addons that will be added to this repository.
+## Table of Contents
+1. [Advanced Lights](#advanced-lights)
+2. [Nether Cult](#nether-cult)
+3. [Portal Catalyst](#portal-catalyst)
+4. [GrandRPG](#grandrpg)
 ## Advanced Lights
 Add more light sources using custom player heads. Most player heads will come from [Freshcoal Heads](heads.freshcoal.com), and other sources which will be given proper credit.
 - Candles and lanterns confirmed
 - Possible heads: *mini-glowstone, lava*
 - Perhaps add furniture-type light sources?
 - Possibly include custom crafting recipes, though support for this may have to be through a third-party plugin.
+
+[Back to Table](#table-of-contents)
 ## Nether Cult
 Let's get rid of those boring Nether Portals and instead make rituals!
 - Replace Nether Portals with ritualistic structures
 - Require certain procedures to open a portal to the Nether
 - Allow free passage from Nether to world, but not from world to Nether?
+
+[Back to Table](#table-of-contents)
 ## Portal Catalyst
 Teleportation items. How quaint.
 - Give support for [Nether Cult](#nether-cult) by adding a special teleportation item for returning from the Nether to the portal in the overworld
 - Basic teleportation item stuff.
 - Include "personal" teleportation items (react as Essentials /sethome and /home)
 - Add support for other teleportation plugins?
+
+[Back to Table](#table-of-contents)
 ## GrandRPG
 ### GrandRPG Base
 Add in a ton of things. Classes, races, tutorial areas, stats and leveling, etc.
@@ -38,3 +49,5 @@ Add more to [GrandRPG Item Lores](#grandrpg-item-lores) with skills being bound 
 - Planned default skills: *Leap, Smite, Fire/Ice/Wind/Earth/Light/Dark Bolt, Fire Ring, Ice Prison, Wind Cutter, Earthquake, Sanctuary (Light), Invisibility Cloak (Dark)*
 - More default skills TBD
 - Allow custom skills?
+
+[Back to Table](#table-of-contents)
