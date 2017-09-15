@@ -3,7 +3,7 @@ Scripts written in Denizen by me, for public use. This repository (as it should 
 
 If you wish to contact me, you can find me at the Denizen Discord group. The invite link is https://discord.gg/Q6pZGSR. I will be under the nickname of `suspic`.
 
-To find a list of planned addons, check out the [Planned Addons file](planned_addons.md).
+To find a list of planned addons, check out the [Planned Addons file](PLANNED_ADDONS.md).
 
 ## Pre-installation Notes
 Before installing any of these addons, you *must* have the latest version of **Denizen (Developmental)** installed. You can find it using this link: http://ci.citizensnpcs.co/job/Denizen_Developmental/
