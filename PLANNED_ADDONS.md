@@ -1,18 +1,9 @@
 # Planned Addons
 A list of planned addons that will be added to this repository.
 ## Table of Contents
-1. [Advanced Lights](#advanced-lights)
-2. [Nether Cult](#nether-cult)
-3. [Portal Catalyst](#portal-catalyst)
-4. [GrandRPG](#grandrpg)
-## Advanced Lights
-Add more light sources using custom player heads. Most player heads will come from [Freshcoal Heads](https://heads.freshcoal.com/maincollection.php), and other sources which will be given proper credit.
-- Candles and lanterns confirmed
-- Possible heads: *mini-glowstone, lava*
-- Perhaps add furniture-type light sources?
-- Possibly include custom crafting recipes, though support for this may have to be through a third-party plugin.
-
-[Back to Table](#table-of-contents)
+1. [Nether Cult](#nether-cult)
+2. [Portal Catalyst](#portal-catalyst)
+3. [GrandRPG](#grandrpg)
 ## Nether Cult
 Let's get rid of those boring Nether Portals and instead make rituals!
 - Replace Nether Portals with ritualistic structures
