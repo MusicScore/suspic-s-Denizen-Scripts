@@ -1,0 +1,85 @@
+gpa_advancedLights_data:
+  type: yaml data
+  items:
+    # Credits to Elsweyr's Decoration Heads Collection.
+    # https://www.spigotmc.org/resources/elsweyrs-decoration-heads-collections.20332/
+    white_candle:
+      skull_skin: 58ac3132-caf9-4c19-bcf5-bc4b06cdbfa1|eyJ0aW1lc3RhbXAiOjE0Mzc3MDA2MDU1NTgsInByb2ZpbGVJZCI6IjUwNzk4YjJhN2QxYjQxYTRiNmFlYzRiNWUwOWJjMTcxIiwicHJvZmlsZU5hbWUiOiJFbHN3ZXlyIiwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzIwNmNmYjc0ZjZjOTQ1MmVjYjkxNDJmYzU0M2U2YzljODM1MWJhYjk5N2QwZDhlMmI4ZThjNjZlYjNmNDQwIn19fQ==
+      light: 6
+      click: true
+      click_action: toggle
+      toggle_sound: ITEM_FIRECHARGE_USE|0.7|1.2
+      toggle_items:
+      - flint_and_steel
+      - fireball
+    # Credits to Elsweyr's Decoration Heads Collection.
+    # https://www.spigotmc.org/resources/elsweyrs-decoration-heads-collections.20332/
+    brown_candle:
+      skull_skin: 5189d181-3483-4cd8-85be-9a997d7e054e|eyJ0aW1lc3RhbXAiOjE0Mzc3MDExOTMzMDYsInByb2ZpbGVJZCI6IjUwNzk4YjJhN2QxYjQxYTRiNmFlYzRiNWUwOWJjMTcxIiwicHJvZmlsZU5hbWUiOiJFbHN3ZXlyIiwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzJhNmUyZWY1Y2ZkNTc0ZjRlZTZiZDhmZTA5MGEyZWYxYTZiNTY2ZTgzNTRkMGM0MDNjYjUyYzFhOTJhMWQifX19
+      light: 6
+      click: true
+      click_action: toggle
+      toggle_sound: ITEM_FIRECHARGE_USE|0.7|1.2
+      toggle_items:
+      - flint_and_steel
+      - fireball
+    # Credits to Freshcoal Heads
+    # http://heads.freshcoal.com/maincollection.php
+    ivory_candle:
+      skull_skin: 95e5e32c-f380-4764-a69d-26e8d812e39a|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2FjYzYxNjY2YWRmMWU0Y2Q3Y2Y1N2FmM2UxZTE3YmExNzMxMGIyZmNkOGUzZWQyN2NmODhiN2QwZDg4NTE4In19fQ==
+      light: 6
+      click: true
+      click_action: toggle
+      toggle_sound: ITEM_FIRECHARGE_USE|0.7|1.2
+      toggle_items:
+      - flint_and_steel
+      - fireball
+    # Credits to Freshcoal Heads
+    # http://heads.freshcoal.com/maincollection.php
+    red_candle:
+      skull_skin: 4236d8b5-9918-48ff-a420-db5223af5f82|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2VhYTU1ZjQzZTVlM2FkNDliMTE0MGRmMjQ4NjYyNmNmOWYxMWRmYWY3NmYxYjI3OGI1ZDkzYmY0ZWRmMTI0In19fQ==
+      light: 6
+      click: true
+      click_action: toggle
+      toggle_sound: ITEM_FIRECHARGE_USE|0.7|1.2
+      toggle_items:
+      - flint_and_steel
+      - fireball
+    # Credits to Freshcoal Heads
+    # http://heads.freshcoal.com/maincollection.php
+    paper_lantern:
+      skull_skin: edaaead3-ca5d-43cb-8b76-ec8e8a90164f|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjYyODNlN2E4OGQzMjcxOTMwNGEzN2VkZTBjNmE4YzVkYzlkOWNmOWIwMGExNzljZjkwNGU4Y2U4MjEzMTIifX19
+      light: 8
+      click: false
+    # Credits to Elsweyr's Decoration Heads Collection.
+    # https://www.spigotmc.org/resources/elsweyrs-decoration-heads-collections.20332/
+    metal_lantern:
+      skull_skin: 8cdbdfd5-bb9a-4e3e-9786-47169f1e40f3|eyJ0aW1lc3RhbXAiOjE0MzQ5NTIzOTg2MjgsInByb2ZpbGVJZCI6IjUwNzk4YjJhN2QxYjQxYTRiNmFlYzRiNWUwOWJjMTcxIiwicHJvZmlsZU5hbWUiOiJFbHN3ZXlyIiwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2M1NTMzMWZmYmExZGQzYWY4YmQ2OTQ2MjM2NmQ1MTVhNTNlOTRlOWIzYWU1OTQ1MTdkYmU1MzIzYWFkN2UifX19
+      light: 10
+      click: false
+    # Credits to Elsweyr's Decoration Heads Collection.
+    # https://www.spigotmc.org/resources/elsweyrs-decoration-heads-collections.20332/
+    oriental_lantern:
+      skull_skin: e6268607-956a-4e8b-b09f-44a648932526|eyJ0aW1lc3RhbXAiOjE0MzQ5NTI1NjkyNzgsInByb2ZpbGVJZCI6IjUwNzk4YjJhN2QxYjQxYTRiNmFlYzRiNWUwOWJjMTcxIiwicHJvZmlsZU5hbWUiOiJFbHN3ZXlyIiwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzVlZTU5MTk0NDhiNjQ0Y2I2NzEwYTI4MzNkNGJmYzZlZWNkOTU1MzMzY2IzNTFiODg0NzQ2Nzc2YmI2MDdlMSJ9fX0=
+      light: 11
+      click: false
+    # Credits to Freshcoal Heads
+    # http://heads.freshcoal.com/maincollection.php
+    electric_lantern:
+      skull_skin: 8c0662db-972a-4039-a360-3dc1a938390d|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2NjMjE3YTliOWUzY2UzY2QwNDg0YzdlOGNlNDlkMWNmNzQxMjgxYmRkYTVhNGQ2Y2I4MjFmMzc4NzUyNzE4In19fQ==
+      light: 13
+      click: true
+      click_action: toggle
+      toggle_sound: UI_BUTTON_CLICK|1.3|1
+      toggle_items: none
+    # Credits to Freshcoal Heads
+    # http://heads.freshcoal.com/maincollection.php
+    lava_bucket:
+      skull_skin: 511af44d-67f6-44e7-a3c2-64d844cd3954|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGQ1NDI3YTgzNTQwYTA4YTNmYTJlNjU1YzI5NjRhMDcyNDM1MTQ1ODRhNzFlYzM1ZDZiOWUxODRkZmJlMzE4In19fQ==
+      light: 15
+      click: true
+      click_action: pickup
+      pickup_item: lava_bucket
+      pickup_sound: ITEM_BUCKET_FILL_LAVA|1
+      drops:
+      - lava_bucket

@@ -1,0 +1,71 @@
+gpa_advancedLights_cmd:
+  type: command
+  debug: false
+  name: advancedlights
+  description: Accesses the AdvancedLights commands.
+  aliases:
+  - al
+  - alights
+  usage: /advancedlights <&lt>help|give<&gt> (light name)
+  # Add a config later down the line?
+  allowed_help:
+  - determine <player.has_permission[gpa.advancedlights].OR[<player.is_op>].OR[<context.server>]>
+  tab complete:
+  - if <context.server> {
+    - queue clear
+  }
+  - define si '<context.raw_args.to_list.count[ ]>'
+  #- define al 'li@'
+  - if <player.has_permission[gpa.advancedlights]> {
+    #- if <player.has_permission[gpa.advancedlights.give]> {
+    #  - define al '<def[al].include[give]>'
+    #}
+    #- define al '<def[al].include[help]>'
+    - define al 'li@help|give'
+  }
+  - if <def[si]> == 0 {
+    - determine '<def[al].filter[starts_with[<context.args.get[1]||>]]>'
+  }
+  - if <player.has_permission[gpa.advancedlights.give]> || <player.is_op> || <context.server> {
+    - if '<context.raw_args.starts_with[give ]>' && <def[si]> == 1 {
+      - determine '<s@gpa_advancedLights_data.list_keys[items].filter[starts_with[<context.args.get[2]||>]]>'
+    }
+    - if '<context.raw_args.starts_with[give ]>' && <def[si]> == 3 {
+      - determine '<server.list_online_players.parse[name].filter[starts_with[<context.args.get[4]||>]]>'
+    }
+  }
+  script:
+  - choose <context.args.get[1]||null>:
+    - case help:
+      - narrate '<&e>======== <&6>AdvancedLights Help <&e>========'
+      - narrate '<&f>/advancedlights help<&r><&nl><&7>Displays this help page.'
+      #- narrate '<&f>/advancedlights reload<&r><&nl><&7>Reloads the AdvancedLights config.<&nl><&7>Data files must be reloaded via <&dq>/denizen reload scripts<&dq>.'
+      - narrate '<&f>/advancedlights give <&lt>item_name<&gt> (quantity) (player) <&r><&nl><&7>Gives an AdvancedLights item to the specified player.'
+    #- case reload:
+    - case give:
+      - if <context.args.get[2]||null> == null {
+        - narrate '<&c>Please specify an item.' format:gpa_advancedLights_cmd_chat_format
+        - queue clear
+      }
+      - if !<s@gpa_advancedLights_data.list_keys[items].contains[<context.args.get[2]||null>]> {
+        - narrate '<&c>Invalid item name.' format:gpa_advancedLights_cmd_chat_format
+        - queue clear
+      }
+      - define a3 '<context.args.get[3]||1>'
+      - if <def[a3].mod[1]||1> != 0 || <def[a3].contains_text[.]> {
+        - narrate '<&c>Invalid item amount.' format:gpa_advancedLights_cmd_chat_format
+        - queue clear
+      }
+      - define a4 '<context.args.get[4]||<player.name>>'
+      - if !<server.list_online_players.parse[name].contains[<def[a4]>]> {
+        - narrate '<&c>Invalid player.' format:gpa_advancedLights_cmd_chat_format
+        - queue clear
+      }
+      - give 'i@human_skull[skull_skin=<s@gpa_advancedLights_data.yaml_key[items.<context.args.get[2]>.skull_skin]>;display_name=&ssf<context.args.get[2].replace[_].with[ ].to_titlecase>]' qty:<def[a3]> to:<def[a4].as_player.inventory>
+    - default:
+      - narrate '<&c>Use <&4>/advancedlights help<&c> for help.' format:gpa_advancedLights_cmd_chat_format
+
+gpa_advancedLights_cmd_chat_format:
+  type: format
+  debug: false
+  format: <&f>[<&6>Advanced<&e>Lights<&f>] <&r><text>

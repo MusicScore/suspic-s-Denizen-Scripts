@@ -1,0 +1,100 @@
+gpa_advancedLights_main:
+  type: world
+  debug: false
+  events:
+    on server start:
+    - wait 5s
+    - foreach <server.list_flags[gpa.advancedLights.]> {
+      - define f '<def[value]>'
+      - foreach <server.flag[<def[f]>].as_list||li@> {
+        - light <def[value]> <def[f].after[gpa.advancedLights.]>
+      }
+    }
+    on player places skull:
+    - if <context.item_in_hand.material> != m@human_skull || <context.cancelled> {
+      - queue clear
+    }
+    - foreach <s@gpa_advancedLights_data.list_keys[items]> {
+      - if <player.item_in_hand.skin.full||null> != <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]> {
+        - foreach next
+      }
+      - light <context.location> <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]>
+      - flag server 'gpa.advancedLights.<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]>:->:<context.location>'
+      - foreach stop
+    }
+    - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
+    - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+    on player breaks skull:
+    - if <context.location.skull_type||null> != 'PLAYER' || <context.cancelled> {
+      - queue clear
+    }
+    - foreach <server.list_flags[gpa.advancedLights.]> {
+      - if <server.flag[<def[value]>].as_list.contains[<context.location>]||false> {
+        - light <context.location> reset
+        - flag server '<def[value]>:<-:<context.location>'
+      }
+    }
+    - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
+    - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+    - foreach <s@gpa_advancedLights_data.list_keys[items]> {
+      - if <player.item_in_hand.skin.full||null> != <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]> {
+        - foreach next
+      }
+      - if <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.drops].as_list.parse[as_item].exclude[null].size||0> > 0 {
+        - determine passively '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.drops].as_list>'
+      }
+    }
+    on player right clicks skull using hand:
+    - if <context.cancelled> {
+      - queue clear
+    }
+    - foreach <s@gpa_advancedLights_data.list_keys[items]> {
+      - if <context.location.skull_skin.full||null> != <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]> {
+        - foreach next
+      }
+      - if <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.click]||false> {
+        - define li_lvl '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]>'
+        - define cl '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.click_action]||null>'
+        - if <def[cl]> == 'pickup' {
+          - define p_i '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.pickup_item].as_item>'
+          - define p_s '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.pickup_sound].as_list>'
+          - if <player.inventory.can_fit[<def[p_i]>]> {
+            - give <def[p_i]>
+            - modifyblock <context.location> m@air
+            - light <context.location> reset
+            - flag server 'gpa.advancedLights.<def[li_lvl]>:<-:<context.location>'
+            - playsound <context.location> 'sound:<def[p_s].get[1]>' pitch:<def[p_s].get[2]>
+          }
+        }
+        else if <def[cl]> == 'toggle' {
+          - determine passively 'CANCELLED'
+          - define t_s '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.toggle_sound].as_list>'
+          - if <server.flag[gpa.advancedLights.<def[li_lvl]>].as_list.contains[<context.location>]||false> {
+            - light <context.location> reset
+            - flag server 'gpa.advancedLights.<def[li_lvl]>:<-:<context.location>'
+            - playsound <context.location.center> 'sound:<def[t_s].get[1]>' volume:1 pitch:<def[t_s].get[3]>
+          }
+          else {
+            - define t_li '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.toggle_items].as_list||li@>'
+            - define c_h '<def[t_li].exclude[none].parse[as_material.name].contains[<player.item_in_hand.material.name>]||false>'
+            - if <def[t_li].contains[none]> || <def[c_h]> {
+              - light <context.location> <def[li_lvl]>
+              - flag server 'gpa.advancedLights.<def[li_lvl]>:->:<context.location>'
+              - if <def[c_h]> && <player.item_in_hand.max_durability||0> > 0 && <player.item_in_hand.durability.add_int[1]||1> < <player.item_in_hand.max_durability||0> && <li@0|2.contains[<player.gamemode.id>]> {
+                - adjust <player.item_in_hand> 'durability:<player.item_in_hand.durability.add_int[1]>' save:tiu
+                - adjust <player> 'item_in_hand:<entry[tiu].result>'
+              }
+              else {
+                - if <li@0|2.contains[<player.gamemode.id>]> {
+                  - take iteminhand
+                }
+              }
+              - playsound <context.location.center> 'sound:<def[t_s].get[1]>' volume:1 pitch:<def[t_s].get[2]>
+            }
+          }
+        }
+      }
+      - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
+      - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+      - foreach stop
+    }
