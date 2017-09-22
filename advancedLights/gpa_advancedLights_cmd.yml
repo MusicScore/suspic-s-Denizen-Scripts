@@ -27,14 +27,14 @@ gpa_advancedLights_cmd:
     - define al 'li@help|give'
   }
   - if <def[si]> == 0 {
-    - determine '<def[al].filter[starts_with[<context.args.get[1]||null>]]>'
+    - determine '<def[al].filter[starts_with[<context.args.get[1]||>]]>'
   }
   - if <player.has_permission[gpa.advancedlights.give]> || <player.is_op> || <context.server> {
     - if '<context.raw_args.starts_with[give ]>' && <def[si]> == 1 {
-      - determine '<s@gpa_advancedLights_data.list_keys[items].filter[starts_with[<context.args.get[2]||null>]]>'
+      - determine '<s@gpa_advancedLights_data.list_keys[items].filter[starts_with[<context.args.get[2]||>]]>'
     }
     - if '<context.raw_args.starts_with[give ]>' && <def[si]> == 3 {
-      - determine '<server.list_online_players.parse[name].filter[starts_with[<context.args.get[4]||null>]]>'
+      - determine '<server.list_online_players.parse[name].filter[starts_with[<context.args.get[4]||>]]>'
     }
   }
   script:
