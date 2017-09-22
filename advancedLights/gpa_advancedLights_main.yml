@@ -86,13 +86,14 @@ gpa_advancedLights_main:
             - if <def[t_li].contains[none]> || <def[c_h]> {
               - light <context.location> <def[li_lvl]>
               - flag server 'gpa.advancedLights.<def[li_lvl]>:->:<context.location>'
-              - if !<def[t_li].contains[none]||true> && <def[c_h]> && <player.item_in_hand.durability.add_int[1]||1> < <player.item_in_hand.max_durability||0> && <li@0|2.contains[<player.gamemode.id>]> {
-                - adjust <player.item_in_hand> 'durability:<player.item_in_hand.durability.add_int[1]>' save:tiu
-                - adjust <player> 'item_in_hand:<entry[tiu].result>'
-              }
-              else if !<def[t_li].contains[none]||false> && <def[c_h]> && <player.item_in_hand.durability.add_int[1]||1> < <player.item_in_hand.max_durability||0> && <li@0|2.contains[<player.gamemode.id>]> {
-                - take iteminhand
-              }
+              - if <def[c_h]> && <player.item_in_hand.durability.add_int[1]||1> < <player.item_in_hand.max_durability||0> && <li@0|2.contains[<player.gamemode.id>]> {
+                - if <def[t_li].contains[none]||true> {
+                  - take iteminhand
+                }
+                else {
+                  - adjust <player.item_in_hand> 'durability:<player.item_in_hand.durability.add_int[1]>' save:tiu
+                  - adjust <player> 'item_in_hand:<entry[tiu].result>'
+                }
               - playsound <context.location.center> 'sound:<def[t_s].get[1]>' volume:1 pitch:<def[t_s].get[2]>
             }
           }
