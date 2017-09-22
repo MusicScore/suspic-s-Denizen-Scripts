@@ -64,23 +64,39 @@ gpa_advancedLights_main:
       - define li_lvl '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]>'
       - define cl '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.click_action]||null>'
       - if <def[cl]> == 'pickup' {
-        - define p_i '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.pickup_item].as_item>'
-        - define p_s '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.pickup_sound].as_list>'
+        - define p_i '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.pickup_item].as_item||i@stone>'
+        - define p_s '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.pickup_sound].as_list||li@>'
         - if <player.inventory.can_fit[<def[p_i]>]> {
           - give <def[p_i]>
           - modifyblock <context.location> m@air
           - light <context.location> reset
           - flag server 'gpa.advancedLights.<def[li_lvl]>:<-:<context.location>'
-          - playsound <context.location> 'sound:<def[p_s].get[1]||UI_BUTTON_CLICK>' pitch:<def[p_s].get[2]||1>
+          - if <def[p_s].is_empty> {
+            - if <proc[gpa_gpu_versionCheck]> > 0 {
+              - define p_s 'UI_BUTTON_CLICK|1'
+            }
+            else {
+              - define p_s 'CLICK|1'
+            }
+          }
+          - playsound <context.location> 'sound:<def[p_s].get[1]>' pitch:<def[p_s].get[2]>
         }
       }
       else if <def[cl]> == 'toggle' {
         - determine passively 'CANCELLED'
-        - define t_s '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.toggle_sound].as_list>'
+        - define t_s '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.toggle_sound].as_list||li@>'
+        - if <def[p_s].is_empty> {
+          - if <proc[gpa_gpu_versionCheck]> > 0 {
+          - define p_s 'UI_BUTTON_CLICK|1|1'
+          }
+          else {
+          - define p_s 'CLICK|1|1'
+          }
+        }
         - if <server.flag[gpa.advancedLights.<def[li_lvl]>].as_list.contains[<context.location>]||false> {
           - light <context.location> reset
           - flag server 'gpa.advancedLights.<def[li_lvl]>:<-:<context.location>'
-          - playsound <context.location.center> 'sound:<def[t_s].get[1]||UI_BUTTON_CLICK>' volume:1 pitch:<def[t_s].get[3]||1>
+          - playsound <context.location.center> 'sound:<def[t_s].get[1]>' volume:1 pitch:<def[t_s].get[3]>
         }
         else {
           - define t_li '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.toggle_items].as_list||li@>'
@@ -96,7 +112,7 @@ gpa_advancedLights_main:
                 - adjust <player.item_in_hand> 'durability:<player.item_in_hand.durability.add_int[1]>' save:tiu
                 - adjust <player> 'item_in_hand:<entry[tiu].result>'
               }
-              - playsound <context.location.center> 'sound:<def[t_s].get[1]||UI_BUTTON_CLICK>' volume:1 pitch:<def[t_s].get[2]||1>
+              - playsound <context.location.center> 'sound:<def[t_s].get[1]>' volume:1 pitch:<def[t_s].get[2]>
             }
           }
         }
