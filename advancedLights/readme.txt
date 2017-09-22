@@ -40,6 +40,7 @@
   
   Required dependencies:
   - Denizen (plugin)
+  - GrandPartyUtilities Version Checker (script)
   Optional dependencies:
   - none
   
