@@ -22,7 +22,7 @@
 # ----| HOW TO USE
 # 
 # Simply use the tag
-#   - <proc[gpu_versionCheck]>
+#   - <proc[gpa_gpu_versionCheck]>
 # 
 # This tag will automatically return a value based on the Spigot version you're
 # running. The values are as follows:
