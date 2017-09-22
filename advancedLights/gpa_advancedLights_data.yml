@@ -1,3 +1,72 @@
+################################################################################
+#                                                                              #
+#                              ADVANCEDLIGHTS DATA                             #
+#                                                                              #
+################################################################################
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# This script serves to store data regarding the custom skulls that
+# AdvancedLights uses.
+# 
+# 
+# ----| HOW TO ADD MORE SKULLS
+# 
+# The general syntax is as follows:
+# 
+#   item_name:
+#     skull_skin: <uuid>|<skin cache>
+#     light: #
+#     click: true/false
+#     click_action: <action>
+#     toggle_sound: <Spigot sound name>|<pitch on turning light on>|<pitch on turning light off>
+#     toggle items:
+#     - <item>
+#     - <item>
+#     ...
+#     pickup_item: <Spigot item enum>
+#     pickup_sound: <Spigot sound name>|<pitch>
+#     drops:
+#     - <item>|none
+#     - <item>
+#     ...
+#   
+# A quick explanation of each line:
+# 
+#   item_name: The item's registered name. Underscores are replaced with spaces.
+#   skull_skin: Requires a player UUID and a player skin cache/textureID.
+#   light: The light level of the skull. Torches are typically around 7.
+#   click: Whether or not to register players' clicks on the placed skull.
+#   click_action: What to do if "click" is enabled. Available actions are:
+#                 - toggle (turns light on and off)
+#                 - pickup (removes the placed skull and gives the player an
+#                   item)
+#   toggle_sound: The sound to play if "click_action" is "toggle", with two
+#                 pitches to specify the sound's pitch upon turning the light
+#                 on and off, in order. If not specified, defaults to
+#                 "UI_BUTTON_CLICK" (1.9+) or "CLICK" (1.8.8) with a pitch of 1.
+#   toggle_items: List of valid Spigot items required to turn the light on if
+#                 "click_action" is "toggle".
+#                 If the item has durability, the durability decreases. If the
+#                 item doesn't have durability or reaches 0 durability, the item
+#                 is simply taken away.
+#   pickup_item: The item to give if "click_action" is "pickup". Must be a valid
+#                Spigot item name.
+#   pickup_sound: The sound to play if "click_action" is "pickup", with one
+#                 optional number to specify pitch. If not specified, defaults
+#                 to "UI_BUTTON_CLICK" (1.9+) or "CLICK" (1.8.8) with a pitch of
+#                 1.
+#   drops: List of valid Spigot items to drop. Include "self" to make the skull
+#          drop itself when broken.
+# 
+# Not specifying required keys will result in the script attempting to apply
+# predetermined default values, causing skulls to react in ways not expected.
+# Practice caution when adding new values or editing old ones, and please ask
+# for help if you have no idea what you're doing.
+# 
+# 
+
+
 gpa_advancedLights_data:
   type: yaml data
   items:
