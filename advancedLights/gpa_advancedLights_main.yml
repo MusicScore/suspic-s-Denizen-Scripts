@@ -18,8 +18,8 @@ gpa_advancedLights_main:
       - if <player.item_in_hand.skin.full||null> != <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]> {
         - foreach next
       }
-      - light <context.location> <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]>
-      - flag server 'gpa.advancedLights.<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]>:->:<context.location>'
+      - light <context.location> <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]||1>
+      - flag server 'gpa.advancedLights.<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]||1>:->:<context.location>'
       - foreach stop
     }
     - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
@@ -44,7 +44,7 @@ gpa_advancedLights_main:
         - foreach next
       }
       - define d_l '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.drops].as_list||li@>'
-      - if <def[d_l].contains[self]||false> {
+      - if <def[d_l].contains[self]||true> {
         - define self_skull 'i@human_skull[display_name=&ssf<def[value].replace[_].with[ ].to_titlecase>;skull_skin=<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]>]'
         - define d_l '<def[d_l].exclude[self].parse[as_item].include[<def[self_skull]>]>'
       }
@@ -61,7 +61,7 @@ gpa_advancedLights_main:
       - if !<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.click]||false> {
         - queue clear
       }
-      - define li_lvl '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]>'
+      - define li_lvl '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]||1>'
       - define cl '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.click_action]||null>'
       - if <def[cl]> == 'pickup' {
         - define p_i '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.pickup_item].as_item||i@stone>'
@@ -72,7 +72,7 @@ gpa_advancedLights_main:
           - light <context.location> reset
           - flag server 'gpa.advancedLights.<def[li_lvl]>:<-:<context.location>'
           - if <def[p_s].is_empty> {
-            - if <proc[gpa_gpu_versionCheck]> > 0 {
+            - if <proc[gpa_gpu_versionCheck]||1> > 0 {
               - define p_s 'UI_BUTTON_CLICK|1'
             }
             else {
@@ -86,7 +86,7 @@ gpa_advancedLights_main:
         - determine passively 'CANCELLED'
         - define t_s '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.toggle_sound].as_list||li@>'
         - if <def[p_s].is_empty> {
-          - if <proc[gpa_gpu_versionCheck]> > 0 {
+          - if <proc[gpa_gpu_versionCheck]||1> > 0 {
           - define p_s 'UI_BUTTON_CLICK|1|1'
           }
           else {
