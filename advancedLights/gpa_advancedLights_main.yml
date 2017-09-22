@@ -6,14 +6,19 @@
 # 
 # ----| ABOUT THIS SCRIPT
 # 
-# Performs most of the main functions for AdvancedLights.
+# Performs most of the main functions for AdvancedLights. Includes creating
+# lights and registering the click event.
 # 
 # 
-# ----|
+# ----| CAVEAT
 # 
-# []
+# Due to the nature of this addon, any skull with the skins specified by the
+# "gpa_advancedLights_data" script will be included in the script's functions.
+# There is currently no way around it.
 # 
 # 
+
+
 gpa_advancedLights_main:
   type: world
   debug: false

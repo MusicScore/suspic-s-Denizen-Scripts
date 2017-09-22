@@ -1,3 +1,30 @@
+################################################################################
+#                                                                              #
+#                            ADVANCEDLIGHTS COMMAND                            #
+#                                                                              #
+################################################################################
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# Adds the /advancedlights command in-game.
+# 
+# 
+# ----| USAGE
+# 
+# COMMANDS:
+#   + /advancedlights help
+#     - Displays the help message.
+#   + /advancedlights give <item_name> (quantity) (player)
+#     - Gives a custom light to an optionally specified player, or the player
+#       who ran the command.
+# 
+# PERMISSIONS:
+#   + gpa.advancedlights
+#     - allows use of /advancedlights
+# 
+# 
+
+
 gpa_advancedLights_cmd:
   type: command
   debug: false
