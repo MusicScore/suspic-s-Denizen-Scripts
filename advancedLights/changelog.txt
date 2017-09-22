@@ -15,6 +15,20 @@
   
   
 +-----------------------------------------------------------------------------|
+|  v0.1.1                                                                     |
++-----------------------------------------------------------------------------|
+  
+  + Quick, add in something to rename the items when the players try to pick
+    up placed lights!
+  
+  = Known issues
+    - [N/A] Flint and Steel still makes a sound when used on the
+            AdvancedLights skulls. We need to find a way to silence it...
+
+
+  
+  
++-----------------------------------------------------------------------------|
 |  v0.1 : Initial release                                                     |
 +-----------------------------------------------------------------------------|
   
