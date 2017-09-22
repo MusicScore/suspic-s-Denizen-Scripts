@@ -1,3 +1,19 @@
+################################################################################
+#                                                                              #
+#                              ADVANCEDLIGHTS MAIN                             #
+#                                                                              #
+################################################################################
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# Performs most of the main functions for AdvancedLights.
+# 
+# 
+# ----|
+# 
+# []
+# 
+# 
 gpa_advancedLights_main:
   type: world
   debug: false
