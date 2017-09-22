@@ -106,12 +106,12 @@ gpa_advancedLights_main:
       else if <def[cl]> == 'toggle' {
         - determine passively 'CANCELLED'
         - define t_s '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.toggle_sound].as_list||li@>'
-        - if <def[p_s].is_empty> {
+        - if <def[t_s].is_empty> {
           - if <proc[gpa_gpu_versionCheck]||1> > 0 {
-          - define p_s 'UI_BUTTON_CLICK|1|1'
+            - define t_s 'UI_BUTTON_CLICK|1|1'
           }
           else {
-          - define p_s 'CLICK|1|1'
+            - define t_s 'CLICK|1|1'
           }
         }
         - if <server.flag[gpa.advancedLights.<def[li_lvl]>].as_list.contains[<context.location>]||false> {
@@ -133,8 +133,8 @@ gpa_advancedLights_main:
                 - adjust <player.item_in_hand> 'durability:<player.item_in_hand.durability.add_int[1]>' save:tiu
                 - adjust <player> 'item_in_hand:<entry[tiu].result>'
               }
-              - playsound <context.location.center> 'sound:<def[t_s].get[1]>' volume:1 pitch:<def[t_s].get[2]>
             }
+            - playsound <context.location.center> 'sound:<def[t_s].get[1]>' volume:1 pitch:<def[t_s].get[2]>
           }
         }
       }

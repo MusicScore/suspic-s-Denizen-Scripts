@@ -43,7 +43,7 @@ gpa_advancedLights_cmd:
   }
   - define si '<context.raw_args.to_list.count[ ]>'
   - define al 'li@'
-  - if !<player.has_permission[gpa.advancedlights]> {
+  - if !<player.has_permission[gpa.advancedlights].OR[<player.is_op>.OR[<context.server>]> {
     - queue clear
   }
   else {
