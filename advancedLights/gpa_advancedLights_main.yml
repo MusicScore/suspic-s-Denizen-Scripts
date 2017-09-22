@@ -45,22 +45,10 @@ gpa_advancedLights_main:
       }
       - define d_l '<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.drops].as_list||li@>'
       - if <def[d_l].contains[self]||false> {
-        - define self_skull 'i@human_skull[skull_skin=<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]>]'
+        - define self_skull 'i@human_skull[display_name=&ssf<def[value].replace[_].with[ ].to_titlecase>;skull_skin=<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]>]'
         - define d_l '<def[d_l].exclude[self].parse[as_item].include[<def[self_skull]>]>'
       }
       - determine passively '<def[d_l]>'
-    }
-    on player picks up human_skull:
-    - if <context.cancelled> {
-      - queue clear
-    }
-    - foreach <s@gpa_advancedLights_data.list_keys[items]> {
-      - if <context.item.skin.full||null> != <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]> {
-        - foreach next
-      }
-      - if !<context.item.has_display||false> {
-        - determine 'ITEM:i@human_skull[display_name=&ssf<def[value].replace[_].with[ ].to_titlecase>;skull_skin=<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]>]'
-      }
     }
     on player right clicks skull using hand:
     - if <context.cancelled> {
