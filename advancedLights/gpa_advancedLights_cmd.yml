@@ -15,8 +15,11 @@ gpa_advancedLights_cmd:
     - queue clear
   }
   - define si '<context.raw_args.to_list.count[ ]>'
-  #- define al 'li@'
-  - if <player.has_permission[gpa.advancedlights]> {
+  - define al 'li@'
+  - if !<player.has_permission[gpa.advancedlights]> {
+    - queue clear
+  }
+  else {
     #- if <player.has_permission[gpa.advancedlights.give]> {
     #  - define al '<def[al].include[give]>'
     #}
@@ -24,14 +27,14 @@ gpa_advancedLights_cmd:
     - define al 'li@help|give'
   }
   - if <def[si]> == 0 {
-    - determine '<def[al].filter[starts_with[<context.args.get[1]||>]]>'
+    - determine '<def[al].filter[starts_with[<context.args.get[1]||null>]]>'
   }
   - if <player.has_permission[gpa.advancedlights.give]> || <player.is_op> || <context.server> {
     - if '<context.raw_args.starts_with[give ]>' && <def[si]> == 1 {
-      - determine '<s@gpa_advancedLights_data.list_keys[items].filter[starts_with[<context.args.get[2]||>]]>'
+      - determine '<s@gpa_advancedLights_data.list_keys[items].filter[starts_with[<context.args.get[2]||null>]]>'
     }
     - if '<context.raw_args.starts_with[give ]>' && <def[si]> == 3 {
-      - determine '<server.list_online_players.parse[name].filter[starts_with[<context.args.get[4]||>]]>'
+      - determine '<server.list_online_players.parse[name].filter[starts_with[<context.args.get[4]||null>]]>'
     }
   }
   script:
