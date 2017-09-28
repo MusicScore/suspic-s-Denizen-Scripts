@@ -34,7 +34,7 @@
 #   - 3   : 1.10 to 1.10.2
 #   - 4   : 1.11
 #   - 5   : 1.11.1 to 1.11.2
-#   - 6   : 1.12
+#   - 6   : 1.12 to 1.12.2
 # 
 # 
 # ----| NOTES
@@ -77,6 +77,8 @@ gpa_gpu_versionCheck:
     - case 1.12:
       - determine '6'
     - case 1.12.1:
+      - determine '6'
+    - case 1.12.2:
       - determine '6'
     - default:
       - determine '-1'
