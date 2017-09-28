@@ -43,7 +43,13 @@ gpa_advancedLights_main:
       - flag server 'gpa.advancedLights.<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]||1>:->:<context.location>'
       - foreach stop
     }
-    - if <proc[gpa_gpu_versionCheck]||0> <= 0 {
+    - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
+      - define v '<proc[gpa_gpu_versionCheck]||1>'
+    }
+    else {
+      - define v '1'
+    }
+    - if <def[v]> < 1 {
       - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
       - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
     }
@@ -57,7 +63,13 @@ gpa_advancedLights_main:
         - flag server '<def[value]>:<-:<context.location>'
       }
     }
-    - if <proc[gpa_gpu_versionCheck]||0> <= 0 {
+    - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
+      - define v '<proc[gpa_gpu_versionCheck]||1>'
+    }
+    else {
+      - define v '1'
+    }
+    - if <def[v]> < 1 {
       - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
       - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
     }
@@ -142,7 +154,13 @@ gpa_advancedLights_main:
           }
         }
       }
-      - if <proc[gpa_gpu_versionCheck]||0> <= 0 {
+      - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
+        - define v '<proc[gpa_gpu_versionCheck]||1>'
+      }
+      else {
+        - define v '1'
+      }
+      - if <def[v]> < 1 {
         - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
         - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
       }
