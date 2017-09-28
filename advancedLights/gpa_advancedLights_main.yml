@@ -43,8 +43,10 @@ gpa_advancedLights_main:
       - flag server 'gpa.advancedLights.<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]||1>:->:<context.location>'
       - foreach stop
     }
-    - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
-    - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+    - if <proc[gpa_gpu_versionCheck]||0> <= 0 {
+      - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
+      - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+    }
     on player breaks skull:
     - if <context.location.skull_type||null> != 'PLAYER' || <context.cancelled> {
       - queue clear
@@ -55,8 +57,10 @@ gpa_advancedLights_main:
         - flag server '<def[value]>:<-:<context.location>'
       }
     }
-    - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
-    - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+    - if <proc[gpa_gpu_versionCheck]||0> <= 0 {
+      - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
+      - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+    }
     - if <li@1|3.contains[<player.gamemode.id>]> {
       - queue clear
     }
@@ -138,7 +142,9 @@ gpa_advancedLights_main:
           }
         }
       }
-      - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
-      - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+      - if <proc[gpa_gpu_versionCheck]||0> <= 0 {
+        - define ar 'cu@<player.location.block.sub[16,16,16]>|<player.location.block.add[16,16,16]>'
+        - adjust <def[ar].list_partial_chunks> refresh_chunk_sections
+      }
       - foreach stop
     }
