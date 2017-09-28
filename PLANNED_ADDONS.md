@@ -2,13 +2,29 @@
 A list of planned addons that will be added to this repository.
 ## Table of Contents
 1. [Nether Cult](#nether-cult)
-2. [Portal Catalyst](#portal-catalyst)
-3. [GrandRPG](#grandrpg)
+2. [GriefPrevention Expansion](#griefprevention-expansion)
+3. [SuperElevators](#superelevators)
+4. [Portal Catalyst](#portal-catalyst)
+5. [GrandRPG](#grandrpg)
 ## Nether Cult
 Let's get rid of those boring Nether Portals and instead make rituals!
 - Replace Nether Portals with ritualistic structures
 - Require certain procedures to open a portal to the Nether
 - Allow free passage from Nether to world, but not from world to Nether?
+
+[Back to Table](#table-of-contents)
+## GriefPrevention Expansion
+Expands on GriefPrevention with new commands and permissions.
+- Allow users to give each other claim blocks, with an optional quota restriction per time period (defaults to 500 per week)
+- Allow users to transfer claim ownership to another user, if the other user has enough free claim blocks to claim it
+- More features TBD
+
+[Back to Table](#table-of-contents)
+## SuperElevators
+Better elevators using the interesting Armor Stand and Shulker solution.
+- Add optional mode option ("block", "teleport", "forcefly")
+- Allow multiple types of elevators
+- More features TBD
 
 [Back to Table](#table-of-contents)
 ## Portal Catalyst
