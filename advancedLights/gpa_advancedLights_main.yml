@@ -24,18 +24,15 @@ gpa_advancedLights_main:
   debug: false
   events:
     on player enters notable cuboid:
-    - wait 1s
-    - if <context.cuboids.filter[starts_with[gpa_advancedLights_]]> {
-      ###################### Continue
+    - foreach <context.cuboids.filter[starts_with[gpa_advancedLights_]]> {
+      - define id '<def[value].notable_name.after_last[_]>'
+      - define loc '<server.flag[gpa.advancedLights.cuboids].as_list.map_get[<def[id]>]>'
+      - foreach <server.list_flags[gpa.advancedLights.]> {
+        - if <server.flag[<def[value]>].as_list.contains[<def[loc]>]||false> {
+          - run gpa_advancedLights_main_light def:<def[loc]>|<def[value]>
+        }
+      }
     }
-    #on server start:
-    #- wait 5s
-    #- foreach <server.list_flags[gpa.advancedLights.]> {
-    #  - define f '<def[value]>'
-    #  - foreach <server.flag[<def[f]>].as_list||li@> {
-    #    - light <def[value]> <def[f].after[gpa.advancedLights.]>
-    #  }
-    #}
     on player places skull:
     - if <context.item_in_hand.material> != m@human_skull || <context.cancelled> {
       - queue clear
@@ -70,7 +67,13 @@ gpa_advancedLights_main:
       - if <server.flag[<def[value]>].as_list.contains[<context.location>]||false> {
         - light <context.location> reset
         - flag server '<def[value]>:<-:<context.location>'
-        ####### Clear cuboid
+        - foreach <server.list_notables[cuboids]> {
+          - if <def[value].center.block> == <context.location> {
+            - define cub_n '<def[value].notable_name||null>'
+            - flag server 'gpa.advancedLights.cuboids:->:<def[cub_n].after_last[_]>/<context.location>'
+            - note remove as:<def[cub_n]>
+          }
+        }
       }
     }
     - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
@@ -176,3 +179,19 @@ gpa_advancedLights_main:
       }
       - foreach stop
     }
+
+gpa_advancedLights_main_light:
+  type: task
+  speed: 0
+  debug: false
+  definitions: loc|flag_name
+  script:
+  - repeat 599 {
+    - if <def[loc].chunk.is_loaded> {
+      - goto light
+    }
+    - wait 1t
+  }
+  - queue clear
+  - mark light
+  - light <def[loc]> '<def[flag_name].after_last[.]>'
