@@ -23,24 +23,33 @@ gpa_advancedLights_main:
   type: world
   debug: false
   events:
-    on server start:
-    - wait 5s
-    - foreach <server.list_flags[gpa.advancedLights.]> {
-      - define f '<def[value]>'
-      - foreach <server.flag[<def[f]>].as_list||li@> {
-        - light <def[value]> <def[f].after[gpa.advancedLights.]>
-      }
+    on player enters notable cuboid:
+    - wait 1s
+    - if <context.cuboids.filter[starts_with[gpa_advancedLights_]]> {
+      ###################### Continue
     }
+    #on server start:
+    #- wait 5s
+    #- foreach <server.list_flags[gpa.advancedLights.]> {
+    #  - define f '<def[value]>'
+    #  - foreach <server.flag[<def[f]>].as_list||li@> {
+    #    - light <def[value]> <def[f].after[gpa.advancedLights.]>
+    #  }
+    #}
     on player places skull:
     - if <context.item_in_hand.material> != m@human_skull || <context.cancelled> {
       - queue clear
     }
+    - define id '<util.random.uuid>'
     - foreach <s@gpa_advancedLights_data.list_keys[items]> {
       - if <player.item_in_hand.skin.full||null> != <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.skull_skin]> {
         - foreach next
       }
       - light <context.location> <s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]||1>
       - flag server 'gpa.advancedLights.<s@gpa_advancedLights_data.yaml_key[items.<def[value]>.light]||1>:->:<context.location>'
+      - define cub 'cu@<context.location.sub[80,80,80]>|<context.location.add[80,80,80]>'
+      - flag server 'gpa.advancedLights.cuboids:->:<def[id]>/<context.location>'
+      - note <def[cub].as_cuboid> as:gpa_advancedLights_<def[id]>
       - foreach stop
     }
     - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
@@ -61,6 +70,7 @@ gpa_advancedLights_main:
       - if <server.flag[<def[value]>].as_list.contains[<context.location>]||false> {
         - light <context.location> reset
         - flag server '<def[value]>:<-:<context.location>'
+        ####### Clear cuboid
       }
     }
     - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
