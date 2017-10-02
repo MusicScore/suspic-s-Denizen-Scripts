@@ -15,6 +15,20 @@
   
   
 +-----------------------------------------------------------------------------|
+|  v0.1.4                                                                     |
++-----------------------------------------------------------------------------|
+  
+  + Eliminate some issues with the server not sending block updates to the
+    clients.
+  
+  = Known issues
+    - [N/A] Flint and Steel still makes a sound when used on the
+            AdvancedLights skulls. We need to find a way to silence it...
+    - [N/A] Server will sometimes not send block updates from chunks affected
+            by the custom lights.
+  
+  
++-----------------------------------------------------------------------------|
 |  v0.1.3                                                                     |
 +-----------------------------------------------------------------------------|
   
