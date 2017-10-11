@@ -16,6 +16,12 @@
 # 
 # ----| HOW TO USE
 # 
+# To reload the config, you must reload all dScripts by using this command:
+#   - /denizen reload scripts
+# 
+# There are currently no built-in commands to handle this.
+# 
+# 
 # To grab an offline player's name, use these tags:
 # 
 #   + <p@player.flag[display_name.prefix]>
@@ -35,29 +41,11 @@ gpa_gpu_MAIN:
   type: world
   debug: false
   events:
-    on shutdown:
-    - execute as_server 'denizen save'
-
+    on server start:
+    - ~run gpa_gpu_config
+    
     on script reload:
     - ~run gpa_gpu_config
-    - if '<yaml[gpa_gpu_config].read[general.enable debug].not||false>' {
-      - queue clear
-    }
-    - define d_list 'li@<&nl><&a>[GrandPartyUtilities] <&f>Reloading all components of GrandPartyUtilities<&dot><&dot><&dot>'
-    - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
-      - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected version checker<&dot> Registered version ID<&co> <proc[gpa_gpu_versionCheck]><&dot>]>'
-      - flag server 'grandpartyaddons.server_version:<proc[gpa_gpu_versionCheck]>'
-    }
-    - if <server.list_scripts.contains[s@gpa_gpu_essentialsCmdListener]> {
-      - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected <&7>gpa_gpu_essentialsCmdListener<&f><&dot>]>'
-    }
-    - if !<def[d_list].is_empty> {
-      - define d_list '<def[d_list].include[<&r>]>'
-    }
-    - if <context.sender> != 'CONSOLE' {
-      - announce '<def[d_list].separated_by[<&nl>]><&a>[GrandPartyUtilities] <&f>Loaded all detected components of GrandPartyUtilities.' to_console
-    }
-    - narrate '<def[d_list].separated_by[<&nl>]><&a>[GrandPartyUtilities] <&f>Loaded all detected components of GrandPartyUtilities.'
 
     on player joins:
     - flag <player> 'display_name.prefix:<player.chat_prefix>'
@@ -118,3 +106,20 @@ gpa_gpu_config:
   - log '    # Return a number when using /essentials:ping instead of returning <&dq>Pong!<&dq>.' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '    return ping number: ' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
   - log '' type:none file:./plugins/GrandPartyAddons/GrandPartyUtilities/config.yml
+
+  - if '<yaml[gpa_gpu_config].read[general.enable debug].not||false>' {
+    - queue clear
+  }
+  - define d_list 'li@<&nl><&a>[GrandPartyUtilities] <&f>Reloading all components of GrandPartyUtilities<&dot><&dot><&dot>'
+  - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
+    - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected version checker<&dot> Registered version ID<&co> <proc[gpa_gpu_versionCheck]><&dot>]>'
+    - flag server 'grandpartyaddons.server_version:<proc[gpa_gpu_versionCheck]>'
+  }
+  - if <server.list_scripts.contains[s@gpa_gpu_essentialsCmdListener]> {
+    - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected <&7>gpa_gpu_essentialsCmdListener<&f><&dot>]>'
+  }
+  - if !<def[d_list].is_empty> {
+    - define d_list '<def[d_list].include[<&r>]>'
+  }
+  - announce '<def[d_list].separated_by[<&nl>]><&a>[GrandPartyUtilities] <&f>Loaded all detected components of GrandPartyUtilities.' to_console
+  - narrate '<def[d_list].separated_by[<&nl>]><&a>[GrandPartyUtilities] <&f>Loaded all detected components of GrandPartyUtilities.'
