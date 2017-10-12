@@ -52,7 +52,7 @@ gpa_gpu_vanilla_potion_behavior:
     - define valid_effects '<def[valid_effects].include[GLOWING|LEVITATION|LUCK|UNLUCK]>'
   }
   - foreach <def[raw_context].as_list.get[2].to[<queue.definitions.size>]||li@> {
-    - define edata '<def[value].replace[,].with[|].as_list>'
+    - define edata '<def[value].split[,]>'
     - if <def[edata].size> != 5 {
       - announce '<&c>Invalid amount of arguments! Syntax is <&dq>SPIGOT_POTION_EFFECT_NAME,power,duration_in_ticks,hide_ambience,hide_particles<&dq>, you input <&dq><def[value]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
       - foreach next
