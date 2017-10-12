@@ -89,7 +89,7 @@ gpa_gpu_vanilla_potion_behavior:
     - if <def[eloc]> < 0 {
       - goto give_effect
     }
-    - define effect '<def[1].list_effects.get[<def[eloc]>].replace[,].with[|].as_list||null>'
+    - define effect '<def[1].list_effects.get[<def[eloc]>].split[,]||null>'
     - if <def[effect]> != null {
       - if <def[effect].get[2]||0> > <def[edata].get[2]> {
         - foreach next
