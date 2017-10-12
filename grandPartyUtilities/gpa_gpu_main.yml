@@ -112,17 +112,16 @@ gpa_gpu_config:
     - queue clear
   }
   - define d_list 'li@<&nl><&a>[GrandPartyUtilities] <&f>Reloading all components of GrandPartyUtilities<&dot><&dot><&dot>'
-  - if <server.list_scripts.contains[s@gpa_gpu_versionCheck]> {
-    - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected version checker<&dot> Registered version ID<&co> <proc[gpa_gpu_versionCheck]><&dot>]>'
-    - flag server 'grandpartyaddons.server_version:<proc[gpa_gpu_versionCheck]>'
-  }
-  - foreach <server.list_scripts.exclude[s@gpa_gpu_versionCheck|s@gpa_gpu_main|s@gpa_gpu_config]> {
+  - foreach <server.list_scripts.exclude[s@gpa_gpu_main|s@gpa_gpu_config]> {
     - if <def[value].starts_with[s@gpa_gpu_]> {
       - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected <&7><def[value].name.to_lowercase><&f><&dot>]>'
+      - if <def[value]> == 's@gpa_gpu_versionCheck' {
+        - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Registered version ID<&co> <proc[gpa_gpu_versionCheck]><&dot>]>'
+        - flag server 'grandpartyaddons.server_version:<proc[gpa_gpu_versionCheck]>'
+      }
     }
   }
   - if !<def[d_list].is_empty> {
     - define d_list '<def[d_list].include[<&r>]>'
   }
   - announce '<def[d_list].separated_by[<&nl>]><&a>[GrandPartyUtilities] <&f>Loaded all detected components of GrandPartyUtilities.' to_console
-  - narrate '<def[d_list].separated_by[<&nl>]><&a>[GrandPartyUtilities] <&f>Loaded all detected components of GrandPartyUtilities.'
