@@ -117,7 +117,6 @@ gpa_gpu_config:
       - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Detected <&7><def[value].name.to_lowercase><&f><&dot>]>'
       - if <def[value]> == 's@gpa_gpu_versionCheck' {
         - define d_list '<def[d_list].include[<&a>[GrandPartyUtilities] <&f>Registered version ID<&co> <proc[gpa_gpu_versionCheck]><&dot>]>'
-        - flag server 'grandpartyaddons.server_version:<proc[gpa_gpu_versionCheck]>'
       }
     }
   }
