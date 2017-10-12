@@ -66,7 +66,7 @@ gpa_gpu_vanilla_potion_behavior:
       - foreach next
     }
     - if <def[edata].get[2]> > 255 {
-      - announce '<&c>Power cannot exceed 255! You input <&dq><def[edata].set[<&6><def[edata].get[3]><&c>].at[3].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+      - announce '<&c>Power cannot exceed 255! You input <&dq><def[edata].set[<&6><def[edata].get[2]><&c>].at[2].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
       - foreach next
     }
     - if <def[edata].get[3].as_decimal||null> == null || <def[edata].get[3].contains_text[.]||true> || <def[edata].get[3]||-100> < 0 {
