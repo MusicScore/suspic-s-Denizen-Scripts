@@ -48,10 +48,10 @@ gpa_gpu_vanilla_potion_behavior:
     - queue clear
   }
   - define valid_effects 'li@ABSORPTION|BLINDNESS|CONFUSION|DAMAGE_RESISTANCE|FAST_DIGGING|FIRE_RESISTANCE|HARM|HEAL|HEALTH_BOOST|HUNGER|INCREASE_DAMAGE|INVISIBILITY|JUMP|NIGHT_VISION|POISON|REGENERATION|SATURATION|SLOW|SLOW_DIGGING|SPEED|WATER_BREATHING|WEAKNESS|WITHER'
-  - if <proc[gpa_gpu_versionCheck]||999999999> >= 1 {
+  - if <proc[gpa_gpu_versionCheck]||9999> >= 1 {
     - define valid_effects '<def[valid_effects].include[GLOWING|LEVITATION|LUCK|UNLUCK]>'
   }
-  - foreach <def[raw_context].as_list.get[2].to[<queue.definitions.size>]||li@> {
+  - foreach <def[raw_context].as_list.remove[1]||li@> {
     - define edata '<def[value].split[,]>'
     - if <def[edata].size> != 5 {
       - announce '<&c>Invalid amount of arguments! Syntax is <&dq>SPIGOT_POTION_EFFECT_NAME,power,duration_in_ticks,hide_ambience,hide_particles<&dq>, you input <&dq><def[value]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
@@ -62,7 +62,7 @@ gpa_gpu_vanilla_potion_behavior:
       - foreach next
     }
     - if <def[edata].get[2].as_decimal||null> == null || <def[edata].get[2].contains_text[.]||true> || <def[edata].get[2]||-100> < 0 {
-      - announce '<&c>Invalid power (positive integer)! You input <&dq><def[edata].set[<&6><def[edata].get[2]><&c>].at[2].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+      - announce '<&c>Invalid power! You input <&dq><def[edata].set[<&6><def[edata].get[2]><&c>].at[2].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
       - foreach next
     }
     - if <def[edata].get[2]> > 255 {
@@ -85,20 +85,15 @@ gpa_gpu_vanilla_potion_behavior:
       - announce '<&c>hide_particles must be true or false! You input <&dq><def[edata].set[<&6><def[edata].get[5]><&c>].at[5].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
       - foreach next
     }
-    - define eloc '<def[1].list_effects.find_partial[<def[edata].get[1]>]>'
-    - if <def[eloc]> < 0 {
-      - goto give_effect
-    }
-    - define effect '<def[1].list_effects.get[<def[eloc]>].split[,]||null>'
-    - if <def[effect]> != null {
-      - if <def[effect].get[2]||0> > <def[edata].get[2]> {
+    - define effect '<def[1].list_effects.filter[starts_with[<def[edata].get[1]>]].get[1].split[,]||NULL_EFFECT>'
+    - if <def[effect]> != 'NULL_EFFECT' {
+      - if <def[effect].get[2]> > <def[edata].get[2]> {
         - foreach next
       }
-      else if <def[effect].get[2]||0> == <def[edata].get[2]> && <def[effect].get[3].as_duration.in_ticks||0> > <def[edata].get[3]> {
+      - if <def[effect].get[2]> == <def[edata].get[2]> && <def[effect].get[3].as_duration.in_ticks> > <def[edata].get[3]> {
         - foreach next
       }
     }
-    - mark give_effect
     - if <def[edata].get[5]> {
       - cast <def[edata].get[1]> power:<def[edata].get[2]> d:<def[edata].get[3]>t <def[1]> hide_particles
     }
