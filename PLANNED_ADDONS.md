@@ -27,6 +27,8 @@ Expands on GriefPrevention with new commands and permissions.
 Adds new world events (not Spigot API events!), such as Blood Moons.
 - Adds 4 new potions (each with their 3 variants)
 - Adds 6 randomly triggered events (and possibly more)
+
+[Back to Table](#table-of-contents)
 ## SuperElevators
 Better elevators using the interesting Armor Stand and Shulker solution.
 - Add optional mode option ("block", "teleport", "forcefly")
