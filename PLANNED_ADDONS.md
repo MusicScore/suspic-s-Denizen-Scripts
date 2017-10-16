@@ -3,9 +3,10 @@ A list of planned addons that will be added to this repository.
 ## Table of Contents
 1. [Nether Cult](#nether-cult)
 2. [GriefPrevention Expansion](#griefprevention-expansion)
-3. [SuperElevators](#superelevators)
-4. [Portal Catalyst](#portal-catalyst)
-5. [GrandRPG](#grandrpg)
+3. [World Events](#world-events)
+4. [SuperElevators](#superelevators)
+5. [Portal Catalyst](#portal-catalyst)
+6. [GrandRPG](#grandrpg)
 ## Nether Cult
 Let's get rid of those boring Nether Portals and instead make rituals!
 - Replace Nether Portals with ritualistic structures
@@ -19,7 +20,13 @@ Expands on GriefPrevention with new commands and permissions.
 - Allow users to transfer claim ownership to another user, if the other user has enough free claim blocks to claim it
 - More features TBD
 
+*Can possibly be cancelled due to difficulties*
+
 [Back to Table](#table-of-contents)
+## World Events
+Adds new world events (not Spigot API events!), such as Blood Moons.
+- Adds 4 new potions (each with their 3 variants)
+- Adds 6 randomly triggered events (and possibly more)
 ## SuperElevators
 Better elevators using the interesting Armor Stand and Shulker solution.
 - Add optional mode option ("block", "teleport", "forcefly")
