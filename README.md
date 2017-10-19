@@ -26,5 +26,4 @@ To install addons from this repository, simply download all of the relevant **YA
 
 If you choose to download the **ZIP** archives instead, simply extract the compressed archive(s) into the same folder (`/plugins/Denizen/scripts/`). Please note that although the **ZIP** archives will be considered the latest stable release, use of the "latest dev" releases (aka the script files themselves) is highly recommended. The version found in the **ZIP** archives may not always be supported, depending on the addon's `readme.txt` and `changelog.txt`.
 
-##
 More specific information about each addon will be find in the `readme.txt` in each addon's folder.
