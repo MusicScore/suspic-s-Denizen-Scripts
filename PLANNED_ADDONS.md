@@ -23,11 +23,15 @@ Expands on GriefPrevention with new commands and permissions.
 
 *Can possibly be cancelled due to difficulties*
 
+**Work on this will be temporarily discontinued.**
+
 [Back to Table](#table-of-contents)
 ## World Events
 Adds new world events (not Spigot API events!), such as Blood Moons.
 - Adds 4 new potions (each with their 3 variants)
 - Adds 6 randomly triggered events (and possibly more)
+
+**Work on this will be temporarily discontinued.**
 
 [Back to Table](#table-of-contents)
 ## mcMMO Prefixes
@@ -40,6 +44,8 @@ Better elevators using the interesting Armor Stand and Shulker solution.
 - Add optional mode option ("block", "teleport", "forcefly")
 - Allow multiple types of elevators
 - More features TBD
+
+**Work on this may be permanently discontinued.**
 
 [Back to Table](#table-of-contents)
 ## Portal Catalyst
