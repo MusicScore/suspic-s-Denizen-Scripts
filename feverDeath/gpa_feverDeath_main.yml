@@ -1,3 +1,9 @@
+##
+# Check to see if this script catches setting player health to 0
+##
+
+
+
 ###############################################################################
 #                                                                             #
 #                            FEVERDEATH MAIN SCRIPT                           #
@@ -60,30 +66,39 @@
 gpa_feverDeath_main:
   type: world
   debug: false
+  version: '0.3.2.2'
   events:
     on shutdown:
-    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
-      - queue clear
-    }
     - run gpa_feverDeath_config
 
     on server start:
-    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
-      - queue clear
-    }
     - run gpa_feverDeath_config
-
+    - inject locally 'events.on script reload' instantly
+    
     on script reload:
-    - wait 1t
-    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
-      - narrate '<&c>[FeverDeath] WARNING: Not all FeverDeath scripts are detected! Disabling FeverDeath.'
-      - if <context.sender> != 'CONSOLE' {
-        - announce '<&c>[FeverDeath] WARNING: Not all FeverDeath scripts are detected! Disabling FeverDeath.' 'to_console'
-      }
+    - ~webget 'https://raw.githubusercontent.com/MusicScore/Denizen-GrandPartyAddons/master/versions_list.txt' save:dscript_versions
+    - if <entry[dscript_versions].failed||true> {
       - queue clear
     }
-    - run gpa_feverDeath_config
+    - if <s@gpa_feverDeath_main.yaml_key[version]||null> == null {
+      - narrate '<&c>An unsupported version of FeverDeath has been detected! Consider downloading a legitimate version.'
+      - queue clear
+    }
+    - define v '<entry[dscript_versions].result.split[;].map_get[feverdeath].split_by[:]||null>'
+    - define vl 'li@<def[v]>|<s@gpa_feverDeath_main.yaml_key[version]||null>'
+    - if <def[v]> != <s@gpa_feverDeath_main.yaml_key[version]> {
+      - if <def[vl].alphanumeric.last> == <def[v]> {
+        - narrate '<&c>Your version of FeverDeath is outdated! Most updated version is <&4><def[v]><&r><&c>.'
+        - queue clear
+      }
+      - narrate '<&c>Your version of FeverDeath is unsupported or the version database has not been updated yet. Please refer to the issues page for all GrandPartyAddons for support.'
+    }
 
+    ##########################
+    #
+    #    REDO /KILL OVERRIDES
+    #
+    ##########################
     on suicide|esuicide command:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
@@ -126,7 +141,46 @@ gpa_feverDeath_main:
       }
     }
 
-    on player damaged:
+    on player quits:
+    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
+      - queue clear
+    }
+    - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
+    - if <def[dd_enable]> {
+      - define dd_recover.enable '<yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>'
+      - if <def[dd_recover.enable]> {
+        - if '<player.flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' != 1 {
+          - flag <player> 'grandpartyaddons.feverdeath.deaths door.recovery:0'
+        }
+        else if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]||0>' == 1 {
+          - run gpa_feverDeath_ddRecovery def:<player>|stop id:gpa_feverDeath_dd_recovery_task_stop_<player.uuid>
+        }
+        - queue clear
+      }
+    }
+
+    on player joins:
+    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
+      - queue clear
+    }
+    - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
+    - if <def[dd_enable]> {
+      - define dd_recover.enable '<yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>'
+      - if <def[dd_recover.enable]> {
+        - if '<player.flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' != 1 {
+          - flag <player> 'grandpartyaddons.feverdeath.deaths door.recovery:0'
+        }
+        else if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]||0>' == 1 {
+          - run gpa_feverDeath_ddRecovery def:<player>|stop id:gpa_feverDeath_dd_recovery_task_stop_<player.uuid>
+        }
+        - queue clear
+      }
+      - if '<player.flag[grandpartyaddons.feverDeath.deaths door.phase]||0>' == 1 {
+        - flag <player> 'grandpartyaddons.feverDeath.deaths door.phase:0'
+      }
+    }
+
+    on player damaged priority:9999 cancelled:false:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
@@ -138,29 +192,12 @@ gpa_feverDeath_main:
       - queue clear
     }
     - define dmg_inflict '<context.final_damage>'
-    #Death's Door mechanics: recovery phase
     - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
     - define dd_recover.enable '<yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>'
     - if <def[dd_enable]> && <def[dd_recover.enable]> && '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' == 1 {
       - define dmg_inflict '<context.final_damage.mul[<def[target].flag[grandpartyaddons.feverdeath.deaths door.recovery_stack].mul[0.1].add[1]||1.1>]>'
     }
-    - determine passively '<def[dmg_inflict]>'
-    #Thanatophobia mechanics: warning
-    - define t_enable '<yaml[gpa_feverdeath_config].read[thanatophobia.enabled].as_boolean||false>'
-    - if <def[t_enable]> {
-      - define t_percent '<yaml[gpa_feverdeath_config].read[thanatophobia.health percent].as_decimal.max[0].min[1]||0.15>'
-      - define t_msgs.warn '<yaml[gpa_feverdeath_config].read[thanatophobia.messages.warning].as_list||li@&sscSomething is wrong with FeverDeath&dot>'
-      - if <def[target].health.sub[<def[dmg_inflict]>]> <= 0 {
-        - queue clear
-      }
-      - if <def[target].health.sub[<def[dmg_inflict]>].div[<def[target].health.max>]> < <def[t_percent]> && !<def[target].has_flag[grandpartyaddons.feverdeath.thanatophobia]> {
-        - flag <def[target]> 'grandpartyaddons.feverdeath.thanatophobia'
-        - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.thanatophobia]><&c>Your health is below <def[t_percent].mul[100].round_to[1]>%! <&f><def[t_msgs.warn].get[<util.random.int[1].to[<def[t_msgs.warn].size>]>].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>' targets:<def[target]>
-        - playsound <def[target]> sound:ENTITY_WITHER_HURT volume:0.5 pitch:0.65
-      }
-    }
-
-    on player killed:
+    - determine '<def[dmg_inflict]>'
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
@@ -171,14 +208,38 @@ gpa_feverDeath_main:
     - if <li@1|3.contains[<def[target].gamemode.id>]> {
       - queue clear
     }
-    - define cancelled 'false'
+    - define t_enable '<yaml[gpa_feverdeath_config].read[thanatophobia.enabled].as_boolean||false>'
+    - if <def[t_enable]> {
+      - define t_percent '<yaml[gpa_feverdeath_config].read[thanatophobia.health percent].as_decimal.max[0].min[1]||0.15>'
+      - define t_msgs.warn '<yaml[gpa_feverdeath_config].read[thanatophobia.messages.warning].as_list||li@&sscSomething is wrong with FeverDeath&dot>'
+      - if <def[target].health.sub[<def[dmg_inflict]>]> <= 0 {
+        - queue clear
+      }
+      - if <def[target].health.sub[<def[dmg_inflict]>].div[<def[target].health.max>]> < <def[t_percent]> && !<def[target].has_flag[grandpartyaddons.feverdeath.thanatophobia]> {
+        - flag <def[target]> 'grandpartyaddons.feverdeath.thanatophobia'
+        - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.thanatophobia]><&c>Your health is below <def[t_percent].mul[100].round_to[1]>%! <&f><def[t_msgs.warn].random.parse_color[%%].unescaped>' targets:<def[target]>
+        - playsound <def[target]> sound:ENTITY_WITHER_HURT volume:0.5 pitch:0.65
+      }
+    }
+
+    on player killed priority:9997 cancelled:false:
+    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
+      - queue clear
+    }
+    - define target '<context.entity.as_player>'
+    - if <li@suicide|void.contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+      - queue clear
+    }
+    - if <li@1|3.contains[<def[target].gamemode.id>]> {
+      - queue clear
+    }
     #Death's Door mechanics: upon killed
     - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
     - if <def[dd_enable]> {
       - define dd_death.title '<yaml[gpa_feverdeath_config].read[deaths door.death.title enabled].as_boolean||true>'
       - if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' != 2 {
-        - determine passively '0'
-        - define cancelled 'true'
+        - determine passively 'CANCELLED'
+        - animate <player> animation:HURT
         - define dd_recover.enable '<yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>'
         - define dd_death.msgs '<yaml[gpa_feverdeath_config].read[deaths door.death.messages].as_list||li@&sscSomething is wrong with FeverDeath&dot>'
         - if <def[dd_recover.enable]> && <queue.list.contains[q@gpa_feverDeath_dd_recovery_task_start_<def[target].uuid>]> {
@@ -198,12 +259,12 @@ gpa_feverDeath_main:
       }
       else if '<def[target].flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' == 2 {
         - define dd_death.kill '<yaml[gpa_feverdeath_config].read[deaths door.death.kill chance].as_decimal.max[0.01].min[1]||0.2>'
-        - if <util.random.int[1].to[10000]> <= <def[dd_death.kill].mul[10000]> {
+        - if <util.random.decimal> <= <def[dd_death.kill]> {
           - flag <def[target]> 'grandpartyaddons.feverdeath.deaths door.phase:0'
         }
         else {
-          - determine passively '0'
-          - define cancelled 'true'
+          - determine passively 'CANCELLED'
+          - animate <player> animation:HURT
           - adjust <def[target]> 'health:0.1'
           - playsound <def[target]> sound:ENTITY_ENDERDRAGON_AMBIENT volume:0.5 pitch:1.8
           - flag <def[target]> 'grandpartyaddons.feverdeath.deaths door.recovery:!'
@@ -213,18 +274,39 @@ gpa_feverDeath_main:
         }
       }
     }
+
+    on player killed priority:9998 cancelled:false:
+    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
+      - queue clear
+    }
+    - define target '<context.entity.as_player>'
+    - if <li@suicide|void.contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+      - queue clear
+    }
+    - if <li@1|3.contains[<def[target].gamemode.id>]> {
+      - queue clear
+    }
     #Thanatophobia mechanics: upon getting killed
     - define t_enable '<yaml[gpa_feverdeath_config].read[thanatophobia.enabled].as_boolean||false>'
-    - if <def[t_enable]> && !<context.cancelled.OR[<def[cancelled]>]> {
+    - if <def[t_enable]> {
       - flag <def[target]> 'grandpartyaddons.feverdeath.thanatophobia:!'
+    }
+
+    on player killed priority:9999 cancelled:false:
+    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
+      - queue clear
+    }
+    - define target '<context.entity.as_player>'
+    - if <li@suicide|void.contains[<context.cause>]> || <player.has_flag[grandpartyaddons.cmd_listen.suicide]||false> {
+      - queue clear
+    }
+    - if <li@1|3.contains[<def[target].gamemode.id>]> {
+      - queue clear
     }
     #Afterlife mechanics: instant respawn
     - define al_enable '<yaml[gpa_feverdeath_config].read[afterlife.enabled].as_boolean||false>'
     - define al_instant '<yaml[gpa_feverdeath_config].read[afterlife.instant respawn].as_boolean||true>'
     - if <def[al_enable]> && <def[al_instant]> {
-      - if <context.cancelled> || <def[cancelled]> {
-        - queue clear
-      }
       - determine passively 'cancelled'
       - define target_d_loc '<def[target].location>'
       - define xp_chance '<util.random.decimal[<def[al_exp.min]>].to[<def[al_exp.max]>]>'
@@ -237,7 +319,7 @@ gpa_feverDeath_main:
       - cast BLINDNESS <def[target]> duration:3s power:0
       - cast NIGHT_VISION <def[target]> duration:2s power:0
       - define al_bed '<yaml[gpa_feverdeath_config].read[afterlife.bed respawn].as_boolean||false>'
-      - define s_loc '<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center>>>'
+      - define s_loc '<server.flag[grandpartyaddons.gpu.essentials_spawn_location.<def[target].groups.last||null>]||<server.flag[grandpartyaddons.gpu.essentials_spawn_location.default]||<server.list_worlds.get[1].spawn_location.center.highest>>>'
       - define s_loc_sc '<el@val[<def[s_loc].sub[10,20,10]>|<def[s_loc].sub[10,20,10]>].as_cuboid.spawnable_blocks.sort_by_number[distance[<def[s_loc]>]]>'
       - if <def[s_loc_sc].is_empty> {
         - define s_loc_safe '<def[s_loc]>'
@@ -300,7 +382,7 @@ gpa_feverDeath_main:
           - if <def[al_inv.hotbar]> && <def[loop_index]> <= 9 {
             - define inv_loss_chance '<def[inv_loss_chance].mul[0.8]>'
           }
-          - if <util.random.int[1].to[10000]> <= <def[inv_loss_chance].mul[10000]> {
+          - if <util.random.decimal> <= <def[inv_loss_chance]> {
             - define player_inv '<def[player_inv].set[i@air].at[<def[loop_index]>]>'
             - define inv_lost '<def[inv_lost].as_list.include[<def[value]>]>'
           }
@@ -319,7 +401,7 @@ gpa_feverDeath_main:
       }
     }
 
-    on player death:
+    on player death priority:9999 cancelled:false:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
@@ -397,7 +479,7 @@ gpa_feverDeath_main:
       }
     }
 
-    on player respawns:
+    on player respawns priority:9999 cancelled:false:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
@@ -444,7 +526,7 @@ gpa_feverDeath_main:
       }
     }
 
-    on player heals:
+    on player heals priority:9999 cancelled:false:
     - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
       - queue clear
     }
@@ -496,44 +578,5 @@ gpa_feverDeath_main:
       - if <def[target].health.add[<context.amount>].div[<def[target].health.max>]> >= <def[t_percent]> && <def[target].has_flag[grandpartyaddons.feverdeath.thanatophobia]||false> {
         - flag <def[target]> 'grandpartyaddons.feverdeath.thanatophobia:!'
         - narrate '<server.flag[grandpartyaddons.feverDeath.prefix.thanatophobia]><&f><def[t_msgs.recovery].get[<util.random.int[1].to[<def[t_msgs.recovery].size>]>].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>' targets:<def[target]>
-      }
-    }
-
-    on player quits:
-    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
-      - queue clear
-    }
-    - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
-    - if <def[dd_enable]> {
-      - define dd_recover.enable '<yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>'
-      - if <def[dd_recover.enable]> {
-        - if '<player.flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' != 1 {
-          - flag <player> 'grandpartyaddons.feverdeath.deaths door.recovery:0'
-        }
-        else if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]||0>' == 1 {
-          - run gpa_feverDeath_ddRecovery def:<player>|stop id:gpa_feverDeath_dd_recovery_task_stop_<player.uuid>
-        }
-        - queue clear
-      }
-    }
-
-    on player joins:
-    - if !<server.list_scripts.parse[name].contains[gpa_feverDeath_config|gpa_feverDeath_ddRecovery|gpa_feverDeath_ddRecovery_timer_task|gpa_feverDeath_cmd]> {
-      - queue clear
-    }
-    - define dd_enable '<yaml[gpa_feverdeath_config].read[deaths door.enabled].as_boolean||false>'
-    - if <def[dd_enable]> {
-      - define dd_recover.enable '<yaml[gpa_feverdeath_config].read[deaths door.recovery.enabled].as_boolean||true>'
-      - if <def[dd_recover.enable]> {
-        - if '<player.flag[grandpartyaddons.feverdeath.deaths door.phase]||0>' != 1 {
-          - flag <player> 'grandpartyaddons.feverdeath.deaths door.recovery:0'
-        }
-        else if '<player.flag[grandpartyaddons.feverdeath.deaths door.recovery]||0>' == 1 {
-          - run gpa_feverDeath_ddRecovery def:<player>|stop id:gpa_feverDeath_dd_recovery_task_stop_<player.uuid>
-        }
-        - queue clear
-      }
-      - if '<player.flag[grandpartyaddons.feverDeath.deaths door.phase]||0>' == 1 {
-        - flag <player> 'grandpartyaddons.feverDeath.deaths door.phase:0'
       }
     }

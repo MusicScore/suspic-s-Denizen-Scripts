@@ -22,7 +22,30 @@
 gpa_advancedLights_main:
   type: world
   debug: false
+  version: '0.1.4.1'
   events:
+    on server start:
+    - inject locally 'events.on script reload' instantly
+
+    on script reload:
+    - ~webget 'https://raw.githubusercontent.com/MusicScore/Denizen-GrandPartyAddons/master/versions_list.txt' save:dscript_versions
+    - if <entry[dscript_versions].failed||true> {
+      - queue clear
+    }
+    - if <s@gpa_advancedLights_main.yaml_key[version]||null> == null {
+      - narrate '<&c>An unsupported version of AdvancedLights has been detected! Consider downloading a legitimate version.'
+      - queue clear
+    }
+    - define v '<entry[dscript_versions].result.split[;].map_get[advancedlights].split_by[:]||null>'
+    - define vl 'li@<def[v]>|<s@gpa_advancedLights_main.yaml_key[version]||null>'
+    - if <def[v]> != <s@gpa_advancedlights_main.yaml_key[version]> {
+      - if <def[vl].alphanumeric.last> == <def[v]> {
+        - narrate '<&c>Your version of AdvancedLights is outdated! Most updated version is <&4><def[v]><&r><&c>.'
+        - queue clear
+      }
+      - narrate '<&c>Your version of AdvancedLights is unsupported or the version database has not been updated yet. Please refer to the issues page for all GrandPartyAddons for support.'
+    }
+
     on player enters notable cuboid:
     - foreach <context.cuboids.filter[starts_with[gpa_advancedLights_]]> {
       - define id '<def[value].notable_name.after_last[_]>'

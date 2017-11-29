@@ -37,25 +37,51 @@
 # 
 
 
-gpa_gpu_MAIN:
+gpa_gpu_main:
   type: world
   debug: false
+  version: '0.2.1.1'
   events:
     on server start:
     - ~run gpa_gpu_config
-    
+    - inject locally 'events.on script reload' instantly
+
     on script reload:
-    - ~run gpa_gpu_config
+    - ~webget 'https://raw.githubusercontent.com/MusicScore/Denizen-GrandPartyAddons/master/versions_list.txt' save:dscript_versions
+    - if <entry[dscript_versions].failed||true> {
+      - queue clear
+    }
+    - if <s@gpa_gpu_main.yaml_key[version]||null> == null {
+      - narrate '<&c>An unsupported version of GrandPartyUtilities has been detected! Consider downloading a legitimate version.'
+      - queue clear
+    }
+    - define v '<entry[dscript_versions].result.split[;].map_get[grandpartyutilities].split_by[:]||null>'
+    - define vl 'li@<def[v]>|<s@gpa_gpu_main.yaml_key[version]||null>'
+    - if <def[v]> != <s@gpa_gpu_main.yaml_key[version]> {
+      - if <def[vl].alphanumeric.last> == <def[v]> {
+        - narrate '<&c>Your version of GrandPartyUtilities is outdated! Most updated version is <&4><def[v]><&r><&c>.'
+        - queue clear
+      }
+      - narrate '<&c>Your version of GrandPartyUtilities is unsupported or the version database has not been updated yet. Please refer to the issues page for all GrandPartyAddons for support.'
+    }
 
     on player joins:
-    - flag <player> 'display_name.prefix:<player.chat_prefix>'
-    - flag <player> 'display_name.suffix:<player.chat_suffix>'
-    - flag <player> 'display_name.nickname:<player.name.display.replace[<player.chat_prefix>].with[].replace[<player.chat_suffix>].with[]>'
+    - define null 'null-<util.random.uuid>'
+    - if <player.chat_prefix||<def[null]>> == <def[null]> {
+      - queue clear
+    }
+    - flag <player> 'display_name.prefix:<player.chat_prefix||>'
+    - flag <player> 'display_name.suffix:<player.chat_suffix||>'
+    - flag <player> 'display_name.nickname:<player.name.display.replace[<player.chat_prefix>].replace[<player.chat_suffix>]>'
 
     on player quits:
+    - define null 'null-<util.random.uuid>'
+    - if <player.chat_prefix||<def[null]>> == <def[null]> {
+      - queue clear
+    }
     - flag <player> 'display_name.prefix:<player.chat_prefix>'
     - flag <player> 'display_name.suffix:<player.chat_suffix>'
-    - flag <player> 'display_name.nickname:<player.name.display.replace[<player.chat_prefix>].with[].replace[<player.chat_suffix>].with[]>'
+    - flag <player> 'display_name.nickname:<player.name.display.replace[<player.chat_prefix>].replace[<player.chat_suffix>]>'
 
 gpa_gpu_config:
   type: task

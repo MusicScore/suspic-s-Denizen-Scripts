@@ -55,26 +55,26 @@ gpa_feverDeath_config:
     - queue clear
   }
   
-  - define fd.prefix '&&7/&&4FeverDeath&&7/ &pipe&pipe'
-  - define fd.no_perm 'Death cannot be easily conquered&dot&dot&dot'
+  - define fd.prefix '<&pc><&pc>7/<&pc><&pc>4FeverDeath<&pc><&pc>7/ ||'
+  - define fd.no_perm 'Death cannot be easily conquered...'
   
   - define dd.enable 'false'
-  - define dd.prefix '&&7/&&4Death&sqs Door&&7/ &pipe&pipe'
+  - define dd.prefix '<&pc><&pc>7/<&pc><&pc>4Death&sqs Door<&pc><&pc>7/ ||'
   - define dd.recovery.enable 'true'
   - define dd.recovery.duration '5'
-  - define dd.recovery.msgs 'li@"You&sqre so close to safety&dot&dot&dot"|"It would seem that your wounds were not too threatening&dot"|"You still haven&sqt made it out of the woods&dot Run&dot"|"Let your wounds heal&dot"|"You&sqve already ran a bit&dot Why not some more?"'
+  - define dd.recovery.msgs 'li@You&sqre so close to safety<&dot><&dot><&dot>|It would seem that your wounds were not too threatening<&dot>|You still haven&sqt made it out of the woods<&dot> Run<&dot>|Let your wounds heal<&dot>|You&sqve already ran a bit<&dot> Why not some more?'
   - define dd.dd.chance '0.60'
   - define dd.dd.enable_title 'true'
-  - define dd.dd.msgs 'li@"Your vision and hearing are failing you&dot"|"You can run away, or die fighting&dot"|"The Reaper&sqs bell rings&dot And so does your head&dot"|"Your body is too battered to endure much more&dot"|"Another strike and you may as well fall&dot"'
+  - define dd.dd.msgs 'li@Your vision and hearing are failing you<&dot>|You can run away, or die fighting<&dot>|The Reaper&sqs bell rings<&dot> And so does your head<&dot>|Your body is too battered to endure much more<&dot>|Another strike and you may as well fall<&dot>'
   
   - define t.enable 'false'
-  - define t.prefix '&&7/&&4Thanatophobia&&7/ &pipe&pipe'
+  - define t.prefix '<&pc><&pc>7/<&pc><&pc>4Thanatophobia<&pc><&pc>7/ ||'
   - define t.percent '0.15'
-  - define t.msgs.warn 'li@"Your heart begins to pump a little slower&dot"|"You are getting closer to dancing with Death&dot"|"You can feel chills running down your spine&dot"|"You are losing time and health&dot"|"You start to wonder if the skies are darkening&dot"'
-  - define t.msgs.recover 'li@"That headache is gone&dot"|"Breathe easier, breathe slower&dot"|"Precautions were taken&dot Will your efforts be worth it?"|"Endurance is only half the battle&dot"|"Medical attention was given&sc life was prolonged&dot"'
+  - define t.msgs.warn 'li@Your heart begins to pump a little slower<&dot>|You are getting closer to dancing with Death<&dot>|You can feel chills running down your spine<&dot>|You are losing time and health<&dot>|You start to wonder if the skies are darkening<&dot>'
+  - define t.msgs.recover 'li@That headache is gone<&dot>|Breathe easier, breathe slower<&dot>|Precautions were taken<&dot> Will your efforts be worth it?|Endurance is only half the battle<&dot>|Medical attention was given; life was prolonged<&dot>'
   
   - define al.enable 'false'
-  - define al.prefix '&&7/&&4Afterlife&&7/ &pipe&pipe'
+  - define al.prefix '<&pc><&pc>7/<&pc><&pc>4Afterlife<&pc><&pc>7/ ||'
   - define al.exp.enable 'true'
   - define al.instant_respawn 'true'
   - define al.bed_respawn 'false'
@@ -87,7 +87,7 @@ gpa_feverDeath_config:
   - define al.inv.percent_max '0.70'
   - define al.inv.hotbar_persist 'true'
   - define al.msgs_enable 'true'
-  - define al.msgs 'li@"A second chance, another life!"|"Your heart, once stopped, is beating furiously&dot"|"Another iteration of your many lives&dot"|"This welcome comes at a price&dot"|"It was but a bad dream&dot"'
+  - define al.msgs 'li@A second chance, another life!|Your heart, once stopped, is beating furiously<&dot>|Another iteration of your many lives<&dot>|This welcome comes at a price<&dot>|It was but a bad dream<&dot>'
   
   - if !<yaml.list.contains[gpa_feverDeath_config]> {
     - yaml create id:gpa_feverDeath_config
@@ -136,7 +136,7 @@ gpa_feverDeath_config:
   - yaml set 'afterlife.enable messages:<yaml[gpa_feverDeath_config].read[afterlife.enable messages].as_boolean||<def[al.msgs_enable]>>' id:gpa_feverDeath_config
   - yaml set 'afterlife.messages:<yaml[gpa_feverDeath_config].read[afterlife.messages].as_list||<def[al.msgs]>>' id:gpa_feverDeath_config
   
-  - define fd_prefix '<yaml[gpa_feverdeath_config].read[general.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[fd.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - define fd_prefix '<yaml[gpa_feverdeath_config].read[general.prefix].replace[<&pc><&pc>].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[fd.prefix].replace[<&pc><&pc>].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
   - if <def[fd_prefix]> == '' || <def[fd_prefix]> == 'none' {
     - define fd_prefix '<&r>'
   }
@@ -144,7 +144,7 @@ gpa_feverDeath_config:
     - define fd_prefix '<def[fd_prefix]><&r> '
   }
   
-  - define dd_prefix '<yaml[gpa_feverdeath_config].read[deaths door.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[dd.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - define dd_prefix '<yaml[gpa_feverdeath_config].read[deaths door.prefix].replace[<&pc><&pc>].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[dd.prefix].replace[<&pc><&pc>].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
   - if <def[dd_prefix]> == 'default' {
     - define dd_prefix '<def[fd_prefix]>'
   }
@@ -155,7 +155,7 @@ gpa_feverDeath_config:
     - define dd_prefix '<def[dd_prefix]><&r> '
   }
   
-  - define t_prefix '<yaml[gpa_feverdeath_config].read[thanatophobia.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[t.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - define t_prefix '<yaml[gpa_feverdeath_config].read[thanatophobia.prefix].replace[<&pc><&pc>].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[t.prefix].replace[<&pc><&pc>].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
   - if <def[t_prefix]> == 'default' {
     - define t_prefix '<def[fd_prefix]>'
   }
@@ -166,7 +166,7 @@ gpa_feverDeath_config:
     - define t_prefix '<def[t_prefix]><&r> '
   }
   
-  - define al_prefix '<yaml[gpa_feverdeath_config].read[afterlife.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[al.prefix].replace[&&].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
+  - define al_prefix '<yaml[gpa_feverdeath_config].read[afterlife.prefix].replace[<&pc><&pc>].with[&ss].replace[&pc].with[<&pc>].unescaped||<def[al.prefix].replace[<&pc><&pc>].with[&ss].replace[&pc].with[<&pc>].unescaped>>'
   - if <def[al_prefix]> == 'default' {
     - define al_prefix '<def[fd_prefix]>'
   }
@@ -192,19 +192,10 @@ gpa_feverDeath_config:
   - log '# For string-type options (e.g. <&dq>prefix<&dq>, <&dq>messages<&dq>, etc.), most' type:none file:./plugins/FeverDeath/config.yml
   - log '# special characters must be replaced.' type:none file:./plugins/FeverDeath/config.yml
   - log '# ' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For color codes, use two &<&sq>s instead of just one. For example, <&dq>&&c<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For a period, use <&dq>&dot<&dq>.' type:none file:./plugins/FeverDeath/config.yml
+  - log '# For color codes, use two <&pc>s. For example, <&dq><&pc><&pc>c<&dq>.' type:none file:./plugins/FeverDeath/config.yml
   - log '# For a <&sq>, use <&dq>&sq<&dq>.' type:none file:./plugins/FeverDeath/config.yml
   - log '# For a <&dq>, use <&dq>&quo<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For a %, use <&dq>&pc<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For a |, use <&dq>&pipe<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For an @, use <&dq>&at<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For a [, use <&dq>&lb<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For a ], use <&dq>&rb<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For a <&gt>, use <&dq>&gt<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For a <&lt>, use <&dq>&lt<&dq>.' type:none file:./plugins/FeverDeath/config.yml
   - log '# For a :, use <&dq>&co<&dq>.' type:none file:./plugins/FeverDeath/config.yml
-  - log '# For a |, use <&dq>&pipe<&dq>.' type:none file:./plugins/FeverDeath/config.yml
   - log '# For all other Unicode characters, use <&dq><&lt>&chr[UNICODE CODE]<&gt><&dq>.' type:none file:./plugins/FeverDeath/config.yml
   - log '#   A heart would be <&dq><&lt>&chr[2665]<&gt><&dq>.' type:none file:./plugins/FeverDeath/config.yml
   - log '# ' type:none file:./plugins/FeverDeath/config.yml
