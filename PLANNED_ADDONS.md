@@ -4,8 +4,8 @@ A list of planned addons that will be added to this repository.
 1. [Nether Cult](#nether-cult)
 2. [GriefPrevention Expansion](#griefprevention-expansion)
 3. [World Events](#world-events)
-4. [mcMMO Prefixes](#mcmmo-prefixes)
-5. [SuperElevators](#superelevators)
+4. [mcMMO Prefixes](#mcmmo-prefixes) (**CANCELLED**)
+5. [SuperElevators](#superelevators) (**CANCELLED**)
 6. [Portal Catalyst](#portal-catalyst)
 7. [GrandRPG](#grandrpg)
 ## Nether Cult
@@ -35,11 +35,15 @@ Adds new world events (not Spigot API events!), such as Blood Moons.
 
 [Back to Table](#table-of-contents)
 ## mcMMO Prefixes
+**CANCELLED**
+
 Adds cosmetic prefixes to a user's name based on their mcMMO stats.
 - Prefixes TBD
 
 [Back to Table](#table-of-contents)
 ## SuperElevators
+**CANCELLED**
+
 Better elevators using the interesting Armor Stand and Shulker solution.
 - Add optional mode option ("block", "teleport", "forcefly")
 - Allow multiple types of elevators
