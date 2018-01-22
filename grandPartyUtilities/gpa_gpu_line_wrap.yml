@@ -27,8 +27,7 @@
 # 
 # The definitions are as follows:
 # 
-#   string      : The escaped string the player wants to convert into a
-#                 readable written book.
+#   string      : The escaped string the player wants to line wrap.
 #                 Color codes will not be automatically parsed. They need to be
 #                 converted into a tag (e.g. "<&a>" instead of "&a").
 #   max_length  : The maximum number of characters per line. If the number is
