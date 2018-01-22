@@ -25,6 +25,17 @@
 #   - run gpa_gpu_vanilla_potion_behavior def:entity|SPIGOT_POTION_EFFECT_NAME,
 #     power,duration_in_ticks,ambience,hide_particles|SPIGOT_POTION_EFFECT_NAME
 #     ,power,duration_in_ticks,ambience,hide_particles|...
+#
+# + "entity" requires a dEntity object.
+# + "SPIGOT_POTION_EFFECT_NAME" requires the name of a valid Spigot potion
+#   effect name.
+# + "power" is an integer between 0 to 255.
+# + "duration_in_ticks" is an integer specifying the duration of the potion
+#   effect in ticks. The maximum duration is 1000000 seconds (20000000 ticks).
+# + "ambience" determines if ambient particles should be shown. Must be true or
+#   false.
+# + "hide_particles" determines if potion effect particles should be shown at
+#   all. Must be true or false.
 # 
 # You can specify as many potion effects, for as long as you follow that
 # command format.
@@ -52,39 +63,42 @@ gpa_gpu_vanilla_potion_behavior:
     - define valid_effects '<def[valid_effects].include[GLOWING|LEVITATION|LUCK|UNLUCK]>'
   }
   - foreach <def[raw_context].as_list.remove[1]||li@> {
+    - if !<def[value].matches[(<def[valid_effects].separated_by[|]>),\d+,\d+,(true|false),(true|false)]> {
+      - announce '<&c>Invalid format! Skipping over specified potion effect <&dq><def[value]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    }
     - define edata '<def[value].split[,]>'
-    - if <def[edata].size> != 5 {
-      - announce '<&c>Invalid amount of arguments! Syntax is <&dq>SPIGOT_POTION_EFFECT_NAME,power,duration_in_ticks,hide_ambience,hide_particles<&dq>, you input <&dq><def[value]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
-      - foreach next
-    }
-    - if !<def[valid_effects].contains[<def[edata].get[1]||null>]> {
-      - announce '<&c>Invalid potion effect! You input <&dq><&6><def[edata].set[<&6><def[edata].get[1]><&c>].at[1].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
-      - foreach next
-    }
-    - if <def[edata].get[2].as_decimal||null> == null || <def[edata].get[2].contains_text[.]||true> || <def[edata].get[2]||-100> < 0 {
-      - announce '<&c>Invalid power! You input <&dq><def[edata].set[<&6><def[edata].get[2]><&c>].at[2].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
-      - foreach next
-    }
-    - if <def[edata].get[2]> > 255 {
-      - announce '<&c>Power cannot exceed 255! You input <&dq><def[edata].set[<&6><def[edata].get[2]><&c>].at[2].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
-      - foreach next
-    }
-    - if <def[edata].get[3].as_decimal||null> == null || <def[edata].get[3].contains_text[.]||true> || <def[edata].get[3]||-100> < 0 {
-      - announce '<&c>Invalid duration (in ticks)! You input <&dq><def[edata].set[<&6><def[edata].get[3]><&c>].at[3].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
-      - foreach next
-    }
-    - if <def[edata].get[3]> > 20000000 {
-      - announce '<&c>Duration cannot exceed 1000000s (20000000 ticks)! You input <&dq><def[edata].set[<&6><def[edata].get[3]><&c>].at[3].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
-      - foreach next
-    }
-    - if !<li@true|false.contains[<def[edata].get[4]>]> {
-      - announce '<&c>hide_ambience must be true or false! You input <&dq><def[edata].set[<&6><def[edata].get[4]><&c>].at[4].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
-      - foreach next
-    }
-    - if !<li@true|false.contains[<def[edata].get[5]>]> {
-      - announce '<&c>hide_particles must be true or false! You input <&dq><def[edata].set[<&6><def[edata].get[5]><&c>].at[5].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
-      - foreach next
-    }
+    #- if <def[edata].size> != 5 {
+    #  - announce '<&c>Invalid amount of arguments! Syntax is <&dq>SPIGOT_POTION_EFFECT_NAME,power,duration_in_ticks,hide_ambience,hide_particles<&dq>, you input <&dq><def[value]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    #  - foreach next
+    #}
+    #- if !<def[valid_effects].contains[<def[edata].get[1]||null>]> {
+    #  - announce '<&c>Invalid potion effect! You input <&dq><&6><def[edata].set[<&6><def[edata].get[1]><&c>].at[1].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    #  - foreach next
+    #}
+    #- if <def[edata].get[2].as_decimal||null> == null || <def[edata].get[2].contains_text[.]||true> || <def[edata].get[2]||-100> < 0 {
+    #  - announce '<&c>Invalid power! You input <&dq><def[edata].set[<&6><def[edata].get[2]><&c>].at[2].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    #  - foreach next
+    #}
+    #- if <def[edata].get[2]> > 255 {
+    #  - announce '<&c>Power cannot exceed 255! You input <&dq><def[edata].set[<&6><def[edata].get[2]><&c>].at[2].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    #  - foreach next
+    #}
+    #- if <def[edata].get[3].as_decimal||null> == null || <def[edata].get[3].contains_text[.]||true> || <def[edata].get[3]||-100> < 0 {
+    #  - announce '<&c>Invalid duration (in ticks)! You input <&dq><def[edata].set[<&6><def[edata].get[3]><&c>].at[3].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    #  - foreach next
+    #}
+    #- if <def[edata].get[3]> > 20000000 {
+    #  - announce '<&c>Duration cannot exceed 1000000s (20000000 ticks)! You input <&dq><def[edata].set[<&6><def[edata].get[3]><&c>].at[3].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    #  - foreach next
+    #}
+    #- if !<li@true|false.contains[<def[edata].get[4]>]> {
+    #  - announce '<&c>hide_ambience must be true or false! You input <&dq><def[edata].set[<&6><def[edata].get[4]><&c>].at[4].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    #  - foreach next
+    #}
+    #- if !<li@true|false.contains[<def[edata].get[5]>]> {
+    #  - announce '<&c>hide_particles must be true or false! You input <&dq><def[edata].set[<&6><def[edata].get[5]><&c>].at[5].separated_by[,]><&dq>' format:gpa_gpu_vanilla_potion_behavior_chat_format to_console
+    #  - foreach next
+    #}
     - define effect '<def[1].list_effects.filter[starts_with[<def[edata].get[1]>]].get[1].split[,]||NULL_EFFECT>'
     - if <def[effect]> != 'NULL_EFFECT' {
       - if <def[effect].get[2]> > <def[edata].get[2]> {
