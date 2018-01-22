@@ -1,0 +1,179 @@
+###############################################################################
+#                                                                             #
+#                     GRANDPARTYUTILITIES: STRING TO BOOK                     #
+#                                                                             #
+###############################################################################
+# 
+# This script does not require "gpa_gpu_main.yml" to work. It should work
+# across all versions, although the latest version of Denizen and Spigot are
+# recommended for optimal performance.
+# 
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# This script converts a string into a written book. It writes up to a maximum
+# of 580 pages, each page with a maximum of 13 lines and 19 characters per
+# line. Hyphenation is currently not supported.
+# 
+# 
+# ----| HOW TO USE
+# 
+# To use this script, run or inject this script like so:
+# 
+#   - run gpa_gpu_string_to_book player:<player> def:string|author|title|save_type|id|key_path|save_path
+# 
+# It is required to have a player if the save_type is display or excluded.
+# 
+# The definitions are as follows:
+# 
+#   string      : The escaped string the player wants to convert into a
+#                 readable written book.
+#                 Color codes will not be automatically parsed. They need to be
+#                 converted into a tag (e.g. "<&a>" instead of "&a").
+#   author      : Author of the book.
+#   title       : Title of the book.
+#   save_type   : (OPTIONAL) Determines how to save the book.
+#                 "flag" will flag the server with the book's dItem.
+#                 "yaml" will save the book's dItem into a YAML key.
+#                 "notable" or "note" will note the book's dItem.
+#                 "display" will force the player to open the book without
+#                 letting the player keep the book.
+#                 Anything else will create a written_book.
+#   id          : If save_type is "display" or excluded, then this definition
+#                 is ignored.
+#                 If save_type is "flag", this determines the flag name.
+#                 If save_type is "yaml", this determines the YAML id to use.
+#                 If save_type is "notable" or "note", this determines the
+#                 notable name to use.
+#   key_path    : If save_type is "yaml", this determines the key path to store
+#                 the book's dItem in.
+#                 Otherwise, this definition is ignored.
+#   save_path   : (OPTIONAL) If save_type is "yaml", this determines the
+#                 filepath to save the YAML data stored under "id" to.
+#
+#
+
+gpa_gpu_string_to_book:
+  type: task
+  speed: 0
+  debug: false
+  definitions: string|author|title|save_type|id|key_path|save_path
+  script:
+  - define max_length '19'
+  - define max_lines '580'
+
+  - define cl_str 'li@'
+  - foreach '<def[string].split_by[ ]||li@>' {
+    - define cl_str '<def[cl_str].include[<def[value]>]>'
+  }
+  - if <def[cl_str].is_empty> {
+    - define b_pages 'li@ '
+    - goto skip_line_split
+  }
+
+  - if <def[cl_str].space_separated.unescaped.length> <= <def[max_length]> {
+    - define b_pages 'li@<def[cl_str].space_separated>'
+    - goto skip_line_split
+  }
+
+  - define red 'li@'
+  - define fl '<def[cl_str].space_separated>'
+  - define ind '0'
+  - define dlc '<&0>'
+  - while <def[fl].unescaped.length.is[MORE].than[0]||false> {
+    - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[max_length]>]>'
+    - if <def[string_op].index_of[<&nl>]> > 0 {
+      - define string_op '<def[string_op].before[<&nl>]>'
+    }
+    - define list_op '<def[string_op].split[ ]>'
+    - define ind '<def[ind].add[<def[list_op].size>]>'
+    - if <def[cl_str].get[<def[ind]||1>].unescaped||<def[cl_str].last>> != <def[list_op].last.unescaped> {
+      - define string_op '<def[string_op].before_last[ ]>'
+    }
+    - if <def[loop_index]> >= <def[max_lines].max[1]||500> {
+      - if <def[fl].length> > <def[max_length]> {
+        - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[0,<def[max_length].sub[3]>]>'
+        - define list_op '<def[string_op].split[ ]>'
+        - if <def[cl_str].get[<def[list_op].size>]> != <def[list_op].last> {
+          - define string_op '<def[string_op].before_last[ ]>'
+        }
+        - define string_op '<def[string_op]>...'
+      }
+      - define red '<def[red].include[<def[string_op]>]>'
+      - define fl:!
+      - while stop
+    }
+    - define red '<def[red].include[<def[string_op]>]>'
+    - define fl '<def[fl].substring[<def[string_op].unescaped.length>].trim>'
+    - define lc '<def[string_op].unescaped.last_color.escaped>'
+    - if <def[lc]> == '' {
+      - define lc '<def[dlc]>'
+    }
+    - define lc '<def[lc].unescaped>'
+  }
+
+  - define b_pages 'li@'
+  - define page 'li@'
+  - foreach <def[red]> {
+    - define page '<def[page].include[<def[value]>]>'
+    - if <def[page].size> > 12 || <def[loop_index]> == <def[red].size> {
+      - define b_pages '<def[b_pages].include[<def[page].separated_by[<n>]>]>'
+      - define page 'li@'
+    }
+  }
+  - mark skip_line_split
+  - define book 'i@written_book[book=author|<def[author]||Server>|title|<def[title]||A Book>|pages|<def[b_pages].separated_by[|]>]'
+  - choose <def[save_type]||null>:
+    - case flag:
+      - define null 'null-<util.random.uuid>'
+      - if <def[id]||<def[null]>> == <def[null]> {
+        - narrate '<&c>Invalid flag name!'
+        - queue clear
+      }
+      - flag server '<def[id]>:<def[book]>'
+    - case yaml:
+      - define null 'null-<util.random.uuid>'
+      - if <def[id]||<def[null]>> == <def[null]> {
+        - narrate '<&c>Invalid YAML id!'
+        - queue clear
+      }
+      - if <def[key_path]||<def[null]>> == <def[null]> {
+        - narrate '<&c>Invalid YAML key!'
+        - queue clear
+      }
+      - if !<yaml.list.contains[<def[id]>]> {
+        - yaml create id:<def[id]>
+      }
+      - yaml set '<def[key_path]>:<def[book]>' id:<def[id]>
+      - if <def[save_path].exists> {
+        - yaml savefile:<def[save_path]> id:<def[id]>
+      }
+    - case notable:
+      - define null 'null-<util.random.uuid>'
+      - if <def[id]||<def[null]>> == <def[null]> {
+        - narrate '<&c>Invalid notable name!'
+        - queue clear
+      }
+      - note <def[book]> as:<def[id]>
+    - case note:
+      - define null 'null-<util.random.uuid>'
+      - if <def[id]||<def[null]>> == <def[null]> {
+        - narrate '<&c>Invalid notable name!'
+        - queue clear
+      }
+      - note <def[book]> as:<def[id]>
+    - case display:
+      - if <player||null> !matches player {
+        - define player '<player>'
+        - queue clear
+      }
+      - define p_item '<player.item_in_hand>'
+      - adjust <player> item_in_hand:<def[book]>
+      - adjust <player> open_book
+      - adjust <player> item_in_hand:<def[p_item]>
+    - default:
+      - if <player||null> !matches player {
+        - define player '<player>'
+        - queue clear
+      }
+      - give <def[book]>
