@@ -69,14 +69,13 @@ Add in a ton of things. Classes, races, tutorial areas, stats and leveling, etc.
 - Mana and health
 - Add in-class advancements later down the road (e.g. Warrior **>** Knight **>** Royal Knight)
 - Possibly allow adding more races and classes?
-### GrandRPG Item Lores
-Yet another lore attributes reader. Soft dependency on [GrandRPG Base](#grandrpg-base).
+### GrandRPG Items
+RPG item creator/handler. Soft dependency on [GrandRPG Base](#grandrpg-base).
 - Planned stats: *Damage, Defense, elemental Affinities (Flame, Ice, Wind, Earth, Light, Dark), Dodge, CRIT Chance, CRIT Damage, Reflect, Health, Attack Speed*
 - Certain stats will have specific modifier types (for example, you can only add/subtract from CRIT Chance in percentages, not in flat numbers)
-- Attack Speed stat may be excluded at first
 - Include a set of "default" items
 - Maybe allow customization of items via **YAML** files?
-### GrandRPG Item Lores - Skill Expansion
+### GrandRPG Item Skills - GRPG Items Expansion
 Add more to [GrandRPG Item Lores](#grandrpg-item-lores) with skills being bound to items via the lore. Depends on [GrandRPG Item Lores](#grandrpg-item-lores).
 - Planned default skills: *Leap, Smite, Fire/Ice/Wind/Earth/Light/Dark Bolt, Fire Ring, Ice Prison, Wind Cutter, Earthquake, Sanctuary (Light), Invisibility Cloak (Dark)*
 - More default skills TBD
