@@ -1,0 +1,101 @@
+###############################################################################
+#                                                                             #
+#                      GRANDPARTYUTILITIES: LINE WRAPPER                      #
+#                                                                             #
+###############################################################################
+# 
+# This script does not require "gpa_gpu_main.yml" to work. It should work
+# across all versions, although the latest version of Denizen and Spigot are
+# recommended for optimal performance.
+# 
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# This script takes a string and splits it into multiple lines respecting a
+# certain character length. Any number of characters can be specified per line,
+# and a maximum number of lines can be chosen.
+# 
+# 
+# ----| HOW TO USE
+# 
+# To use this script, use it as a procedure tag:
+# 
+#   - <proc[gpa_gpu_line_wrap].context[string|max_length|max_lines]>
+# 
+# The procedure will return a dList of the lines. The player may then perform
+# any operation on the dList as they see fit.
+# 
+# The definitions are as follows:
+# 
+#   string      : The escaped string the player wants to convert into a
+#                 readable written book.
+#                 Color codes will not be automatically parsed. They need to be
+#                 converted into a tag (e.g. "<&a>" instead of "&a").
+#   max_length  : The maximum number of characters per line. If the number is
+#                 smaller than the length of the smallest word in the string,
+#                 then the entire string will be returned without any wrapping.
+#   max_lines   : The maximum number of lines the script will attempt to wrap.
+#                 Any word past the limit will be excluded and an ellipses
+#                 will be put at the end.
+#                 This must be at least 1.
+#
+#
+
+gpa_gpu_line_wrap:
+  type: procedure
+  speed: 0
+  debug: false
+  definitions: string|max_length|max_lines
+  script:
+  - define cl_str 'li@'
+  - foreach '<def[string].split_by[ ]||li@>' {
+    - define cl_str '<def[cl_str].include[<def[value]>]>'
+  }
+  - if <def[cl_str].is_empty> {
+    - define red 'li@'
+    - goto skip_line_split
+  }
+
+  - if <def[cl_str].space_separated.unescaped.length> <= <def[max_length]> || <def[cl_str].parse[unescaped.length].filter[is[OR_LESS].than[<def[max_length]>]].is_empty> {
+    - define red 'li@<def[cl_str].space_separated>'
+    - goto skip_line_split
+  }
+
+  - define red 'li@'
+  - define fl '<def[cl_str].space_separated>'
+  - define ind '0'
+  - define dlc '<&f>'
+  - while <def[fl].unescaped.length.is[MORE].than[0]||false> {
+    - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[max_length]>]>'
+    - if <def[string_op].index_of[<&nl>]> > 0 {
+      - define string_op '<def[string_op].before[<&nl>]>'
+    }
+    - define list_op '<def[string_op].split[ ]>'
+    - define ind '<def[ind].add[<def[list_op].size>]>'
+    - if <def[cl_str].get[<def[ind]||1>].unescaped||<def[cl_str].last>> != <def[list_op].last.unescaped> {
+      - define string_op '<def[string_op].before_last[ ]>'
+    }
+    - if <def[loop_index]> >= <def[max_lines].max[1]||999> {
+      - if <def[fl].length> > <def[max_length]> {
+        - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[0,<def[max_length].sub[3]>]>'
+        - define list_op '<def[string_op].split[ ]>'
+        - if <def[cl_str].get[<def[list_op].size>]> != <def[list_op].last> {
+          - define string_op '<def[string_op].before_last[ ]>'
+        }
+        - define string_op '<def[string_op]>...'
+      }
+      - define red '<def[red].include[<def[string_op]>]>'
+      - define fl:!
+      - while stop
+    }
+    - define red '<def[red].include[<def[string_op]>]>'
+    - define fl '<def[fl].substring[<def[string_op].unescaped.length>].trim>'
+    - define lc '<def[string_op].unescaped.last_color.escaped>'
+    - if <def[lc]> == '' {
+      - define lc '<def[dlc]>'
+    }
+    - define lc '<def[lc].unescaped>'
+  }
+
+  - mark skip_line_split
+  - determine <def[red]>
