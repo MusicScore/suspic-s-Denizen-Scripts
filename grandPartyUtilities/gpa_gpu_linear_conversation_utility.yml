@@ -1,0 +1,232 @@
+###############################################################################
+#                                                                             #
+#                  GRANDPARTYUTILITIES: LINEAR CONVERSATION                   #
+#                                                                             #
+###############################################################################
+# 
+# This script is completely independent of "gpa_gpu_main.yml". It should work
+# across all versions, although the latest version of Denizen and Spigot are
+# recommended for optimal performance.
+# 
+# 
+# ----| ABOUT THIS SCRIPT
+# 
+# This script carries out a linear conversation much like a standard RPG
+# dialogue sequence. There is no choices available. Automatic formatting is not
+# supported.
+# 
+# 
+# ----| HOW TO USE
+# 
+# To run this script, run this command:
+#   - run gpa_gpu_linear_conversation_utility player:<dPlayer> def:<conversation_name>|<step_name>
+# 
+# To add conversations, create a new YAML file in the folder "/plugins/
+# GrandPartyUtilities/linear_conversations/". Any conversations will be loaded
+# into the server when scripts are reloaded OR when the server starts. An
+# example conversation will be automatically created.
+# 
+# 
+# ----| CAVEATS
+# 
+# Even though this script supports 1.8.8 to 1.12, it requires the latest
+# developmental version of Denizen.
+# 
+# 
+
+gpa_gpu_linear_conversation_utility:
+  type: task
+  debug: false
+  speed: 0
+  # - run gpa_gpu_linear_conversation_utility player:<player> def:<conversation_name>|<step_name>
+  definitions: name|step
+  script:
+  - if <player||null> == null {
+    - announce to_console '<&c>Error! A dPlayer object is required via the <&dq>player<&dq> argument!' format:gpa_gpu_linear_conversation_utility_format
+    - queue clear
+  }
+  - define null 'null-<util.random.uuid>'
+  - if <server.flag[gpa.gpu.lcu.invalid].as_list.include[<def[null]>].contains[<def[name]||<def[null]>>]||false> {
+    - announce to_console '<&c>Error! This conversation is invalid, has a duplicate, or doesn<&sq>t exist!' format:gpa_gpu_linear_conversation_utility_format
+    - queue clear
+  }
+  - define y_id '<server.flag[gpa.gpu.lcu.list].as_list.map_get[<def[name]>]>'
+  - if !<yaml.list.contains[<def[y_id]>]> {
+    - announce to_console '<&c>Error! This conversation<&sq>s YAML configuration is invalid!' format:gpa_gpu_linear_conversation_utility_format
+    - queue clear
+  }
+  - if !<yaml[<def[y_id]>].list_keys[<def[name]>].filter[matches[\d+]].contains[<def[step]||null>]> {
+    - queue clear
+  }
+  - define text '<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text].unescaped.parse_color[%]>'
+  - define ntext 'li@'
+  - foreach <def[text].split[\u]> {
+    - if <def[value].matches[[a-zA-Z0-9]{4}]> {
+      - define ntext '<def[ntext].include[<&chr[<def[value]>]>]>'
+      - foreach next
+    }
+    - define ntext '<def[ntext].include[<def[value]>]>'
+  }
+  - narrate '<def[ntext].separated_by[]>'
+  - if !<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay].matches[\d+\.*\d*]||false>
+    || !<yaml[<def[y_id]>].list_keys[<def[name]>].contains[<def[step].add_int[1]>]> {
+    - queue clear
+  }
+  - wait <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay]>s
+  - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>' id:gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_step_<def[step].add_int[1]>
+
+gpa_gpu_linear_conversation_utility_cmd:
+  type: command
+  debug: false
+  name: gpulcu
+  description: 'Uses the GrandPartyUtilities Linear Conversation Tool.'
+  usage: /gpulcu <&lt>help|reload|run<&gt> (conversation) (step) (player)
+  allowed help:
+  - determine <context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[]||false>]>
+  tab complete:
+  - if !<context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[]||false>]> {
+    - queue clear
+  }
+  - define s '<context.raw_args.to_list.count[ ]>'
+  - if <def[s]> == 0 {
+    - determine <li@help|reload|run.filter[starts_with[<context.args.get[1]||>]]>
+  }
+  else if <def[s]> == 1 && <context.args.get[1]||> == 'run' {
+    - determine <server.flag[gpa.gpu.lcu.list].as_list.get_sub_items[1].exclude[<server.flag[gpa.gpu.lcu.invalid].as_list>].filter[starts_with[<context.args.get[2]||>]]>
+  }
+  else if <def[s]> == 3 && <context.args.get[1]||> == 'run' {
+    - determine <server.list_online_players.parse[name].filter[starts_with[<context.args.get[4]||>]]>
+  }
+  script:
+  - if !<context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[]||false>]> {
+    - queue clear
+  }
+  - choose <context.args.get[1]||null>:
+    - case reload:
+      - narrate '<&a>Attempting to reload GPU LCU conversations. Check console for any errors.' format:gpa_gpu_linear_conversation_utility_format
+      - run gpa_gpu_linear_conversation_utility_yaml_loader path:load_conversations instantly
+    - case run:
+      - define name '<context.args.get[2]||null>'
+      - define step '<context.args.get[3]||null>'
+      - if !<server.flag[gpa.gpu.lcu.list].as_list.get_sub_items[1].contains[<def[name]>]> {
+        - narrate '<&c>Conversation <&dq><def[name]><&dq> does not exist!' format:gpa_gpu_linear_conversation_utility_format
+        - queue clear
+      }
+      - if !<def[step].matches[\d+]> {
+        - define step '1'
+      }
+      - if <context.server> && !<server.list_online_players.parse[name].contains[<context.args.get[4]||>]> {
+        - narrate '<&c>Invalid player! The player must be online!' format:gpa_gpu_linear_conversation_utility_format
+      }
+      - narrate '<&f>Attempting to run a conversation <&dq><def[name]><&dq> at step <def[step]> for <context.args.get[4]||<player.name>>.
+        Check console for any errors.' format:gpa_gpu_linear_conversation_utility_format
+      - run gpa_gpu_linear_conversation_utility player:<context.args.get[4]||<player>> def:<def[name]>|<def[step]>
+    - default:
+
+gpa_gpu_linear_conversation_utility_yaml_loader:
+  type: world
+  debug: false
+  events:
+    on server start:
+    - run locally 'load_conversations' instantly
+  
+  load_conversations:
+  - foreach <yaml.list.filter[starts_with[gpa_gpu_linear_conversation_data_]]> {
+    - yaml unload id:<def[value]>
+  }
+  - flag server 'gpa.gpu.lcu:!'
+  - define start_file '../GrandPartyUtilities/linear_conversations/'
+  - run locally 'validate' instantly 'def:<def[start_file]>'
+
+  validate:
+  - if !<def[1].ends_with[/]> {
+    - define 1 '<def[1]>/'
+  }
+  - define fs '<server.list_files[<def[1]>]||li@>'
+  - if <def[fs].is_empty> {
+    - announce to_console '<&c>Warning! There are no loaded conversations! We will wait for 10 seconds for
+      the example template to fully load.' format:gpa_gpu_linear_conversation_utility_format
+    - log '' type:clear file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log 'example_conversation:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    1:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] This is an example conversation.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    2:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] You will be required to understand that you need to escape relevant special characters, such as single quotes (&sq), double quotes (&quo), and colons (&co).<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    3:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] A missing step will cause the conversation to stop with no errors, because the utility will assume you wanted to end there but added in a delay key for no reason.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    4:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] You can use color codes by replacing & with <&pc>. For example, <&pc>agreen<&pc>r!<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    5:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] If you want to use special Unicode characters, encase the character&sqs encoding with &quo\u&quo. For example, a heart would be \u2665\u.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    6:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] To end a conversation, simply put no delay key.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - wait 10s
+    - announce to_console '<&c>Assuming the file has loaded. Commencing conversation reading.' format:gpa_gpu_linear_conversation_utility_format
+  }
+  - run locally 'file_search' instantly 'def:<def[1]>|true'
+
+  file_search:
+  - if !<def[1].ends_with[/]> {
+    - define 1 '<def[1]>/'
+  }
+  - define fl 'li@'
+  - define fs '<server.list_files[<def[1]>]||li@>'
+  - foreach <def[fs]> {
+    - if <def[value].matches[.+\.yml]> {
+      - define fl '<def[fl].include[<def[1]><def[value]>]>'
+      - foreach next
+    }
+    else if <def[value].matches[.+\..+]> {
+      - foreach next
+    }
+    - ~run locally 'file_search' instantly 'def:<def[1]><def[value]>|false'
+  }
+  - flag server 'gpa.gpu.lcu.prepare:|:<def[fl]>'
+  - if !<def[2]||false> {
+    - queue clear
+  }
+  - foreach <server.flag[gpa.gpu.lcu.prepare].as_list.deduplicate> {
+    - define y_id 'gpa_gpu_linear_conversation_data_<util.random.uuid.replace[-].with[_]>'
+    - yaml create id:<def[y_id]>
+    - yaml load:<def[value]> id:<def[y_id]>
+    - if !<yaml.list.contains[<def[y_id]>]> {
+      - announce to_console '<&c>Error! A YAML file is considered unusable! The file
+        <&dq>/<def[value].after[GrandPartyUtilities/linear_conversations/]> is most likely empty.<&dq>'
+        format:gpa_gpu_linear_conversation_utility_format
+      - foreach next
+    }
+  }
+  - flag server 'gpa.gpu.lcu.prepare:!'
+  - define ylist 'li@'
+  - foreach <yaml.list.filter[starts_with[gpa_gpu_linear_conversation_data_]]> {
+    - define y_id '<def[value]>'
+    - foreach <yaml[<def[y_id]>].list_keys[]> {
+      - define ylist '<def[ylist].include[<def[value]>/<def[y_id]>]>'
+    }
+  }
+  - define ylisterror 'li@'
+  - foreach <def[ylist].get_sub_items[1]> {
+    - if <def[ylist_c_<def[value]>].exists> {
+      - define ylisterror '<def[ylisterror].include[<def[value]>]>'
+      - foreach next
+    }
+    - define ylist_c_<def[value]> '1'
+  }
+  - flag server 'gpa.gpu.lcu.list:|:<def[ylist]>'
+  - flag server 'gpa.gpu.lcu.invalid:|:<def[ylisterror].deduplicate>'
+  - if !<def[ylisterror].is_empty> {
+    - announce to_console '<&c>Error! There are multiple conversations with the same name!
+      The following conversation name(s) are suspect<&co>' format:gpa_gpu_linear_conversation_utility_format
+    - announce to_console '<&4><server.flag[gpa.gpu.lcu.invalid].as_list.formatted>'
+  }
+  - announce to_console '<&a>Loaded conversation(s).' format:gpa_gpu_linear_conversation_utility_format
+
+gpa_gpu_linear_conversation_utility_format:
+  type: format
+  debug: false
+  format: '[<&a>GPU<&r> <&2>LCU<&r>] <text>'
