@@ -29,6 +29,14 @@
 # WARNING: If you set the third definition to "true", you MUST make sure that
 # you are not attempting to run another queue with the exact same ID!
 # 
+# To use this script out-of-the-box, there is a /gpulcu command. It requires
+# the player A) have OP, B) have the permission "gpu.lcu", or C) have the flag
+# "gpa.gpu.lcu".
+# 
+# WARNING: Using the "/gpulcu run" command automatically forces the script to
+# use the third definition. Absolutely do NOT independently use scripts to make
+# queues with the same ID as described by the third definition's explanation.
+# 
 # To add conversations, create a new YAML file in the folder "/plugins/
 # GrandPartyUtilities/linear_conversations/". Any conversations will be loaded
 # into the server when scripts are reloaded OR when the server starts. An
@@ -42,6 +50,10 @@
 # 
 # The third definition in the run command is EXTREMELY dangerous! Do not use
 # it unless you know what you're doing!
+# 
+# If any player uses the /gpulcu command, absolutely do NOT use scripts to
+# independently create queues with IDs of the format:
+#   - gpa_gpu_linear_conversation_utility_conversation_<dPlayer UUID>_step_<#>
 # 
 # 
 
@@ -98,9 +110,9 @@ gpa_gpu_linear_conversation_utility_cmd:
   description: 'Uses the GrandPartyUtilities Linear Conversation Tool.'
   usage: /gpulcu <&lt>help|reload|run<&gt> (conversation) (step) (player)
   allowed help:
-  - determine <context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[]||false>]>
+  - determine <context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[gpa.gpu.lcu]||false>]>
   tab complete:
-  - if !<context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[]||false>]> {
+  - if !<context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[gpa.gpu.lcu]||false>]> {
     - queue clear
   }
   - define s '<context.raw_args.to_list.count[ ]>'
@@ -136,8 +148,11 @@ gpa_gpu_linear_conversation_utility_cmd:
       }
       - narrate '<&f>Attempting to run a conversation <&dq><def[name]><&dq> at step <def[step]> for <context.args.get[4]||<player.name>>.
         Check console for any errors.' format:gpa_gpu_linear_conversation_utility_format
-      - run gpa_gpu_linear_conversation_utility player:<context.args.get[4]||<player>> def:<def[name]>|<def[step]>|true
-        id:gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_step_<def[step]>
+      - define qid 'gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_step_<def[step]>'
+      - if <queue.list.contains[q@<def[qid]>]> {
+        - queue q@<def[qid]> clear
+      }
+      - run gpa_gpu_linear_conversation_utility player:<context.args.get[4]||<player>> def:<def[name]>|<def[step]>|true id:<def[qid]>
     - default:
       - narrate '<&f>GrandPartyUtilities Linear Conversation Tool Help<&co>'
       - narrate '<&7>/gpulcu help || <&8>Displays this help page.'
