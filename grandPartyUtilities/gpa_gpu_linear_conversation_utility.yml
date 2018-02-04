@@ -25,7 +25,7 @@
 # "<step>" should be the number of the step that the script should start at.
 # "<true/false>" determines if the script should assign a custom queue ID to
 # each new line of conversation with this format:
-#   - gpa_gpu_linear_conversation_utility_conversation_<dPlayer UUID>_step_<#>
+#   - gpa_gpu_linear_conversation_utility_conversation_<dPlayer UUID>_c_<conversation_name>_step_<#>
 # WARNING: If you set the third definition to "true", you MUST make sure that
 # you are not attempting to run another queue with the exact same ID!
 # 
@@ -97,7 +97,7 @@ gpa_gpu_linear_conversation_utility:
   - wait <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay]>s
   - if <def[use_id]||false> {
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>|true'
-      id:gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_step_<def[step].add_int[1]>
+      id:gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_c_<def[name]>_step_<def[step].add_int[1]>
   }
   else {
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>'
@@ -148,7 +148,7 @@ gpa_gpu_linear_conversation_utility_cmd:
       }
       - narrate '<&f>Attempting to run a conversation <&dq><def[name]><&dq> at step <def[step]> for <context.args.get[4]||<player.name>>.
         Check console for any errors.' format:gpa_gpu_linear_conversation_utility_format
-      - define qid 'gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_step_<def[step]>'
+      - define qid 'gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_c_<def[name]>_step_<def[step]>'
       - if <queue.list.contains[q@<def[qid]>]> {
         - queue q@<def[qid]> clear
       }
