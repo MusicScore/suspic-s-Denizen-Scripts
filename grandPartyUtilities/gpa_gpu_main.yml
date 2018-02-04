@@ -40,7 +40,7 @@
 gpa_gpu_main:
   type: world
   debug: false
-  version: '0.2.1.1'
+  version: '0.3'
   events:
     on server start:
     - ~run gpa_gpu_config
