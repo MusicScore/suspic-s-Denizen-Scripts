@@ -19,7 +19,15 @@
 # ----| HOW TO USE
 # 
 # To run this script, run this command:
-#   - run gpa_gpu_linear_conversation_utility player:<dPlayer> def:<conversation_name>|<step_name>
+#   - run gpa_gpu_linear_conversation_utility player:<dPlayer> def:<conversation_name>|<step_name>|<true/false>
+# 
+# "<conversation_name>" should be the name of a loaded conversation.
+# "<step>" should be the number of the step that the script should start at.
+# "<true/false>" determines if the script should assign a custom queue ID to
+# each new line of conversation with this format:
+#   - gpa_gpu_linear_conversation_utility_conversation_<dPlayer UUID>_step_<#>
+# WARNING: If you set the third definition to "true", you MUST make sure that
+# you are not attempting to run another queue with the exact same ID!
 # 
 # To add conversations, create a new YAML file in the folder "/plugins/
 # GrandPartyUtilities/linear_conversations/". Any conversations will be loaded
@@ -32,14 +40,16 @@
 # Even though this script supports 1.8.8 to 1.12, it requires the latest
 # developmental version of Denizen.
 # 
+# The third definition in the run command is EXTREMELY dangerous! Do not use
+# it unless you know what you're doing!
+# 
 # 
 
 gpa_gpu_linear_conversation_utility:
   type: task
   debug: false
   speed: 0
-  # - run gpa_gpu_linear_conversation_utility player:<player> def:<conversation_name>|<step_name>
-  definitions: name|step
+  definitions: name|step|use_id
   script:
   - if <player||null> == null {
     - announce to_console '<&c>Error! A dPlayer object is required via the <&dq>player<&dq> argument!' format:gpa_gpu_linear_conversation_utility_format
@@ -73,7 +83,13 @@ gpa_gpu_linear_conversation_utility:
     - queue clear
   }
   - wait <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay]>s
-  - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>' id:gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_step_<def[step].add_int[1]>
+  - if <def[use_id]||false> {
+    - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>|true'
+      id:gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_step_<def[step].add_int[1]>
+  }
+  else {
+    - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>'
+  }
 
 gpa_gpu_linear_conversation_utility_cmd:
   type: command
@@ -120,8 +136,13 @@ gpa_gpu_linear_conversation_utility_cmd:
       }
       - narrate '<&f>Attempting to run a conversation <&dq><def[name]><&dq> at step <def[step]> for <context.args.get[4]||<player.name>>.
         Check console for any errors.' format:gpa_gpu_linear_conversation_utility_format
-      - run gpa_gpu_linear_conversation_utility player:<context.args.get[4]||<player>> def:<def[name]>|<def[step]>
+      - run gpa_gpu_linear_conversation_utility player:<context.args.get[4]||<player>> def:<def[name]>|<def[step]>|true
+        id:gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_step_<def[step]>
     - default:
+      - narrate '<&f>GrandPartyUtilities Linear Conversation Tool Help<&co>'
+      - narrate '<&7>/gpulcu help || <&8>Displays this help page.'
+      - narrate '<&7>/gpulcu reload || <&8>Reloads conversations from file. Performs a recursive check for all YAML files in the folder "/plugins/GrandPartyUtilities/linear_conversations/"'
+      - narrate '<&7>/gpulcu run <&lt>conversation<&gt> (step) (player) || <&8>Runs a conversation, with an optional step argument for the specific step to use and an optional player argument. If the command is run by CONSOLE, the step and player arguments are mandatory.'
 
 gpa_gpu_linear_conversation_utility_yaml_loader:
   type: world
