@@ -120,7 +120,7 @@ gpa_gpu_linear_conversation_utility_cmd:
     - determine <li@help|reload|run.filter[starts_with[<context.args.get[1]||>]]>
   }
   else if <def[s]> == 1 && <context.args.get[1]||> == 'run' {
-    - determine <server.flag[gpa.gpu.lcu.list].as_list.get_sub_items[1].exclude[<server.flag[gpa.gpu.lcu.invalid].as_list>].filter[starts_with[<context.args.get[2]||>]]>
+    - determine <server.flag[gpa.gpu.lcu.list].as_list.get_sub_items[1].exclude[<server.flag[gpa.gpu.lcu.invalid].as_list||li@>].filter[starts_with[<context.args.get[2]||>]]>
   }
   else if <def[s]> == 3 && <context.args.get[1]||> == 'run' {
     - determine <server.list_online_players.parse[name].filter[starts_with[<context.args.get[4]||>]]>
