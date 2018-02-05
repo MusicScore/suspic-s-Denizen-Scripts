@@ -53,7 +53,7 @@
 # 
 # If any player uses the /gpulcu command, absolutely do NOT use scripts to
 # independently create queues with IDs of the format:
-#   - gpa_gpu_linear_conversation_utility_conversation_<dPlayer UUID>_step_<#>
+#   - gpa_gpu_linear_conversation_utility_conversation_<dPlayer UUID>_c_<conversation_name>_step_<#>
 # 
 # 
 
