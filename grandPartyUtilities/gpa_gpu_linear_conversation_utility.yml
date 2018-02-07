@@ -23,8 +23,8 @@
 # 
 # "<conversation_name>" should be the name of a loaded conversation.
 # "<step>" should be the number of the step that the script should start at.
-# "<true/false>" determines if the script should assign a custom queue ID to
-# each new line of conversation with this format:
+# "<true/false>" (optional) determines if the script should assign a custom
+# queue ID to each new line of conversation with this format:
 #   - gpa_gpu_linear_conversation_utility_conversation_<dPlayer UUID>_c_<conversation_name>_step_<#>
 # WARNING: If you set the third definition to "true", you MUST make sure that
 # you are not attempting to run another queue with the exact same ID!
@@ -33,14 +33,18 @@
 # the player A) have OP, B) have the permission "gpu.lcu", or C) have the flag
 # "gpa.gpu.lcu".
 # 
-# WARNING: Using the "/gpulcu run" command automatically forces the script to
-# use the third definition. Absolutely do NOT independently use scripts to make
-# queues with the same ID as described by the third definition's explanation.
-# 
 # To add conversations, create a new YAML file in the folder "/plugins/
 # GrandPartyUtilities/linear_conversations/". Any conversations will be loaded
 # into the server when scripts are reloaded OR when the server starts. An
 # example conversation will be automatically created.
+# 
+# 
+# When a conversation is run, you can use these tags:
+# - <player.flag[gpa.gpu.lcu.cname]>
+# - <player.flag[gpa.gpu.lcu.step]>
+# 
+# "gpa.gpu.lcu.cname" returns the conversation name, if any.
+# "gpa.gpu.lcu.step" returns the step number, if any.
 # 
 # 
 # ----| CAVEATS
@@ -74,7 +78,7 @@ gpa_gpu_linear_conversation_utility:
   }
   - define y_id '<server.flag[gpa.gpu.lcu.list].as_list.map_get[<def[name]>]>'
   - if !<yaml.list.contains[<def[y_id]>]> {
-    - announce to_console '<&c>Error! This conversation<&sq>s YAML configuration is invalid!' format:gpa_gpu_linear_conversation_utility_format
+    - announce to_console '<&c>Error! This conversation<&sq>s YAML configuration is invalid or does not exist!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
   }
   - if !<yaml[<def[y_id]>].list_keys[<def[name]>].filter[matches[\d+]].contains[<def[step]||null>]> {
@@ -92,8 +96,12 @@ gpa_gpu_linear_conversation_utility:
   - narrate '<def[ntext].separated_by[]>'
   - if !<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay].matches[\d+\.*\d*]||false>
     || !<yaml[<def[y_id]>].list_keys[<def[name]>].contains[<def[step].add_int[1]>]> {
+    - flag player 'gpa.gpu.lcu.cname:!'
+    - flag player 'gpa.gpu.lcu.step:!'
     - queue clear
   }
+  - flag player 'gpa.gpu.lcu.cname:<def[name]>'
+  - flag player 'gpa.gpu.lcu.step:<def[step]>'
   - wait <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay]>s
   - if <def[use_id]||false> {
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>|true'
@@ -152,7 +160,7 @@ gpa_gpu_linear_conversation_utility_cmd:
       - if <queue.list.contains[q@<def[qid]>]> {
         - queue q@<def[qid]> clear
       }
-      - run gpa_gpu_linear_conversation_utility player:<context.args.get[4]||<player>> def:<def[name]>|<def[step]>|true id:<def[qid]>
+      - run gpa_gpu_linear_conversation_utility player:<context.args.get[4]||<player>> def:<def[name]>|<def[step]>
     - default:
       - narrate '<&f>GrandPartyUtilities Linear Conversation Tool Help<&co>'
       - narrate '<&7>/gpulcu help || <&8>Displays this help page.'
