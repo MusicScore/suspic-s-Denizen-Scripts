@@ -40,11 +40,12 @@
 # 
 # 
 # When a conversation is run, you can use these tags:
-# - <player.flag[gpa.gpu.lcu.cname]>
-# - <player.flag[gpa.gpu.lcu.step]>
+# - <player.flag[gpa.gpu.lcu.<name>.step]>
+# - <player.flag[gpa.gpu.lcu.<name>.queue]>
 # 
-# "gpa.gpu.lcu.cname" returns the conversation name, if any.
-# "gpa.gpu.lcu.step" returns the step number, if any.
+# "gpa.gpu.lcu.<name>.step" returns the conversation step, if any.
+# "gpa.gpu.lcu.<name>.queue" returns the step queue, if the third definition is
+#                            set to false.
 # 
 # 
 # ----| CAVEATS
@@ -71,7 +72,7 @@ gpa_gpu_linear_conversation_utility:
     - announce to_console '<&c>Error! A dPlayer object is required via the <&dq>player<&dq> argument!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
   }
-  - define flag 'gpa.gpu.lcu.<def[name]>.step'
+  - define flag 'gpa.gpu.lcu.<def[name]>'
   - flag player '<def[flag]>:!'
   - define null 'null-<util.random.uuid>'
   - if <server.flag[gpa.gpu.lcu.invalid].as_list.include[<def[null]>].contains[<def[name]||<def[null]>>]||false> {
@@ -104,15 +105,16 @@ gpa_gpu_linear_conversation_utility:
     || !<yaml[<def[y_id]>].list_keys[<def[name]>].contains[<def[step].add_int[1]>]> {
     - queue clear
   }
-  - flag player '<def[flag]>:<def[step]>'
+  - flag player '<def[flag]>.step:<def[step]>'
   - wait <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay]>s
-  - define step '<player.flag[<def[flag]>]>'
+  - define step '<player.flag[<def[flag]>.step]>'
   - if <def[use_id]||false> {
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>|true'
       id:<def[id_prefix]><def[name]>_step_<def[step].add_int[1]>
   }
   else {
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>'
+    - flag player '<def[flag]>.queue:<queue>'
   }
 
 gpa_gpu_linear_conversation_utility_cmd:
