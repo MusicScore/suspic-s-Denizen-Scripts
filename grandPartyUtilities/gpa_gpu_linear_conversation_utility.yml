@@ -112,7 +112,7 @@ gpa_gpu_linear_conversation_utility:
       id:<def[id_prefix]><def[name]>_step_<def[step].add_int[1]>
   }
   else {
-    - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<player.flag[g].add_int[1]>'
+    - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>'
   }
 
 gpa_gpu_linear_conversation_utility_cmd:
