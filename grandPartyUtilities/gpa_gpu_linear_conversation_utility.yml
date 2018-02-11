@@ -76,12 +76,12 @@ gpa_gpu_linear_conversation_utility:
   - flag player '<def[flag]>:!'
   - define null 'null-<util.random.uuid>'
   - if <server.flag[gpa.gpu.lcu.invalid].as_list.include[<def[null]>].contains[<def[name]||<def[null]>>]||false> {
-    - announce to_console '<&c>Error! This conversation is invalid, has a duplicate, or doesn<&sq>t exist!' format:gpa_gpu_linear_conversation_utility_format
+    - announce to_console '<&c>Error! Conversation <&dq><def[name]||null><&dq> is invalid, has a duplicate, or doesn<&sq>t exist!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
   }
-  - define y_id '<server.flag[gpa.gpu.lcu.list].as_list.map_get[<def[name]>]>'
+  - define y_id '<server.flag[gpa.gpu.lcu.list].as_list.map_get[<def[name]||<def[null]>>]||<def[null]>>'
   - if !<yaml.list.contains[<def[y_id]>]> {
-    - announce to_console '<&c>Error! This conversation<&sq>s YAML configuration is invalid or does not exist!' format:gpa_gpu_linear_conversation_utility_format
+    - announce to_console '<&c>Error! The YAML configuration for <&dq><def[name]||null><&dq> is invalid or does not exist!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
   }
   - if !<yaml[<def[y_id]>].list_keys[<def[name]>].filter[matches[\d+]].contains[<def[step]||null>]> {
