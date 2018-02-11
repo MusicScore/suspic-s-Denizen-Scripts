@@ -47,6 +47,9 @@
 # "gpa.gpu.lcu.<name>.queue" returns the step queue, if the third definition is
 #                            set to false.
 # 
+# For a list of valid placeholders, look at the generated "example_
+# conversation.yml" file.
+# 
 # 
 # ----| CAVEATS
 # 
@@ -87,20 +90,60 @@ gpa_gpu_linear_conversation_utility:
   - if !<yaml[<def[y_id]>].list_keys[<def[name]>].filter[matches[\d+]].contains[<def[step]||null>]> {
     - queue clear
   }
-  - define id_prefix 'gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_c_'
-  - foreach <queue.list.exclude[<queue>].filter[starts_with[q@<def[id_prefix]>]]> {
-    - queue <def[value]> clear
-  }
   - define text '<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text].unescaped.parse_color[%]>'
   - define ntext 'li@'
-  - foreach <def[text].split[\u]> {
-    - if <def[value].matches[[a-zA-Z0-9]{4}]> {
-      - define ntext '<def[ntext].include[<&chr[<def[value]>]>]>'
+  #- foreach <def[text].replace[\\u[a-zA-Z0-9]{4}\\].with[|%0|].split[|]> {
+  #  - if <def[value].matches[\\u[a-zA-Z0-9]{4}\\]> {
+  #    - define ntext '<def[ntext].include[<&chr[<def[value].after[\u].before[\]>]>]>'
+  #    - foreach next
+  #  }
+  #  - define ntext '<def[ntext].include[<def[value]>]>'
+  #}
+  #- define text '<def[ntext].separated_by[]>'
+  - define replacelist 'li@'
+  #- foreach <s@gpa_gpu_linear_conversation_utility.yaml_key[placeholders]> {
+  #  - define term '<def[value].after[/]>'
+  #  - if !<def[term].matches[\{[A-Z_]+\((.*)\)\}]> {
+  #    - define replacelist '<def[replacelist].include[replace[<def[value].before[/]>].with[<%term%>]]'
+  #    - foreach next
+  #  }
+  #  - define replacelist '<def[replacelist].include[replace[<def[value].before[/]>].with[<%term%>]]'
+  #}
+  #- define replacelist '<def[replacelist].separated_by[.]>'
+  #- narrate '<def[ntext].separated_by[].%replacelist%>'
+  - define spl_list '<s@gpa_gpu_linear_conversation_utility.yaml_key[static_placeholders]>'
+  - define dpl_list '<s@gpa_gpu_linear_conversation_utility.yaml_key[dynamic_placeholders]>'
+  - define ntext 'li@'
+  - foreach '<def[text].replace[regex:\{[^\}]+\}].with[|$0|].split[|]>' {
+    - define tag:!
+    - define replace:!
+    - define textpiece '<def[value]>'
+    - if <def[spl_list].get_sub_items[1].contains[<def[textpiece]>]> {
+      - define tag '<def[spl_list].map_get[<def[textpiece]>]>'
+      - define ntext '<def[ntext].include[<parse:%tag%>]>'
+      #- narrate '<def[tag]>'
       - foreach next
     }
-    - define ntext '<def[ntext].include[<def[value]>]>'
+    - foreach <def[dpl_list]> {
+      - define dpl_reg '<def[value].before[/]>'
+      - if <def[dpl_reg]> == '\{PLACEHOLDER\[([a-zA-Z0-9_]+)\]\}' && !<server.list_plugins.contains[pl@Depenizen|pl@PlaceholderAPI]> {
+        - foreach next
+      }
+      - if <def[textpiece].matches[<def[dpl_reg]>]> {
+        - define tag '<def[textpiece].replace[regex:<def[dpl_reg]>].with[$1]>'
+        - define rtag '<def[value].after[/]>'
+        - define ntext '<def[ntext].include[<parse:%rtag%>]>'
+        - define replace 'true'
+        - foreach next
+      }
+    }
+    - if <def[replace]||false> {
+      - foreach next
+    }
+    - define ntext '<def[ntext].include[<def[textpiece]>]>'
   }
-  - narrate '<def[ntext].separated_by[]>'
+  - define text '<def[ntext].separated_by[]>'
+  - narrate '<def[text]>'
   - if !<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay].matches[\d+\.*\d*]||false>
     || !<yaml[<def[y_id]>].list_keys[<def[name]>].contains[<def[step].add_int[1]>]> {
     - queue clear
@@ -116,6 +159,20 @@ gpa_gpu_linear_conversation_utility:
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>'
     - flag player '<def[flag]>.queue:<queue>'
   }
+  static_placeholders:
+  - '{PLAYER_NAME}/<player.name>'
+  - '{PLAYER_PING}/<player.ping>'
+  - '{PLAYER_XP}/<player.exp.total>'
+  - '{PLAYER_XP_PERCENT}/<player.exp>'
+  - '{PLAYER_XP_LEVEL}/<player.exp.level>'
+  - '{PLAYER_XP_TO_NEXT_LEVEL}/<player.exp.to_next_level>'
+  - '{PLAYER_HEALTH}/<player.health.round_to[2]>'
+  - '{PLAYER_HEALTH_PERCENT}/<player.health.percentage.round_to[1]>'
+  dynamic_placeholders:
+  - '\{PLACEHOLDER\[([a-zA-Z0-9_]+)\]\}/<placeholder[<def[tag]>]>'
+  - '\{PLAYER_FLAG\[(.+)\]\}/<player.flag[<def[tag]>]>'
+  - '\{SERVER_FLAG\[(.+)\]\}/<server.flag[<def[tag]>]>'
+  - '\{u([a-zA-Z0-9]{4})\}/<&chr[<def[tag]>]>'
 
 gpa_gpu_linear_conversation_utility_cmd:
   type: command
@@ -197,6 +254,37 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
     - announce to_console '<&c>Warning! There are no loaded conversations! We will wait for 10 seconds for
       the example template to fully load.' format:gpa_gpu_linear_conversation_utility_format
     - log '' type:clear file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# ----| VALID PLACEHOLDERS' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_NAME}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns the player<&sq>s username.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_PING}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns the player<&sq>s ping.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_XP}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns the player<&sq>s total XP.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_XP_PERCENT}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns how much XP the player has in a level, as a percent.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_XP_LEVEL}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns the player<&sq>s XP level.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_XP_TO_NEXT_LEVEL}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns how much XP the player needs to level up.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_HEALTH}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns the player<&sq>s health.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_HEALTH_PERCENT}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns the player<&sq>s health as a percent.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLACEHOLDER[<&lt>PAPI tag<&gt>]}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns any valid PlaceholderAPI placeholder. Replace <&lt>PAPI tag<&gt> with a' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   valid PlaceholderAPI tag, without the percent marks. For example,' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   <&dq>{PLACEHOLDER[player_exp]}<&dq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {PLAYER_FLAG[<&lt>Denizen flag<&gt>]}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns the value of the Denizen flag on the player, if any.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {SERVER_FLAG[<&lt>Denizen flag<&gt>]}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns the value of the Denizen flag on the server, if any.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# {uUNICODE_ENCODING}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   Returns a Unicode character with the specific 4-character encoding. For' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '#   example, {u2665} returns a heart.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# ' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# ' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log 'example_conversation:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    1:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        text: <&sq>[Server] This is an example conversation.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
@@ -211,7 +299,10 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
     - log '        text: <&sq>[Server] You can use color codes by replacing & with <&pc>. For example, <&pc>agreen<&pc>r!<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    5:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '        text: <&sq>[Server] If you want to use special Unicode characters, encase the character&sqs encoding with &quo\u&quo. For example, a heart would be \u2665\u.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] If you want to use special Unicode characters, use &quo{uUNICODE_ENCODING}&quo. For example, a heart would be {u2665}.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    6:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] A list of valid placeholders can be found in the example_conversation file.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    6:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        text: <&sq>[Server] To end a conversation, simply put no delay key.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
