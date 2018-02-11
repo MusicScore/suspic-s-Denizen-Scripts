@@ -144,6 +144,14 @@ gpa_gpu_linear_conversation_utility:
   }
   - define text '<def[ntext].separated_by[]>'
   - narrate '<def[text]>'
+  # action
+  - if <yaml[<def[y_id]>].list_keys[<def[name]>.<def[step]>].contains[run_script]> {
+    - define rscrpt '<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.run_script]>'
+    - if <server.list_scripts.parse[name].contains[<def[rscrpt]>]> {
+      - run <def[rscrpt]> instantly player:<player> def:<def[name]>|<def[step]>
+    }
+  }
+  ###################
   - if !<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay].matches[\d+\.*\d*]||false>
     || !<yaml[<def[y_id]>].list_keys[<def[name]>].contains[<def[step].add_int[1]>]> {
     - queue clear
@@ -304,7 +312,10 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
     - log '    6:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        text: <&sq>[Server] A list of valid placeholders can be found in the example_conversation file.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '    6:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    7:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] You can also choose to run a script using the &quorun_script&quo key. The specified script must be valid and loaded into the server.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '    8:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        text: <&sq>[Server] To end a conversation, simply put no delay key.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - wait 10s
     - announce to_console '<&c>Assuming the file has loaded. Commencing conversation reading.' format:gpa_gpu_linear_conversation_utility_format
