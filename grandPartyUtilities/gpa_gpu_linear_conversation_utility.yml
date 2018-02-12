@@ -50,6 +50,14 @@
 # For a list of valid placeholders, look at the generated "example_
 # conversation.yml" file.
 # 
+# When using a "run_script" key, note that the conversation name and step the
+# player is on are immediately passed to the specified script as definitions.
+# You can use <def[1]> and <def[2]> to return the respective values, or any
+# relevant definition name as specified by a "definitions:" key in the task
+# script.
+# The player is also attached to the task script run, so any player-related
+# tag should work as well.
+# 
 # 
 # ----| CAVEATS
 # 
