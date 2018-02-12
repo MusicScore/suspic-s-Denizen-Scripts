@@ -90,7 +90,7 @@ gpa_gpu_linear_conversation_utility:
   - if !<yaml[<def[y_id]>].list_keys[<def[name]>].filter[matches[\d+]].contains[<def[step]||null>]> {
     - queue clear
   }
-  - define text '<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text].unescaped.parse_color[%]>'
+  - define text '<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text].unescaped.parse_color[%].replace[|].with[&pipe].replace[\n].with[<&nl>]>'
   - define ntext 'li@'
   #- foreach <def[text].replace[\\u[a-zA-Z0-9]{4}\\].with[|%0|].split[|]> {
   #  - if <def[value].matches[\\u[a-zA-Z0-9]{4}\\]> {
@@ -114,7 +114,8 @@ gpa_gpu_linear_conversation_utility:
   - define spl_list '<s@gpa_gpu_linear_conversation_utility.yaml_key[static_placeholders]>'
   - define dpl_list '<s@gpa_gpu_linear_conversation_utility.yaml_key[dynamic_placeholders]>'
   - define ntext 'li@'
-  - foreach '<def[text].replace[regex:\{[^\}]+\}].with[|$0|].split[|]>' {
+  - define sep '^separator^'
+  - foreach '<def[text].replace[regex:\{[^\}]+\}].with[<def[sep]>$0<def[sep]>].split[<def[sep]>]>' {
     - define tag:!
     - define replace:!
     - define textpiece '<def[value]>'
@@ -142,7 +143,7 @@ gpa_gpu_linear_conversation_utility:
     }
     - define ntext '<def[ntext].include[<def[textpiece]>]>'
   }
-  - define text '<def[ntext].separated_by[]>'
+  - define text '<def[ntext].separated_by[].unescaped>'
   - narrate '<def[text]>'
   # action
   - if <yaml[<def[y_id]>].list_keys[<def[name]>.<def[step]>].contains[run_script]> {
@@ -304,7 +305,7 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
     - log '        text: <&sq>[Server] A missing step will cause the conversation to stop with no errors, because the utility will assume you wanted to end there but added in a delay key for no reason.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    4:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '        text: <&sq>[Server] You can use color codes by replacing & with <&pc>. For example, <&pc>agreen<&pc>r!<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] You can use color codes by replacing & with <&pc>. For example, <&pc>agreen<&pc>r! You can also\nsplit lines!<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    5:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        text: <&sq>[Server] If you want to use special Unicode characters, use &quo{uUNICODE_ENCODING}&quo. For example, a heart would be {u2665}.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
