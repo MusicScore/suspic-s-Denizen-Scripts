@@ -35,6 +35,11 @@
   Specific details about each part of GrandPartyUtilities can be found in their
   respective files OR in the config file.
   
+  NOTE: The version check will ONLY check the "gpa_gpu_main" script. All other
+  utilities will not have an official version check, so it is encouraged that
+  you regularly check this GitHub for updates to the other components of this
+  utility.
+  
   
 +-----------------------------------------------------------------------------|
 |  How to Install                                                             |
