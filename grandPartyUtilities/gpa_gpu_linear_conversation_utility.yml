@@ -59,6 +59,19 @@
 # tag should work as well.
 # 
 # 
+# ----| COMMANDS & PERMISSIONS
+# 
+# /gpulcu reload
+#   Reloads conversations from ./plugins/GrandPartyUtilities/linear_conversations/
+# 
+# /gpulcu run <conversation_name> (step) (player_name)
+#   Runs a conversation at the optionally defined step (or step 1) and to the
+#   optionally defined player (or the player who ran the command).
+# 
+# Permission "gpu.lcu", flag "gpa.gpu.lcu.permission", or OP status are required to run
+# the commands.
+# 
+# 
 # ----| CAVEATS
 # 
 # Even though this script supports 1.8.8 to 1.12, it requires the latest
@@ -79,14 +92,15 @@ gpa_gpu_linear_conversation_utility:
   speed: 0
   definitions: name|step|use_id
   script:
+  # Run quick checks on valid player, valid conversation name, and valid YAML
   - if <player||null> == null {
     - announce to_console '<&c>Error! A dPlayer object is required via the <&dq>player<&dq> argument!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
   }
+  - define name '<def[name]||null>'
   - define flag 'gpa.gpu.lcu.<def[name]>'
   - flag player '<def[flag]>:!'
-  - define null 'null-<util.random.uuid>'
-  - if <server.flag[gpa.gpu.lcu.invalid].as_list.include[<def[null]>].contains[<def[name]||<def[null]>>]||false> {
+  - if <server.flag[gpa.gpu.lcu.invalid].as_list.include[null].contains[<def[name]||null>]||false> {
     - announce to_console '<&c>Error! Conversation <&dq><def[name]||null><&dq> is invalid, has a duplicate, or doesn<&sq>t exist!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
   }
@@ -95,79 +109,49 @@ gpa_gpu_linear_conversation_utility:
     - announce to_console '<&c>Error! The YAML configuration for <&dq><def[name]||null><&dq> is invalid or does not exist!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
   }
-  - if !<yaml[<def[y_id]>].list_keys[<def[name]>].filter[matches[\d+]].contains[<def[step]||null>]> {
+
+  # If the step is not a valid positive integer, assume the step number is 1.
+  - define step '<def[step].max[1].round_down||1>'
+
+  # Define a special null case to avoid conflicts with users who think it's
+  # funny to make a text line "null"
+  - define null 'null-<util.random.uuid>'
+
+  # Check to see if a text key has a valid entry
+  - if !<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text]||<def[null]>> == <def[null]> {
     - queue clear
   }
-  - define text '<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text].unescaped.parse_color[%].replace[|].with[&pipe].replace[\n].with[<&nl>]>'
-  - define ntext 'li@'
-  #- foreach <def[text].replace[\\u[a-zA-Z0-9]{4}\\].with[|%0|].split[|]> {
-  #  - if <def[value].matches[\\u[a-zA-Z0-9]{4}\\]> {
-  #    - define ntext '<def[ntext].include[<&chr[<def[value].after[\u].before[\]>]>]>'
-  #    - foreach next
-  #  }
-  #  - define ntext '<def[ntext].include[<def[value]>]>'
-  #}
-  #- define text '<def[ntext].separated_by[]>'
-  - define replacelist 'li@'
-  #- foreach <s@gpa_gpu_linear_conversation_utility.yaml_key[placeholders]> {
-  #  - define term '<def[value].after[/]>'
-  #  - if !<def[term].matches[\{[A-Z_]+\((.*)\)\}]> {
-  #    - define replacelist '<def[replacelist].include[replace[<def[value].before[/]>].with[<%term%>]]'
-  #    - foreach next
-  #  }
-  #  - define replacelist '<def[replacelist].include[replace[<def[value].before[/]>].with[<%term%>]]'
-  #}
-  #- define replacelist '<def[replacelist].separated_by[.]>'
-  #- narrate '<def[ntext].separated_by[].%replacelist%>'
-  - define spl_list '<s@gpa_gpu_linear_conversation_utility.yaml_key[static_placeholders]>'
-  - define dpl_list '<s@gpa_gpu_linear_conversation_utility.yaml_key[dynamic_placeholders]>'
-  - define ntext 'li@'
-  - define sep '^separator^'
-  - foreach '<def[text].replace[regex:\{[^\}]+\}].with[<def[sep]>$0<def[sep]>].split[<def[sep]>]>' {
-    - define tag:!
-    - define replace:!
-    - define textpiece '<def[value]>'
-    - if <def[spl_list].get_sub_items[1].contains[<def[textpiece]>]> {
-      - define tag '<def[spl_list].map_get[<def[textpiece]>]>'
-      - define ntext '<def[ntext].include[<parse:%tag%>]>'
-      #- narrate '<def[tag]>'
-      - foreach next
-    }
-    - foreach <def[dpl_list]> {
-      - define dpl_reg '<def[value].before[/]>'
-      - if <def[dpl_reg]> == '\{PLACEHOLDER\[([a-zA-Z0-9_]+)\]\}' && !<server.list_plugins.contains[pl@Depenizen|pl@PlaceholderAPI]> {
-        - foreach next
-      }
-      - if <def[textpiece].matches[<def[dpl_reg]>]> {
-        - define tag '<def[textpiece].replace[regex:<def[dpl_reg]>].with[$1]>'
-        - define rtag '<def[value].after[/]>'
-        - define ntext '<def[ntext].include[<parse:%rtag%>]>'
-        - define replace 'true'
-        - foreach next
-      }
-    }
-    - if <def[replace]||false> {
-      - foreach next
-    }
-    - define ntext '<def[ntext].include[<def[textpiece]>]>'
-  }
-  - define text '<def[ntext].separated_by[].unescaped>'
+
+  # Parse and narrate text
+  - define text '<parse:<yaml[<def[y_id]>].contains[<def[name]>.<def[step]>.text]>>'
   - narrate '<def[text]>'
-  # action
-  - if <yaml[<def[y_id]>].list_keys[<def[name]>.<def[step]>].contains[run_script]> {
+
+  # Check to see if we should flag the player with the queue ID or not (based
+  # on if the third definition is defined as "true"
+  - if <def[use_id]||false> {
+    - flag player '<def[flag]>.queue:<queue>'
+  }
+
+  # Check to see if there is a valid run_script
+  - if <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.run_script]||<def[null]>> != <def[null]> {
     - define rscrpt '<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.run_script]>'
     - if <server.list_scripts.parse[name].contains[<def[rscrpt]>]> {
       - run <def[rscrpt]> instantly player:<player> def:<def[name]>|<def[step]>
     }
   }
-  ###################
+
+  # Check to see if a next step exists or if a delay key is missing
   - if !<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay].matches[\d+\.*\d*]||false>
-    || !<yaml[<def[y_id]>].list_keys[<def[name]>].contains[<def[step].add_int[1]>]> {
+    || !<yaml[<def[y_id]>].contains[<def[name]>.<def[step].add_int[1]>]> {
     - queue clear
   }
+
   - flag player '<def[flag]>.step:<def[step]>'
   - wait <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay]>s
   - define step '<player.flag[<def[flag]>.step]>'
+
+  # Check to see if the third definition is used. If so, proceed with using a
+  # custom queue ID. Else, flag the player with the next queue.
   - if <def[use_id]||false> {
     - define id_prefix 'gpa_gpu_linear_conversation_utility_conversation_<player.uuid>_c_'
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>|true'
@@ -175,22 +159,7 @@ gpa_gpu_linear_conversation_utility:
   }
   else {
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>'
-    - flag player '<def[flag]>.queue:<queue>'
   }
-  static_placeholders:
-  - '{PLAYER_NAME}/<player.name>'
-  - '{PLAYER_PING}/<player.ping>'
-  - '{PLAYER_XP}/<player.exp.total>'
-  - '{PLAYER_XP_PERCENT}/<player.exp>'
-  - '{PLAYER_XP_LEVEL}/<player.exp.level>'
-  - '{PLAYER_XP_TO_NEXT_LEVEL}/<player.exp.to_next_level>'
-  - '{PLAYER_HEALTH}/<player.health.round_to[2]>'
-  - '{PLAYER_HEALTH_PERCENT}/<player.health.percentage.round_to[1]>'
-  dynamic_placeholders:
-  - '\{PLACEHOLDER\[([a-zA-Z0-9_]+)\]\}/<placeholder[<def[tag]>]>'
-  - '\{PLAYER_FLAG\[(.+)\]\}/<player.flag[<def[tag]>]>'
-  - '\{SERVER_FLAG\[(.+)\]\}/<server.flag[<def[tag]>]>'
-  - '\{u([a-zA-Z0-9]{4})\}/<&chr[<def[tag]>]>'
 
 gpa_gpu_linear_conversation_utility_cmd:
   type: command
@@ -199,9 +168,9 @@ gpa_gpu_linear_conversation_utility_cmd:
   description: 'Uses the GrandPartyUtilities Linear Conversation Tool.'
   usage: /gpulcu <&lt>help|reload|run<&gt> (conversation) (step) (player)
   allowed help:
-  - determine <context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[gpa.gpu.lcu]||false>]>
+  - determine <context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[gpa.gpu.lcu.permission]||false>]>
   tab complete:
-  - if !<context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[gpa.gpu.lcu]||false>]> {
+  - if !<context.server.or[<player.is_op||false>].or[<player.has_permission[gpu.lcu]||false>].or[<player.has_flag[gpa.gpu.lcu.permission]||false>]> {
     - queue clear
   }
   - define s '<context.raw_args.to_list.count[ ]>'
@@ -254,7 +223,8 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
   events:
     on server start:
     - run locally 'load_conversations' instantly
-  
+
+  # Begin loading of conversations
   load_conversations:
   - foreach <yaml.list.filter[starts_with[gpa_gpu_linear_conversation_data_]]> {
     - yaml unload id:<def[value]>
@@ -263,6 +233,7 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
   - define start_file '../GrandPartyUtilities/linear_conversations/'
   - run locally 'validate' instantly 'def:<def[start_file]>'
 
+  # Verify if there is a loaded conversation. If not, create the example conversation.
   validate:
   - if !<def[1].ends_with[/]> {
     - define 1 '<def[1]>/'
@@ -272,34 +243,8 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
     - announce to_console '<&c>Warning! There are no loaded conversations! We will wait for 10 seconds for
       the example template to fully load.' format:gpa_gpu_linear_conversation_utility_format
     - log '' type:clear file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# ----| VALID PLACEHOLDERS' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_NAME}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns the player<&sq>s username.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_PING}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns the player<&sq>s ping.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_XP}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns the player<&sq>s total XP.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_XP_PERCENT}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns how much XP the player has in a level, as a percent.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_XP_LEVEL}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns the player<&sq>s XP level.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_XP_TO_NEXT_LEVEL}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns how much XP the player needs to level up.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_HEALTH}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns the player<&sq>s health.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_HEALTH_PERCENT}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns the player<&sq>s health as a percent.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLACEHOLDER[<&lt>PAPI tag<&gt>]}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns any valid PlaceholderAPI placeholder. Replace <&lt>PAPI tag<&gt> with a' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   valid PlaceholderAPI tag, without the percent marks. For example,' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   <&dq>{PLACEHOLDER[player_exp]}<&dq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {PLAYER_FLAG[<&lt>Denizen flag<&gt>]}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns the value of the Denizen flag on the player, if any.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {SERVER_FLAG[<&lt>Denizen flag<&gt>]}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns the value of the Denizen flag on the server, if any.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '# {uUNICODE_ENCODING}' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   Returns a Unicode character with the specific 4-character encoding. For' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '#   example, {u2665} returns a heart.' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# ' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '# WARNING: When using Denizen tags, please be careful!' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '# ' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '# ' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
@@ -317,10 +262,10 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
     - log '        text: <&sq>[Server] You can use color codes by replacing & with <&pc>. For example, <&pc>agreen<&pc>r! You can also\nsplit lines!<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    5:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '        text: <&sq>[Server] If you want to use special Unicode characters, use &quo{uUNICODE_ENCODING}&quo. For example, a heart would be {u2665}.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] You can use any valid, relevant Denizen tags. For example, you can use the &lt&chr[UNICODE_ENCODING]&gt tag to return a Unicode character (for example, a heart would be <&chr[2665]>).<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    6:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '        text: <&sq>[Server] A list of valid placeholders can be found in the example_conversation file.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] When using tags, remember that only the player is attached.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    7:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        text: <&sq>[Server] You can also choose to run a script using the &quorun_script&quo key. The specified script must be valid and loaded into the server.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
@@ -332,6 +277,8 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
   }
   - run locally 'file_search' instantly 'def:<def[1]>|true'
 
+  # Begin a recursive file search. This can create a lot of lag, so users are
+  # advised to limit the number of folders and files as much as possible.
   file_search:
   - if !<def[1].ends_with[/]> {
     - define 1 '<def[1]>/'
