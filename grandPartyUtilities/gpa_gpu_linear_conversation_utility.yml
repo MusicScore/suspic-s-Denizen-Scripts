@@ -118,7 +118,7 @@ gpa_gpu_linear_conversation_utility:
   - define null 'null-<util.random.uuid>'
 
   # Check to see if a text key has a valid entry
-  - if !<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text]||<def[null]>> == <def[null]> {
+  - if <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text]||<def[null]>> == <def[null]> {
     - queue clear
   }
 
@@ -148,7 +148,6 @@ gpa_gpu_linear_conversation_utility:
 
   - flag player '<def[flag]>.step:<def[step]>'
   - wait <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay]>s
-  - define step '<player.flag[<def[flag]>.step]>'
 
   # Check to see if the third definition is used. If so, proceed with using a
   # custom queue ID. Else, flag the player with the next queue.
