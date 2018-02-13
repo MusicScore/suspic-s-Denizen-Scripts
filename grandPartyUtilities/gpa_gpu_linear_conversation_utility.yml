@@ -123,8 +123,8 @@ gpa_gpu_linear_conversation_utility:
   }
 
   # Parse and narrate text
-  - define text '<parse:<yaml[<def[y_id]>].contains[<def[name]>.<def[step]>.text]>>'
-  - narrate '<def[text]>'
+  - define text '<parse:<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text]>>'
+  - narrate '<def[text].replace[\n].with[<&nl>].unescaped.parse_color[%]>'
 
   # Check to see if we should flag the player with the queue ID or not (based
   # on if the third definition is defined as "true"
@@ -262,7 +262,7 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
     - log '        text: <&sq>[Server] You can use color codes by replacing & with <&pc>. For example, <&pc>agreen<&pc>r! You can also\nsplit lines!<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    5:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
-    - log '        text: <&sq>[Server] You can use any valid, relevant Denizen tags. For example, you can use the &lt&chr[UNICODE_ENCODING]&gt tag to return a Unicode character (for example, a heart would be <&chr[2665]>).<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
+    - log '        text: <&sq>[Server] You can use any valid, relevant Denizen tags. For example, you can use the &lt&chr[UNICODE_ENCODING]&gt tag to return a Unicode character (for example, a heart would be <&lt>&chr[2665]<&gt>).<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        delay: 2' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '    6:' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
     - log '        text: <&sq>[Server] When using tags, remember that only the player is attached.<&sq>' type:none file:<def[1].replace[firstregex:\.\./].with[plugins/]>example_conversation.yml
