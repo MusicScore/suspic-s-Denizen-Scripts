@@ -128,12 +128,6 @@ gpa_gpu_linear_conversation_utility:
   - define text '<parse:<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.text]>>'
   - narrate '<def[text].replace[\n].with[<&nl>].unescaped.parse_color[%]>'
 
-  # Check to see if we should flag the player with the queue ID or not (based
-  # on if the third definition is defined as "true"
-  - if !<def[use_id]||false> {
-    - flag player '<def[flag]>.queue:<queue>'
-  }
-
   # Check to see if there is a valid run_script
   - if <yaml[<def[y_id]>].read[<def[name]>.<def[step]>.run_script]||<def[null]>> != <def[null]> {
     - define rscrpt '<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.run_script]>'
@@ -146,6 +140,12 @@ gpa_gpu_linear_conversation_utility:
   - if !<yaml[<def[y_id]>].read[<def[name]>.<def[step]>.delay].matches[\d+\.*\d*]||false>
     || !<yaml[<def[y_id]>].contains[<def[name]>.<def[step].add_int[1]>]> {
     - queue clear
+  }
+
+  # Check to see if we should flag the player with the queue ID or not (based
+  # on if the third definition is defined as "true"
+  - if !<def[use_id]||false> {
+    - flag player '<def[flag]>.queue:<queue>'
   }
 
   - flag player '<def[flag]>.step:<def[step]>'
