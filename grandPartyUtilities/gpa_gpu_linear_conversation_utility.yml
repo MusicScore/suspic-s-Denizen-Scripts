@@ -99,7 +99,6 @@ gpa_gpu_linear_conversation_utility:
   }
   - define name '<def[name]||null>'
   - define flag 'gpa.gpu.lcu.<def[name]>'
-  - flag player '<def[flag]>:!'
   - if <server.flag[gpa.gpu.lcu.invalid].as_list.include[null].contains[<def[name]||null>]||false> {
     - announce to_console '<&c>Error! Conversation <&dq><def[name]||null><&dq> is invalid, has a duplicate, or doesn<&sq>t exist!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
@@ -109,6 +108,9 @@ gpa_gpu_linear_conversation_utility:
     - announce to_console '<&c>Error! The YAML configuration for <&dq><def[name]||null><&dq> is invalid or does not exist!' format:gpa_gpu_linear_conversation_utility_format
     - queue clear
   }
+
+  # Clear player's flags related to this conversation
+  - flag player '<def[flag]>:!'
 
   # If the step is not a valid positive integer, assume the step number is 1.
   - define step '<def[step].max[1].round_down||1>'
@@ -128,7 +130,7 @@ gpa_gpu_linear_conversation_utility:
 
   # Check to see if we should flag the player with the queue ID or not (based
   # on if the third definition is defined as "true"
-  - if <def[use_id]||false> {
+  - if !<def[use_id]||false> {
     - flag player '<def[flag]>.queue:<queue>'
   }
 
@@ -304,7 +306,7 @@ gpa_gpu_linear_conversation_utility_yaml_loader:
     - yaml load:<def[value]> id:<def[y_id]>
     - if !<yaml.list.contains[<def[y_id]>]> {
       - announce to_console '<&c>Error! A YAML file is considered unusable! The file
-        <&dq>/<def[value].after[GrandPartyUtilities/linear_conversations/]> is most likely empty.<&dq>'
+        <&dq>/<def[value].after[GrandPartyUtilities/linear_conversations/]><&dq> is most likely empty.'
         format:gpa_gpu_linear_conversation_utility_format
       - foreach next
     }
