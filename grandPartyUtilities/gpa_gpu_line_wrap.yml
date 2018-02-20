@@ -88,7 +88,7 @@ gpa_gpu_line_wrap:
       - while stop
     }
     - define red '<def[red].include[<def[string_op]>]>'
-    - define fl '<def[fl].substring[<def[string_op].unescaped.length>].trim>'
+    - define fl '<def[fl].substring[<def[string_op].unescaped.length.sub_int[1]>].trim>'
     - define lc '<def[string_op].unescaped.last_color.escaped>'
     - if <def[lc]> == '' {
       - define lc '<def[dlc]>'
