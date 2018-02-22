@@ -154,7 +154,7 @@ gpa_gpu_linear_conversation_utility:
   # Check to see if the third definition is used. If so, proceed with using a
   # custom queue ID. Else, flag the player with the next queue.
   - if <def[use_id]||false> {
-    - define id_prefix 'gpa_gpu_linear_conversation_utility_conversation_<player.uuid>_c_'
+    - define id_prefix 'gpa_gpu_linear_conversation_utility_conversation_<player.uuid.replace[-].with[_]>_c_'
     - run gpa_gpu_linear_conversation_utility 'player:<player>' 'def:<def[name]>|<def[step].add_int[1]>|true'
       id:<def[id_prefix]><def[name]>_step_<def[step].add_int[1]>
   }
