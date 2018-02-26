@@ -46,21 +46,17 @@ gpa_gpu_line_wrap:
   debug: false
   definitions: string|max_length|max_lines
   script:
-  - define cl_str 'li@'
-  - foreach '<def[string].split_by[ ]||li@>' {
-    - define cl_str '<def[cl_str].include[<def[value]>]>'
-  }
+  - define cl_str '<def[string].split_by[ ]||li@>'
+  - define final_str 'li@'
   - if <def[cl_str].is_empty> {
-    - define red 'li@'
+    - goto skip_line_split
+  }
+  - if <def[cl_str].space_separated.unescaped.length> <= <def[max_length]>
+    || <def[cl_str].parse[unescaped.length].numerical.get[1]> > <def[max_length]> {
+    - define final_str 'li@<def[cl_str].space_separated>'
     - goto skip_line_split
   }
 
-  - if <def[cl_str].space_separated.unescaped.length> <= <def[max_length]> || <def[cl_str].parse[unescaped.length].filter[is[OR_LESS].than[<def[max_length]>]].is_empty> {
-    - define red 'li@<def[cl_str].space_separated>'
-    - goto skip_line_split
-  }
-
-  - define red 'li@'
   - define fl '<def[cl_str].space_separated>'
   - define ind '0'
   - define dlc '<&f>'
