@@ -62,12 +62,12 @@ gpa_gpu_line_wrap:
   - define dlc '<&f>'
   - while <def[fl].unescaped.length.is[MORE].than[0]||false> {
     - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[max_length]>]>'
-    - if <def[string_op].index_of[<&nl>]> > 0 {
+    - if <def[string_op].index_of[<&nl>]||-1> != -1 {
       - define string_op '<def[string_op].before[<&nl>]>'
     }
     - define list_op '<def[string_op].split[ ]>'
     - define ind '<def[ind].add[<def[list_op].size>]>'
-    - if <def[cl_str].get[<def[ind]||1>].unescaped||<def[cl_str].last>> != <def[list_op].last.unescaped> {
+    - if <def[cl_str].get[<def[ind]||last>].unescaped> != <def[list_op].last.unescaped> {
       - define string_op '<def[string_op].before_last[ ]>'
     }
     - if <def[loop_index]> >= <def[max_lines].max[1]||999> {
@@ -79,18 +79,13 @@ gpa_gpu_line_wrap:
         }
         - define string_op '<def[string_op]>...'
       }
-      - define red '<def[red].include[<def[string_op]>]>'
-      - define fl:!
+      - define final_str '<def[red].include[<def[string_op]>]>'
       - while stop
     }
-    - define red '<def[red].include[<def[string_op]>]>'
+    - define final_str '<def[red].include[<def[string_op]>]>'
     - define fl '<def[fl].substring[<def[string_op].unescaped.length.sub_int[1]>].trim>'
-    - define lc '<def[string_op].unescaped.last_color.escaped>'
-    - if <def[lc]> == '' {
-      - define lc '<def[dlc]>'
-    }
-    - define lc '<def[lc].unescaped>'
+    - define lc '<def[string_op].unescaped.last_color||<def[dlc]>>'
   }
 
   - mark skip_line_split
-  - determine <def[red]>
+  - determine <def[final_str]>
