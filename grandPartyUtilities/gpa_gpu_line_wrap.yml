@@ -62,7 +62,7 @@ gpa_gpu_line_wrap:
   - define dlc '<&f>'
   - while <def[fl].unescaped.length.is[MORE].than[0]||false> {
     - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[max_length]>]>'
-    - if <def[string_op].index_of[<&nl>]||-1> != -1 {
+    - if <def[string_op].index_of[<&nl>]||0> > 0 {
       - define string_op '<def[string_op].before[<&nl>]>'
     }
     - define list_op '<def[string_op].split[ ]>'
