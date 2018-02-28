@@ -61,28 +61,27 @@ gpa_gpu_line_wrap:
   - define ind '0'
   - define dlc '<&f>'
   - while <def[fl].unescaped.length.is[MORE].than[0]||false> {
-    - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[max_length]>]>'
+    - define lmax '<def[max_length]>'
+    - if <def[loop_index]> >= <def[max_lines].max[1]||999> {
+      - define lmax '<def[lmax].sub_int[3]>'
+    }
+    - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[lmax]>]>'
     - if <def[string_op].index_of[<&nl>]||0> > 0 {
       - define string_op '<def[string_op].before[<&nl>]>'
     }
     - define list_op '<def[string_op].split[ ]>'
     - define ind '<def[ind].add[<def[list_op].size>]>'
-    - if <def[cl_str].get[<def[ind]||last>].unescaped> != <def[list_op].last.unescaped> {
+    - if <def[cl_str].get[<def[ind]||last>]> != <def[list_op].last.escaped> {
       - define string_op '<def[string_op].before_last[ ]>'
     }
     - if <def[loop_index]> >= <def[max_lines].max[1]||999> {
       - if <def[fl].length> > <def[max_length]> {
-        - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[0,<def[max_length].sub[3]>]>'
-        - define list_op '<def[string_op].split[ ]>'
-        - if <def[cl_str].get[<def[list_op].size>]> != <def[list_op].last> {
-          - define string_op '<def[string_op].before_last[ ]>'
-        }
         - define string_op '<def[string_op]>...'
       }
-      - define final_str '<def[red].include[<def[string_op]>]>'
+      - define final_str '<def[final_str].include[<def[string_op]>]>'
       - while stop
     }
-    - define final_str '<def[red].include[<def[string_op]>]>'
+    - define final_str '<def[final_str].include[<def[string_op]>]>'
     - define fl '<def[fl].substring[<def[string_op].unescaped.length.sub_int[1]>].trim>'
     - define lc '<def[string_op].unescaped.last_color||<def[dlc]>>'
   }
