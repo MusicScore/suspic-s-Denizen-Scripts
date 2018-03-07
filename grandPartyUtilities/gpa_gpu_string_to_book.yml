@@ -59,7 +59,7 @@ gpa_gpu_string_to_book:
   debug: false
   definitions: string|author|title|save_type|id|key_path|save_path
   script:
-  - define max_length '19'
+  - define max_length '21'
   - define max_lines '580'
 
   - define cl_str 'li@'
@@ -76,11 +76,15 @@ gpa_gpu_string_to_book:
     - goto skip_line_split
   }
 
-  - define red 'li@'
+  - define final_str 'li@'
   - define fl '<def[cl_str].space_separated>'
   - define ind '0'
   - define dlc '<&0>'
   - while <def[fl].unescaped.length.is[MORE].than[0]||false> {
+    - define lmax '<def[max_length]>'
+    - if <def[loop_index]> >= <def[max_lines]> {
+      - define lmax '<def[lmax].sub_int[3]>'
+    }
     - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[max_length]>]>'
     - if <def[string_op].index_of[<&nl>]> > 0 {
       - define string_op '<def[string_op].before[<&nl>]>'
@@ -90,33 +94,23 @@ gpa_gpu_string_to_book:
     - if <def[cl_str].get[<def[ind]||1>].unescaped||<def[cl_str].last>> != <def[list_op].last.unescaped> {
       - define string_op '<def[string_op].before_last[ ]>'
     }
-    - if <def[loop_index]> >= <def[max_lines].max[1]||500> {
+    - if <def[loop_index]> >= <def[max_lines]> {
       - if <def[fl].length> > <def[max_length]> {
-        - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[0,<def[max_length].sub[3]>]>'
-        - define list_op '<def[string_op].split[ ]>'
-        - if <def[cl_str].get[<def[list_op].size>]> != <def[list_op].last> {
-          - define string_op '<def[string_op].before_last[ ]>'
-        }
         - define string_op '<def[string_op]>...'
       }
-      - define red '<def[red].include[<def[string_op]>]>'
-      - define fl:!
+      - define final_str '<def[final_str].include[<def[string_op]>]>'
       - while stop
     }
-    - define red '<def[red].include[<def[string_op]>]>'
+    - define final_str '<def[final_str].include[<def[string_op]>]>'
     - define fl '<def[fl].substring[<def[string_op].unescaped.length>].trim>'
-    - define lc '<def[string_op].unescaped.last_color.escaped>'
-    - if <def[lc]> == '' {
-      - define lc '<def[dlc]>'
-    }
-    - define lc '<def[lc].unescaped>'
+    - define lc '<def[string_op].unescaped.last_color.||<def[dlc]>>'
   }
 
   - define b_pages 'li@'
   - define page 'li@'
-  - foreach <def[red]> {
+  - foreach <def[final_str]> {
     - define page '<def[page].include[<def[value]>]>'
-    - if <def[page].size> > 12 || <def[loop_index]> == <def[red].size> {
+    - if <def[page].size> > 12 || <def[loop_index]> == <def[final_str].size> {
       - define b_pages '<def[b_pages].include[<def[page].separated_by[<n>]>]>'
       - define page 'li@'
     }
