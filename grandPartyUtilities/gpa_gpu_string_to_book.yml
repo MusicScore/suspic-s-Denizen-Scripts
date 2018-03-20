@@ -85,7 +85,7 @@ gpa_gpu_string_to_book:
     - if <def[loop_index]> >= <def[max_lines]> {
       - define lmax '<def[lmax].sub_int[3]>'
     }
-    - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[max_length]>]>'
+    - define string_op '<def[lc]||<def[dlc]>><def[fl].unescaped.substring[1,<def[lmax]>]>'
     - if <def[string_op].index_of[<&nl>]> > 0 {
       - define string_op '<def[string_op].before[<&nl>]>'
     }
