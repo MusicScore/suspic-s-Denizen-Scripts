@@ -4,10 +4,7 @@ A list of planned addons that will be added to this repository.
 1. [Nether Cult](#nether-cult)
 2. [GriefPrevention Expansion](#griefprevention-expansion)
 3. [World Events](#world-events)
-4. [mcMMO Prefixes](#mcmmo-prefixes) (**CANCELLED**)
-5. [SuperElevators](#superelevators) (**CANCELLED**)
-6. [Portal Catalyst](#portal-catalyst)
-7. [GrandRPG](#grandrpg)
+4. [Portal Catalyst](#portal-catalyst)
 ## Nether Cult
 Let's get rid of those boring Nether Portals and instead make rituals!
 - Replace Nether Portals with ritualistic structures
@@ -21,8 +18,6 @@ Expands on GriefPrevention with new commands and permissions.
 - Allow users to transfer claim ownership to another user, if the other user has enough free claim blocks to claim it
 - More features TBD
 
-*Can possibly be cancelled due to difficulties*
-
 **Work on this will be temporarily discontinued.**
 
 [Back to Table](#table-of-contents)
@@ -34,51 +29,11 @@ Adds new world events (not Spigot API events!), such as Blood Moons.
 **Work on this will be temporarily discontinued.**
 
 [Back to Table](#table-of-contents)
-## mcMMO Prefixes
-**CANCELLED**
-
-Adds cosmetic prefixes to a user's name based on their mcMMO stats.
-- Prefixes TBD
-
-[Back to Table](#table-of-contents)
-## SuperElevators
-**CANCELLED**
-
-Better elevators using the interesting Armor Stand and Shulker solution.
-- Add optional mode option ("block", "teleport", "forcefly")
-- Allow multiple types of elevators
-- More features TBD
-
-**Work on this may be permanently discontinued.**
-
-[Back to Table](#table-of-contents)
 ## Portal Catalyst
 Teleportation items. How quaint.
 - Give support for [Nether Cult](#nether-cult) by adding a special teleportation item for returning from the Nether to the portal in the overworld
 - Basic teleportation item stuff.
 - Include "personal" teleportation items (react as Essentials /sethome and /home)
 - Add support for other teleportation plugins?
-
-[Back to Table](#table-of-contents)
-## GrandRPG
-### GrandRPG Base
-Add in a ton of things. Classes, races, tutorial areas, stats and leveling, etc.
-- Planned races: *Human (obviously), Faerie, Nether, Pelagic*
-- Planned classes: *Warrior, Mage, Ranger, Saboteur*
-- Custom level-up system with custom EXP system
-- Mana and health
-- Add in-class advancements later down the road (e.g. Warrior **>** Knight **>** Royal Knight)
-- Possibly allow adding more races and classes?
-### GrandRPG Items
-RPG item creator/handler. Soft dependency on [GrandRPG Base](#grandrpg-base).
-- Planned stats: *Damage, Defense, elemental Affinities (Flame, Ice, Wind, Earth, Light, Dark), Dodge, CRIT Chance, CRIT Damage, Reflect, Health, Attack Speed*
-- Certain stats will have specific modifier types (for example, you can only add/subtract from CRIT Chance in percentages, not in flat numbers)
-- Include a set of "default" items
-- Maybe allow customization of items via **YAML** files?
-### GrandRPG Item Skills - GRPG Items Expansion
-Add more to [GrandRPG Item Lores](#grandrpg-item-lores) with skills being bound to items via the lore. Depends on [GrandRPG Item Lores](#grandrpg-item-lores).
-- Planned default skills: *Leap, Smite, Fire/Ice/Wind/Earth/Light/Dark Bolt, Fire Ring, Ice Prison, Wind Cutter, Earthquake, Sanctuary (Light), Invisibility Cloak (Dark)*
-- More default skills TBD
-- Allow custom skills?
 
 [Back to Table](#table-of-contents)
