@@ -1,0 +1,25 @@
+gpa_utility_versioncheck:
+  type: procedure
+  debug: false
+  script:
+  - if !<def[2].matches[\d+\.\d+(\.\d+)*]> {
+    - debug ERROR 'Invalid version number!'
+    - determine null
+  }
+  - if <def[1]||null> == is_at_least {
+    - foreach <def[2].split_by[.]> {
+      - if %value% > <server.bukkit_version.before[-].split_by[.].get[%loop_index%]||0> {
+        - determine false
+      }
+    }
+    - determine true
+  }
+  else if <def[1]||null> == matches {
+    - foreach <def[2].split_by[.]> {
+      - if %value% != <server.bukkit_version.before[-].split_by[.].get[%loop_index%]||0> {
+        - determine false
+      }
+    }
+    - determine true
+  }
+  - determine null
