@@ -1,24 +1,116 @@
+####################################################################################################
+#                                                                                                  #
+#                                   LINEAR CONVERSATION UTILITY                                    #
+#                                                                                                  #
+####################################################################################################
+# 
+# This utility allows people with little to no Denizen experience to create entire linear
+# conversations and dynamically load them in. The command provided currently only allows reloading
+# conversations from file and running conversation lines automatically.
+# 
+# 
+# ----| PREREQUISITES
+# 
+# In the Denizen config, enable "Commands.Log.Allow logging" and "Commands.Yaml.Allow saving outside
+# folder". This will allow the script to generate the example file so you can effectively use the
+# utility.
+# 
+# Optionally, also set "Tags.Timeout" to 0. This may increase the speed of the script and reduce
+# lag spent by the Denizen engine in parsing the tags (in the scripts).
+# 
+# 
+# ----| COMMANDS
+# 
+# /gpalcu help
+#   - Displays information about the arguments for the "/gpalcu" command.
+# /gpalcu reload
+#   - Reloads all conversations from file. If no files are found, the example file will
+#     immediately start generating.
+# /gpalcu run <conversation> (step number) (player)
+#   - Runs a conversation. If this command is run through console, all of the arguments are
+#     required.
+#     Optionally specify a step number to begin at that step.
+#     Optionally specify a player name to display the conversation to that player.
+# 
+# 
+# ----| PERMISSIONS
+# 
+# grandpartyaddons.utility.linear_conversation
+#    - Allows use of the "/gpalcu" command.
+#      FLAG EQUIVALENT: grandpartyaddons.permission.linear_conversation
+# 
+# 
+# ----| HOW TO USE
+# 
+# When your first start your server with this script in it, the example file will automatically be
+# created. If you are loading the utility in after the server has started, relax. Just reload all
+# Denizen scripts (using the command "/denizen reload scripts") and then run the command "/gpalcu
+# reload".
+# 
+# Once the example file has been created, you can go over to the folder "./plugins
+# /GrandPartyUtilities/linear_conversations/" and find the "example_conversation.yml" file. It holds
+# a very basic conversation with a full explanation of how to create your own conversations.
+# 
+# Whenever you create your own conversations, just run "/gpalcu reload". All of the conversations
+# will have loaded, and you are ready to trigger them whenever!
+# 
+# If you are interested in using these scripts in your own scripts, please scroll to the relevant
+# scripts and read the comments there.
+# 
+# 
+# ----| RELATED TAGS
+# 
+# <player.flag[grandpartyaddons.utility.linear_conversation.<NAME>]>
+#     Returns the step number of the specified conversation.
+# 
+# <player.flag[grandpartyaddons.utility.linear_conversation.queues.<NAME>]>
+#     Returns the queue object of specified conversation.
+# 
+# 
+# 
+
+
+
+
+
+# -----------------------------------------------
+#
+# Linear Conversation Utility Task
+# 
+# - Runs a conversation
+# - Checks to see if the next step is valid. If so, create a new queue to run that conversation
+#   line
+# - Flags the player with the step number and (if relevant) the queue ID
+# 
+# 
+
 gpa_utility_linear_conversation_task:
   type: task
   debug: false
   speed: 0
   definitions: name|id|step
   script:
+  # See if the dPlayer is valid and/or attached
   - if <player||null> == null {
     - debug ERROR 'A valid attached dPlayer is needed for this script to run!'
     - queue clear
   }
+
+  # Check to see if the YAML data for the specified conversation name exists
   - define ymldata <server.flag[grandpartyaddons.utility.linear_conversations.loaded.<def[name]>]||null+>
   - if !<yaml.list.contains_text[<def[ymldata]>]> {
     - announce to_console '<&c>WARNING! <&f>The YAML configuration/file for <&dq><def[name]><&dq> is invalid or does not exist!'
       format:gpa_utility_linear_conversation_format
+    - narrate '<&c>Conversation unexpectedly ended or could not continue.'
     - queue clear
   }
 
+  # Narrate the conversation line.
   - define step <def[step]||<player.flag[grandpartyaddons.utility.linear_conversation.<def[name]>].add[1]||1>>
   - define text <parse:<yaml[<def[ymldata]>].read[<def[name]>.<def[step]>.text]||null>>
   - narrate '<def[text].unescaped.parse_color[%].replace[\n].with[<&nl>]>'
 
+  # If the conversation step has a specified script to run, run that script
   - define null null<util.random.uuid.replace[-]>
   - if <yaml[<def[ymldata]>].read[<def[name]>.<def[step]>.script]||<def[null]>> != <def[null]> {
     - if <server.list_scripts.contains[s@<yaml[<def[ymldata]>].read[<def[name]>.<def[step]>.script]>]> {
@@ -26,6 +118,8 @@ gpa_utility_linear_conversation_task:
     }
   }
 
+  # If the next step does not exist or if the next step's delay key is less than 0, stop the task
+  # from trying to continue the conversation
   - if !<yaml[<def[ymldata]>].contains[<def[name]>.<def[step].add[1]>]>
     || <yaml[<def[ymldata]>].read[<def[name]>.<def[step]>.delay]||-1> < 0 {
     - flag player grandpartyaddons.utility.linear_conversation.<def[name]>:!
@@ -35,6 +129,8 @@ gpa_utility_linear_conversation_task:
   - flag player grandpartyaddons.utility.linear_conversation.<def[name]>:<def[step]>
   - wait <yaml[<def[ymldata]>].read[<def[name]>.<def[step]>.delay]>s
 
+  # If the ID definition is true, run the scrpt using the unique ID. Otherwise, allow Denizen to
+  # assign its own queue ID to the created queue
   - if <def[id]||false> {
     - run <script> def:<def[name]>|true id:gpa_utility_lcu_<player.uuid.replace[-]>_c_<def[name]>_s_<def[step].add[1]>
   }
@@ -42,6 +138,16 @@ gpa_utility_linear_conversation_task:
     - flag player grandpartyaddons.utility.linear_conversation.queues.<def[name]>:<queue>
     - run <script> def:<def[name]>|false
   }
+
+
+# -----------------------------------------------
+# 
+# Linear Conversation Command
+# 
+# - Allows the user to manually reload conversations from file
+# - Allows the user to run a conversation without having to use a Denizen command
+# 
+# 
 
 gpa_utility_linear_conversation_cmd:
   type: command
@@ -56,6 +162,8 @@ gpa_utility_linear_conversation_cmd:
     || <player.has_flag[grandpartyaddons.permission.linear_conversation]||false> {
     - determine true
   }
+  - determine false
+
   tab complete:
   - if !<context.server>
     && !<player.is_op||false>
@@ -75,6 +183,7 @@ gpa_utility_linear_conversation_cmd:
   }
 
   script:
+  # Check to see if console or a player with the right permissions is running the command
   - if !<context.server||false>
     && !<player.is_op||false>
     && !<player.has_permission[grandpartyaddons.utility.linear_conversation]||false>
@@ -82,9 +191,12 @@ gpa_utility_linear_conversation_cmd:
     - queue clear
   }
   - choose <context.args.get[1]||null>:
+    # Reloads conversations from file
     - case reload:
       - narrate '<&a>Attempting to reload GPU LCU conversations. Check console for any errors.' format:gpa_utility_linear_conversation_format
       - run gpa_utility_linear_conversation_yaml_loader
+
+    # Runs a conversation using the specified related arguments
     - case run:
       - define name '<context.args.get[2]||null>'
       - define step '<context.args.get[3]||null>'
@@ -106,6 +218,8 @@ gpa_utility_linear_conversation_cmd:
       }
       - run gpa_utility_linear_conversation_task player:<def[player]> def:<def[name]>|true|<def[step]>
         id:gpa_utility_lcu_<def[player].uuid.replace[-]>_c_<def[name]>_s_<def[step]>
+
+    # Displays help information
     - default:
       - narrate '<&f>GrandPartyUtilities Linear Conversation Tool Help<&co>'
       - narrate '<&7>/gpalcu help || <&8>Displays this help page.'
@@ -114,12 +228,32 @@ gpa_utility_linear_conversation_cmd:
       - narrate '<&7>/gpalcu run <&lt>conversation<&gt> (step) (player) || <&8>Runs a conversation, with an optional step argument for the specific
         step to use and an optional player argument. If the command is run by CONSOLE, the step and player arguments are mandatory.'
 
+
+# -----------------------------------------------
+# 
+# Linear Conversation Utility Events
+# 
+# - Loads all conversation files on server start
+# 
+# 
+
 gpa_utility_linear_conversation_evts:
   type: world
   debug: false
   events:
     on server start:
     - run gpa_utility_linear_conversation_yaml_loader
+
+
+# -----------------------------------------------
+# 
+# Linear Conversation YAML File Loader
+# 
+# - Loads all YAML files in the directory ./plugins/GrandPartyUtilities/linear_conversations/
+# - Also searches for subdirectories and loads all YAML files within all subdirectories
+# - Generates a default example file if no files are found
+# 
+# 
 
 gpa_utility_linear_conversation_yaml_loader:
   type: task
@@ -162,6 +296,7 @@ gpa_utility_linear_conversation_yaml_loader:
     - '    8:'
     - '        text: <&sq>[Server] To end a conversation, simply put no delay key.<&sq>'
 
+  # Runs all parts of the script at once
   script:
   - narrate '<&f>Beginning to load files. Please check console for errors...' format:gpa_utility_linear_conversation_format
   - ~run locally unload_yaml_configs
@@ -170,12 +305,15 @@ gpa_utility_linear_conversation_yaml_loader:
   - ~run locally load_files
   - narrate '<&a>OKAY! <&f>Loading finished.' format:gpa_utility_linear_conversation_format
 
+  # Deletes all existing conversation data
   unload_yaml_configs:
   - foreach <yaml.list.filter[starts_with[gpa_utility_linear_conversation_]]> {
     - yaml unload id:<def[value]>
   }
   - flag server grandpartyaddons.utility.linear_conversations:!
 
+  # Generates the example file if no file is found in the
+  # ./plugins/GrandPartyUtilities/linear_conversations/ directory
   validate_existence:
   - if <server.list_files[../GrandPartyUtilities/linear_conversations/].is_empty||true> {
     - announce to_console '<&c>WARNING! <&f>The <&dq>/plugins/GrandPartyUtilities/linear_conversations/<&dq> folder is empty or missing! Now creating
@@ -191,6 +329,8 @@ gpa_utility_linear_conversation_yaml_loader:
       format:gpa_utility_linear_conversation_format
   }
 
+  # Searches the ./plugins/GrandPartyUtilities/linear_conversations/ directory and all
+  # subdirectories for YAML files to load
   recursive_file_search:
   - define start_dir '<def[1]||>'
   - define yml_id_list li@
@@ -210,10 +350,13 @@ gpa_utility_linear_conversation_yaml_loader:
     - ~run locally recursive_file_search def:<def[start_dir]><def[value]>/
   }
 
+  # Loads all files, based on the data collected by the "recursive_file_search" path. Also checks
+  # for duplicate conversation names
   load_files:
   - if <server.flag[grandpartyaddons.utility.linear_conversations.files].as_list.is_empty||true> {
     - announce to_console '<&c>ERROR! <&f>There currently is no file name to YAML ID data stored. Please run the <&dq>recursive_file_search<&dq> path
       before attempting to load files.' format:gpa_utility_linear_conversation_format
+    - queue clear
   }
   - define yaml_list li@
   - foreach <server.flag[grandpartyaddons.utility.linear_conversations.files].as_list> {
@@ -245,6 +388,7 @@ gpa_utility_linear_conversation_yaml_loader:
     - announce to_console '<&f><def[duplicate_warn].formatted>' format:gpa_utility_linear_conversation_format
   }
 
+# A format script
 gpa_utility_linear_conversation_format:
   type: format
   debug: false
