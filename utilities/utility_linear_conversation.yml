@@ -388,7 +388,13 @@ gpa_utility_linear_conversation_yaml_loader:
     - announce to_console '<&f><def[duplicate_warn].formatted>' format:gpa_utility_linear_conversation_format
   }
 
-# A format script
+
+# -----------------------------------------------
+# 
+# Linear Conversation Format Script
+# 
+# 
+
 gpa_utility_linear_conversation_format:
   type: format
   debug: false
