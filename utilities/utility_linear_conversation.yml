@@ -194,7 +194,7 @@ gpa_utility_linear_conversation_cmd:
     # Reloads conversations from file
     - case reload:
       - narrate '<&a>Attempting to reload GPU LCU conversations. Check console for any errors.' format:gpa_utility_linear_conversation_format
-      - run gpa_utility_linear_conversation_yaml_loader
+      - run gpa_utility_linear_conversation_yamlloader
 
     # Runs a conversation using the specified related arguments
     - case run:
@@ -242,7 +242,7 @@ gpa_utility_linear_conversation_evts:
   debug: false
   events:
     on server start:
-    - run gpa_utility_linear_conversation_yaml_loader
+    - run gpa_utility_linear_conversation_yamlloader
 
 
 # -----------------------------------------------
@@ -255,7 +255,7 @@ gpa_utility_linear_conversation_evts:
 # 
 # 
 
-gpa_utility_linear_conversation_yaml_loader:
+gpa_utility_linear_conversation_yamlloader:
   type: task
   debug: false
   speed: 0
@@ -399,3 +399,14 @@ gpa_utility_linear_conversation_format:
   type: format
   debug: false
   format: '[<&a>GPA <&7>LCU<&f>] <text>'
+
+
+# -----------------------------------------------
+# 
+# Linear Conversation Version
+# 
+# 
+
+gpa_utility_linear_conversation_VERSION:
+  type: yaml data
+  version: 0.3
