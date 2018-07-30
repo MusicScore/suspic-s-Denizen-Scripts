@@ -61,10 +61,10 @@
 # ----| RELATED TAGS
 # 
 # <player.flag[grandpartyaddons.utility.linear_conversation.<NAME>]>
-#     Returns the step number of the specified conversation.
+#     Returns the step number of the specified conversation
 # 
 # <player.flag[grandpartyaddons.utility.linear_conversation.queues.<NAME>]>
-#     Returns the queue object of specified conversation.
+#     Returns the queue object of specified conversation
 # 
 # 
 # 
@@ -81,6 +81,17 @@
 # - Checks to see if the next step is valid. If so, create a new queue to run that conversation
 #   line
 # - Flags the player with the step number and (if relevant) the queue ID
+# 
+# 
+# DEFINITIONS:
+#   "name" : Element          : Determines which conversation the script should attempt to run
+#   "id"   : Element(Boolean) : (Optional) Determines whether or not to use the unique queue ID
+#                               instead of the Denizen-generated queue ID. Defaults to false
+#                               
+#                               When set to false, the tag "<player.flag[grandpartyaddons.utility.linear_conversation.queues.<NAME>]>"
+#                               is available. When set to true, the queue ID will follow the format
+#                               "gpa_utility_lcu_<player.uuid.replace[-]>_c_<NAME>_s_<STEP>"
+#   "step" : Element(Number)  : (Optional) Determines which step to start at
 # 
 # 
 
