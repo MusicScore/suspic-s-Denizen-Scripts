@@ -20,20 +20,13 @@ Commands:
         # Whether the YAML command is allowed to save outside the minecraft folder.
         # Set to 'false' if you're worried about security.
         Allow saving outside folder: false
-...
-Tags:
-  # How long a tag can parse before force-closing the tag parser engine. Set to 0 to disable tag parse timing entirely.
-  Timeout: 10
 ```
 **Commands.Log.Allow logging** is recommended to be set to "`true`".
 <br>**Commands.Yaml.Allow saving outside folder** is recommended to be set to "`true`".
-<br>**Tags.Timeout** is recommended to be set to "`0`".
 
 By setting **Commands.Log.Allow logging** and **Commands.Yaml.Allow saving outside folder** to `true`, appropriate configuration files can be generated outside of the Denizen folder and in the `/plugins/GrandPartyAddons/` folder (for example, ExampleGrandAddon would generate a config file with the filepath `/plugins/ExampleGrandAddon/config.yml`). This is mostly ease of access, but it also serves the purpose of allowing users unfamiliar with Denizen to customize scripts as if it were another Java plugin. Meaning, even with no knowledge of code or dScript any user can edit and configure the way GrandPartyAddon scripts behave without ever having to touch the scripts themselves.
 
 Some of the addons won't require these options to be set to true. However, some of them do.
-
-Setting **Tags.Timeout** to `0` is mostly for optimization purposes. According to the Denizen developer, tags will parse faster when this option is `0`, which will allow the scripts to run even faster.
 
 ## How to Install Addons
 To install addons from this repository, simply download all of the relevant **YAML** files from the addon(s) you wish to install and move those files to the `/plugins/Denizen/scripts/` directory in your server's directory. For example, to install GrandPartyUtilities, you will want to download all **YAML** files from this GitHub repository and move those files to `/plugins/Denizen/scripts/`.
