@@ -410,4 +410,3 @@ gpa_utility_linear_conversation_format:
   type: format
   debug: false
   format: '[<&a>GPA <&7>LCU<&f>] <text>'
-  
