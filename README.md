@@ -25,7 +25,7 @@ By setting **Commands.Log.Allow logging** to `true`, appropriate configuration f
 
 Some of the script sets won't require these options to be set to true. However, some of them do.
 
-## How to Install Script sets
+## How to Install Script Sets
 To install addons from this repository, simply download all of the relevant **YAML** files from the script set(s) you wish to install and move those files to the `/plugins/Denizen/scripts/` directory in your server's directory. For example, to install SuspicUtilities, you will want to download all **YAML** files from this GitHub repository and move those files to `/plugins/Denizen/scripts/`.
 
 More specific information about each addon will be find in the `readme.txt` in each script set's folder.
