@@ -1,10 +1,11 @@
 # Planned Addons
-A list of planned addons that will be added to this repository.
+A list of planned script sets that will be added to this repository.
 ## Table of Contents
 1. [Nether Cult](#nether-cult)
 2. [World Events](#world-events)
 3. [Portal Catalyst](#portal-catalyst)
 4. [Item Stats Modifiers](#item-stats-modifiers)
+5. [FeverDeath](#feverdeath)
 ## Nether Cult
 Let's get rid of those boring Nether Portals and instead make rituals!
 - Replace Nether Portals with ritualistic structures
@@ -33,5 +34,12 @@ Creates items that modify the player's stats.
 - Support an infinite number of modifiers (requires scripting knowledge)
 - Use of YAML files and recursive file loading to dynamically load all items
 - Make it so generic that any scripter can expand on it
+
+[Back to Table](#table-of-contents)
+## Darkest Death Logic
+Implements the death logic from the indie dungeon crawler *Darkest Dungeon*.
+- Support health warnings
+- Add optional stress meter
+- Non-intrusive death and respawn features
 
 [Back to Table](#table-of-contents)
