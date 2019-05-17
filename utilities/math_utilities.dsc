@@ -17,7 +17,7 @@
 
 
 #
-# --------------------------------------------------------------------------------------------------
+# __________________________________________________________________________________________________
 #
 # [NAME]==>
 #     force_round_number
@@ -49,29 +49,29 @@ force_round_number:
   debug: false
   definitions: decimal|places
   script:
-  - if <def[decimal]||null> !matches decimal || <def[places].as_decimal.contains_any_text[.|-]||true>:
-    - debug ERROR "Invalid number input! Expected: <#.#>|<#>. Received: <def[raw_context]> <n>Note: The second number should be a positive integer."
+  - if <[decimal]||null> !matches decimal || <[places].as_decimal.contains_any_text[.|-]||true>:
+    - debug ERROR "Invalid number input! Expected: <#.#>|<#>. Received: <[raw_context]> <n>Note: The second number should be a positive integer."
     - determine null
 
-  - if <def[places]> == 0:
-    - determine <def[decimal]>
+  - if <[places]> <= 0:
+    - determine <[decimal].round>
 
-  - if <def[places]> > 9:
+  - if <[places]> > 9:
     - debug ERROR "Limiting forced rounding to 9 decimal places. Attempting to force round a number above 10 decimal places
       will result in inaccuracies produced by Java float/double handling."
     - define places 9
 
-  - if !<def[decimal].contains_text[.]>:
-    - determine <def[decimal]>.<element[].pad_right[<def[places]>].with[0]>
+  - if !<[decimal].contains_text[.]>:
+    - determine <[decimal]>.<element[].pad_right[<[places]>].with[0]>
 
-  - define decimal <def[decimal].round_to[<def[places]>]>
-  - determine <def[decimal].before[.]>.<def[decimal].after[.].pad_right[<def[places]>].with[0]>
+  - define decimal <[decimal].round_to[<[places]>]>
+  - determine <[decimal].before[.]>.<[decimal].after[.].pad_right[<[places]>].with[0]>
 
 
 
 
 #
-# --------------------------------------------------------------------------------------------------
+# __________________________________________________________________________________________________
 #
 # [NAME]==>
 #     stats_median
@@ -101,24 +101,25 @@ stats_median:
   type: procedure
   debug: false
   script:
-  - define list <list[<def[raw_context]>].filter[is[matches].to[decimal]]>
-  - if <def[list].is_empty>:
+  - define list <list[<[raw_context]>].filter[is[matches].to[decimal]]>
+
+  - if <[list].is_empty>:
     - debug ERROR "The input must be a list of at least one decimal/number!"
     - determine null
 
-  - define list <def[list].numerical>
+  - define list <[list].numerical>
+  - define midpoint <[list].size./[2].round_up>
 
-  - define midpoint <def[list].size.div[2].round_up>
-  - if <def[list].size.mod[2]> != 0:
-    - determine <def[list].get[<def[midpoint]>]>
+  - if <[list].size.%[2]> != 0:
+    - determine <[list].get[<[midpoint]>]>
 
-  - determine <def[list].get[<def[midpoint]>].add[<def[list].get[<def[midpoint].add[1]>]>].div[2]>
+  - determine <[list].get[<[midpoint]>].+[<[list].get[<[midpoint].+[1]>]>]./[2]>
 
 
 
 
 #
-# --------------------------------------------------------------------------------------------------
+# __________________________________________________________________________________________________
 #
 # [NAME]==>
 #     stats_std_dev
@@ -152,20 +153,23 @@ stats_std_dev:
   type: procedure
   debug: false
   script:
-  - if <def[raw_context].contains[:]>:
-    - define prefix <def[raw_context].before[:]>
+  - if <[raw_context].contains[:]>:
+    - define prefix <[raw_context].before[:]>
 
-  - define list <list[<def[raw_context].after[<def[prefix]||>]>].filter[is[matches].to[decimal]]>
-  - narrate <def[list]>
-  - if <def[list].is_empty>:
+  - define list <list[<[raw_context].after[<[prefix]||>:]>].filter[is[matches].to[decimal]]>
+
+  - if <[list].is_empty>:
     - debug ERROR "The input must be a list of at least one number!"
     - determine null
 
-  - define average <def[list].sum.div[<def[list].size>]>
-  - define sigma <def[list].parse[sub[<def[average]>].power[2]].sum>
-  - if <def[prefix]||null> == "sample":
-    - determine <def[sigma].div[<def[list].size.sub[1]>].sqrt>
-  - if !<list[sample|population].contains[<def[prefix]||null>]> && <def[raw_context].contains[:]>:
-    - debug ERROR "Option <&dq><def[prefix]><&dq> is not <&dq>sample<&dq> or <&dq>population<&dq>. Defaulting to calculating the
+  - define average <[list].sum./[<[list].size>]>
+  - define sigma <[list].parse[sub[<[average]>].^[2]].sum>
+
+  - if <[prefix]||null> == "sample":
+    - determine <[sigma]./[<[list].size.-[1]>].sqrt>
+
+  - if !<list[sample|population].contains[<[prefix]||null>]> && <[raw_context].contains[:]>:
+    - debug ERROR "Option <&dq><[prefix]><&dq> is not <&dq>sample<&dq> or <&dq>population<&dq>. Defaulting to calculating the
       population standard deviation."
-  - determine <def[sigma].div[<def[list].size>].sqrt>
+
+  - determine <[sigma]./[<[list].size>].sqrt>
