@@ -17,7 +17,7 @@
 # ----| HOW TO USE
 #
 # It is as simple as running a single run command:
-# - run suscript_utility_vpb def:<dEntity>|<EFFECT>/<EFFECT>/...)
+# - run suscript_utility_vpb def:<dEntity>|<EFFECT>(/<EFFECT>...)
 #
 # Each <EFFECT> follows the format:
 #   - SPIGOT_POTION_EFFECT,<power>,<duration>,<hide_ambience>,<hide_particles>
