@@ -49,23 +49,23 @@ force_round_number:
   debug: false
   definitions: decimal|places
   script:
-  - if <[decimal]||null> !matches decimal || <[places].as_decimal.contains_any_text[.|-]||true>:
-    - debug ERROR "Invalid number input! Expected: <#.#>|<#>. Received: <[raw_context]> <n>Note: The second number should be a positive integer."
+  - if !<def[decimal].is_decimal||false> || <def[places].as_decimal.contains_any_text[.|-]||true>:
+    - debug ERROR "Invalid number input! Expected: <#.#>|<#>. Received: <def[raw_context]> <&nl>Note: The second number should be a positive integer."
     - determine null
 
-  - if <[places]> <= 0:
-    - determine <[decimal].round>
+  - if <def[places]> <= 0:
+    - determine <def[decimal].round>
 
-  - if <[places]> > 9:
+  - if <def[places]> > 9:
     - debug ERROR "Limiting forced rounding to 9 decimal places. Attempting to force round a number above 10 decimal places
       will result in inaccuracies produced by Java float/double handling."
     - define places 9
 
-  - if !<[decimal].contains_text[.]>:
-    - determine <[decimal]>.<element[].pad_right[<[places]>].with[0]>
+  - if !<def[decimal].contains_text[.]>:
+    - determine <def[decimal]>.<element[].pad_right[<def[places]>].with[0]>
 
-  - define decimal <[decimal].round_to[<[places]>]>
-  - determine <[decimal].before[.]>.<[decimal].after[.].pad_right[<[places]>].with[0]>
+  - define decimal <def[decimal].round_to[<def[places]>]>
+  - determine <def[decimal].before[.]>.<def[decimal].after[.].pad_right[<def[places]>].with[0]>
 
 
 
@@ -85,14 +85,11 @@ force_round_number:
 #
 #
 # [USAGE EXAMPLES]==>
-#     To get "10.0" from "10":
-#       <proc[sigfig].context[10|3]>
+#     To get "10" from "10|12|1":
+#       <proc[stats_median].context[10|12|1]>
 #
-#     To get "15.60" from "15.598432":
-#       <proc[sigfig].context[15.598432|4]>
-#
-#     To get "1200" from "1199":
-#       <proc[sigfig].context[1199|2]>
+#     To get "11" from "10|12|2|15":
+#       <proc[stats_median].context[10|12|2|15]>
 #
 #
 #
@@ -101,19 +98,64 @@ stats_median:
   type: procedure
   debug: false
   script:
-  - define list <list[<[raw_context]>].filter[is[matches].to[decimal]]>
+  - define list <list[<def[raw_context]>].filter[is_decimal]>
 
-  - if <[list].is_empty>:
+  - if <def[list].is_empty>:
     - debug ERROR "The input must be a list of at least one decimal/number!"
     - determine null
 
-  - define list <[list].numerical>
-  - define midpoint <[list].size./[2].round_up>
+  - define list <def[list].numerical>
+  - define midpoint <def[list].size.div[2].round_up>
 
-  - if <[list].size.%[2]> != 0:
-    - determine <[list].get[<[midpoint]>]>
+  - if <def[list].size.mod[2]> != 0:
+    - determine <def[list].get[<def[midpoint]>]>
 
-  - determine <[list].get[<[midpoint]>].+[<[list].get[<[midpoint].+[1]>]>]./[2]>
+  - determine <def[list].get[<def[midpoint]>].add[<def[list].get[<def[midpoint].add[1]>]>].div[2]>
+
+
+
+
+#
+# __________________________________________________________________________________________________
+#
+# [NAME]==>
+#     stats_mode
+#
+# [PROC SYNTAX]==>
+#     <proc[stats_mode].context[<DECIMAL>|...]>
+#
+# [RETURNS]==>
+#     Element(Decimal)
+#     Returns the mode of the list of numbers.
+#     If there is no mode, this will return null.
+#
+#
+# [USAGE EXAMPLES]==>
+#     To get "10" from "-40|2|10|10|2|1|10|5|10":
+#       <proc[stats_mode].context[-40|2|10|10|2|1|10|5|10]>
+#
+#
+#
+
+stats_mode:
+  type: procedure
+  debug: false
+  script:
+  - define list <list[<def[raw_context]>].filter[is_decimal]>
+
+  - if <def[list].is_empty>:
+    - debug ERROR "The input must be a list of at least one decimal/number!"
+    - determine null
+
+  - define dedup <def[list].deduplicate>
+  - define count <list[]>
+  - foreach <def[dedup]> as:num:
+    - define count <def[count].include[<def[num]>/<def[list].count[<def[num]>]>]>
+
+  - if <def[count].get_sub_items[2].count[<def[count].get[1].after[/]>]> == <def[count].size>:
+    - determine null
+
+  - determine <def[count].sort_by_number[after[/]].last>
 
 
 
@@ -153,23 +195,23 @@ stats_std_dev:
   type: procedure
   debug: false
   script:
-  - if <[raw_context].contains[:]>:
-    - define prefix <[raw_context].before[:]>
+  - if <def[raw_context].contains[:]>:
+    - define prefix <def[raw_context].before[:]>
 
-  - define list <list[<[raw_context].after[<[prefix]||>:]>].filter[is[matches].to[decimal]]>
+  - define list <list[<def[raw_context].after[<def[prefix]||>:]>].filter[is_decimal]>
 
-  - if <[list].is_empty>:
+  - if <def[list].is_empty>:
     - debug ERROR "The input must be a list of at least one number!"
     - determine null
 
-  - define average <[list].sum./[<[list].size>]>
-  - define sigma <[list].parse[sub[<[average]>].^[2]].sum>
+  - define average <def[list].sum.div[<def[list].size>]>
+  - define sigma <def[list].parse[sub[<def[average]>].power[2]].sum>
 
-  - if <[prefix]||null> == "sample":
-    - determine <[sigma]./[<[list].size.-[1]>].sqrt>
+  - if <def[prefix]||null> == "sample":
+    - determine <def[sigma].div[<def[list].size.sub[1]>].sqrt>
 
-  - if !<list[sample|population].contains[<[prefix]||null>]> && <[raw_context].contains[:]>:
-    - debug ERROR "Option <&dq><[prefix]><&dq> is not <&dq>sample<&dq> or <&dq>population<&dq>. Defaulting to calculating the
+  - if !<list[sample|population].contains[<def[prefix]||null>]> && <def[raw_context].contains[:]>:
+    - debug ERROR "Option <&dq><def[prefix]><&dq> is not <&dq>sample<&dq> or <&dq>population<&dq>. Defaulting to calculating the
       population standard deviation."
 
-  - determine <[sigma]./[<[list].size>].sqrt>
+  - determine <def[sigma].div[<def[list].size>].sqrt>

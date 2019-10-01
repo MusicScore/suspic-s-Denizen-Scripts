@@ -1,0 +1,40 @@
+#
+# WARNING: When using Denizen tags, please be careful!
+#
+#
+
+example_conversation:
+    1:
+        text: "[Server] This is an example conversation."
+        delay: 2
+    2:
+        text: "[Server] You must escape either the double quotes (\") or single quotes (\'), whichever you use to
+          surround the text of the conversation."
+        delay: 2
+    3:
+        text: "[Server] A missing step will cause the conversation to stop with no errors, because the utility will
+          assume you wanted to end there but added in a delay key by accident."
+        delay: 2
+    4:
+        text: "[Server] You can use color codes by replacing & with %. For example, %agreen%r! You can also\nsplit lines!"
+        delay: 2
+    5:
+        text: "[Server] You can use any valid Denizen tag that works off of the server or the player who is reading the
+          conversation. For example, you can use the <&chr[UNICODE_ENCODING]> tag to return a Unicode character (for
+          example, a heart would be <&chr[2665]>)."
+        delay: 2
+    6:
+        text: "[Server] As always, be cautious of using procedural tags that may do more than just return a value."
+        delay: 2
+    7:
+        text: "[Server] You can also choose to run a script using the \"run_script\" key. The specified script must be
+          valid and loaded into the server."
+        delay: 2
+    8:
+        text: "[Server] To end a conversation, simply put no delay key or no extra consecutive step."
+
+example_converation_pathed:
+    1:
+        text: "[Server] You can have multiple branches in a single conversation that is randomly selected."
+        delay: 4
+        goto_conversation:
