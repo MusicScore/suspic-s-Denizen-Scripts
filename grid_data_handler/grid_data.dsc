@@ -370,7 +370,7 @@ grid_dataproc_listallgrids:
     type: procedure
     debug: false
     script:
-    - determine <server.list_files[./grid_data].parse[before[.yml]].include[<yaml.list.filter[starts_with[grid-data-]].parse[after[grid-data-]]>].deduplicate>
+    - determine <server.flag[grid_data/created].deduplicate||li@>
 
 
 
@@ -436,7 +436,9 @@ grid_dataproc_findvalue:
 # as "X,Y,Z/null".
 #
 # Contexts:
-#     name : The name of the grid.
+#     name  : The name of the grid.
+#     coord : The coordinates as a comma-separated list of integers. For
+#             example, "3,2" for a 2D grid, or "1,10,3" for a 3D grid.
 #
 #
 
@@ -468,6 +470,8 @@ grid_dataproc_getadjacent:
 #
 # Contexts:
 #     name : The name of the grid.
+#     coord : The coordinates as a comma-separated list of integers. For
+#             example, "3,2" for a 2D grid, or "1,10,3" for a 3D grid.
 #
 #
 
