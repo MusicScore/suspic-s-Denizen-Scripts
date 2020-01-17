@@ -45,11 +45,14 @@ grid_data_2d_create:
 
     - define name <def[name]||grid2d-<util.random.uuid>>
 
-    - inject grid_dataproc_exists.creator_check instantly
+    - inject grid_dataproc_exists.creator_check
 
-    - flag server grid_data/<def[name]>/x:<def[width]>
-    - flag server grid_data/<def[name]>/y:<def[length]>
-    - flag server grid_data/<def[name]>/type:2D
+    - flag server grid_data/created:->:<def[name]>
+    - yaml id:grid-data-<def[name]> create
+    - yaml id:grid-data-<def[name]> set x:<def[width]>
+    - yaml id:grid-data-<def[name]> set y:<def[length]>
+    - yaml id:grid-data-<def[name]> set type:2D
+    - yaml id:grid-data-<def[name]> savefile:./grid_data/<def[name]>.yml
     - determine name/<def[name]>
 
 
@@ -80,12 +83,15 @@ grid_data_3d_create:
 
     - define name <def[name]||grid3d-<util.random.uuid>>
 
-    - inject grid_dataproc_exists.creator_check instantly
+    - inject grid_dataproc_exists.creator_check
 
-    - flag server grid_data/<def[name]>/x:<def[width]>
-    - flag server grid_data/<def[name]>/y:<def[length]>
-    - flag server grid_data/<def[name]>/z:<def[height]>
-    - flag server grid_data/<def[name]>/type:3D
+    - flag server grid_data/created:->:<def[name]>
+    - yaml id:grid-data-<def[name]> create
+    - yaml id:grid-data-<def[name]> set x:<def[width]>
+    - yaml id:grid-data-<def[name]> set y:<def[length]>
+    - yaml id:grid-data-<def[name]> set z:<def[height]>
+    - yaml id:grid-data-<def[name]> set type:3D
+    - yaml id:grid-data-<def[name]> savefile:./grid_data/<def[name]>.yml
     - determine name/<def[name]>
 
 
@@ -107,8 +113,8 @@ grid_data_delete:
     - if !<proc[grid_dataproc_exists].context[<def[name]||+>]>:
         - debug DEBUG "A grid <&dq><def[name]||null><&dq> does not exist! Was it already deleted?"
         - stop
-    - foreach <server.list_flags.filter[starts_with[grid_data/<def[name]>/]]>:
-        - flag server <def[value]>:!
+    - flag server grid_data/created:!|:<server.flag[grid_data/created].exclude[<def[name]>]>
+    - yaml id:grid-data-<def[name]> unload
 
 
 
@@ -117,10 +123,12 @@ grid_data_delete:
 # Use "null" or "!" to unset the data value.
 #
 # Definitions/Parameters:
-#     name  : The name of the grid to edit.
-#     coord : The coordinates as a comma-separated list of integers. For
-#             example, "3,2" for a 2D grid, or "1,10,3" for a 3D grid.
-#     data  : The data to put at the specified coordinate.
+#     name   : The name of the grid to edit.
+#     coord  : The coordinates as a comma-separated list of integers. For
+#              example, "3,2" for a 2D grid, or "1,10,3" for a 3D grid.
+#     action : (Optional) The data action to use. Can be any valid Denizen data
+#              action.
+#     data   : The data to put at the specified coordinate.
 #
 #
 
@@ -129,37 +137,67 @@ grid_data_set:
     type: task
     debug: false
     speed: 0
-    definitions: name|coord|data
+    definitions: name|coord
     script:
     - if !<proc[grid_dataproc_exists].context[<def[name]||+>]>:
         - debug ERROR "A grid by the name <&dq><def[name]||null><&dq> does not exist!"
         - stop
 
-    - define readcoord <proc[grid_dataproc_readcoord].context[<def[name]>|<def[coord]>]>
+    - define coord <proc[grid_dataproc_readcoord].context[<def[name]>|<def[coord]>]>
 
-    - if <def[readcoord]> == null:
+    - if <def[coord]> == null:
         - debug ERROR "Could not fetch a <server.flag[grid_data/<def[name]>/type]> coordinate from <def[coord]>!"
         - stop
 
-    - define is_3d <server.flag[grid_data/<def[name]>/type].is[EQUALS].to[3D]>
+    - define readcoord <def[coord].split[,]>
+    - define is_3d <yaml[grid-data-<def[name]>].read[type].is[EQUALS].to[3D]>
 
-    - define max_x <server.flag[grid_data/<def[name]>/x]>
-    - define max_y <server.flag[grid_data/<def[name]>/y]>
-    - define max_z <server.flag[grid_data/<def[name]>/z]||<def[coord].get[3].add[1]||1>>
+    - define max_x <yaml[grid-data-<def[name]>].read[x]>
+    - define max_y <yaml[grid-data-<def[name]>].read[y]>
+    - define max_z <yaml[grid-data-<def[name]>].read[z]||<def[coord].get[3].add[1]||1>>
 
-    - if <def[readcoord].get[1]> >= <def[max_x]> || <def[readcoord].get[2]> >= <def[max_y]> || ( <def[is_3d]> == "3D" && <def[readcoord].get[3]||0> >= <def[max_z]> ):
+    - if <def[readcoord].get[1]> >= <def[max_x]> || <def[readcoord].get[2]> >= <def[max_y]> || ( <def[is_3d]> && <def[readcoord].get[3]||0> >= <def[max_z]> ):
         - debug ERROR "Attempting to set data for a coordinate beyond the max coordinate point <def[max_x].sub[1]>,<def[max_y].sub[1]><tern[<def[is_3d]>].pass[,<def[max_z]>].fail[]>"
 
-    - define data <def[raw_context].after[|].after[|].replace[|].with[&pipe]>
-    - define flag_list <server.flag[grid_data/<def[name]>/list_data]||li@>
-    - define coord <def[readcoord].separated_by[,]>
+    - define data <def[raw_context].after[|].after[|]>
+    - if <def[data]> == null:
+        - yaml id:grid-data-<def[name]> set coords.<def[coord]>:!
 
-    - if !<def[flag_list].filter[starts_with[<def[coord]>]].is_empty>:
-        - define flag_list <def[flag_list].exclude[<def[flag_list].filter[starts_with[<def[coord]>]]>]>
+    - else:
+        - if <def[data].starts_with[!||]>:
+            - define data <def[data].after[|].after[|]>
 
-    - if !<list[!|null].contains[<def[data]>]>:
-        - define flag_list:->:<def[coord]>/<def[data]>
-        - flag server grid_data/<def[name]>/list_data:!|:<def[flag_list]>
+        - else if <def[data].starts_with[||]>:
+            - define data <def[data].after[|].after[|]>
+
+        - else if <list[+|-|*|/|-<&gt>|<&lt>-].contains[<def[data].before[|]>]>:
+            - define action <def[data].before[|]>
+            - define data <def[data].after[|]>
+
+        - if <def[action]||null> != null:
+            - yaml id:grid-data-<def[name]> set coords.<def[coord]>:<def[action]>:<def[data]>
+        - else:
+            - yaml id:grid-data-<def[name]> set coords.<def[coord]>:<def[data]>
+
+
+
+################################################################################
+# World scripts
+################################################################################
+
+grid_dataevt:
+    type: world
+    debug: false
+    events:
+        # Backup the grid data
+        on system time hourly:
+        - inject locally "events.on server shutdown"
+
+        # Save the grid data
+        on server shutdown:
+        - foreach <yaml.list.filter[starts_with[grid-data-]]>:
+            - yaml id:<def[value]> savefile:./grid_data/<def[value].after[grid-data-]>.yml
+
 
 
 
@@ -179,9 +217,14 @@ grid_dataproc_exists:
     type: procedure
     debug: false
     script:
-    - if !<def[1].matches[[a-zA-Z0-9_\-]+]||false>:
+    - if !<def[1].matches[[a-zA-Z0-9_\-]+]||false> || !<server.flag[grid_data/created].contains[<def[1]>]||false>:
         - determine false
-    - determine <server.list_flags.filter[starts_with[grid_data/]].parse[after[/].before[/]].deduplicate.contains[<def[1]>]>
+
+    - if !<yaml.list.contains[grid-data-<def[1]>]> && <server.has_file[./grid_data/<def[1]>.yml]>:
+        - yaml id:grid-data-<def[1]> create
+        - yaml id:grid-data-<def[1]> load:./grid_data/<def[1]>.yml
+        - determine true
+    - determine <yaml.list.contains[grid-data-<def[1]>]>
 
     # Helper script section for procedure scripts
     proc_check:
@@ -190,12 +233,12 @@ grid_dataproc_exists:
 
     # Helper script section for "grid_data_2d_create" and "grid_data_3d_create"
     creator_check:
-    - if <server.list_flags.filter[starts_with[grid_data/]].parse[after[/].before[/]].contains[<def[name]>]>:
-        - debug ERROR "A <server.flag[grid_data/<def[name]>/type]> grid by the name <def[name]> already exists! Not creating."
-        - stop
-
     - if !<def[name].matches[[a-zA-Z0-9_\-]+]>:
         - debug ERROR "A grid name must be alphanumeric, including underscores and dashes!"
+        - stop
+
+    - if <proc[grid_dataproc_exists].context[<def[name]>]>:
+        - debug ERROR "A <yaml[grid-data-<def[name]>].read[type]> grid by the name <def[name]> already exists! Not creating."
         - stop
 
 
@@ -214,7 +257,7 @@ grid_dataproc_type:
     debug: false
     script:
     - inject grid_dataproc_exists.proc_check
-    - determine <server.flag[grid_data/<def[1]>/type]>
+    - determine <yaml[grid-data-<def[1]>].read[type]>
 
 
 
@@ -232,7 +275,7 @@ grid_dataproc_width:
     debug: false
     script:
     - inject grid_dataproc_exists.proc_check
-    - determine <server.flag[grid_data/<def[1]>/x]>
+    - determine <yaml[grid-data-<def[1]>].read[x]>
 
 
 
@@ -250,7 +293,7 @@ grid_dataproc_length:
     debug: false
     script:
     - inject grid_dataproc_exists.proc_check
-    - determine <server.flag[grid_data/<def[1]>/y]>
+    - determine <yaml[grid-data-<def[1]>].read[y]>
 
 
 
@@ -268,9 +311,9 @@ grid_dataproc_height:
     debug: false
     script:
     - inject grid_dataproc_exists.proc_check
-    - if <server.flag[grid_data/<def[1]>/type]> != 3D:
+    - if <yaml[grid-data-<def[1]>].read[type]> != 3D:
         - determine null
-    - determine <server.flag[grid_data/<def[1]>/z]>
+        - determine <yaml[grid-data-<def[1]>].read[z]>
 
 
 
@@ -294,14 +337,14 @@ grid_dataproc_get:
     - define coord <proc[grid_dataproc_readcoord].context[<def[1]>|<def[2]>]>
     - if <def[coord]> == null:
         - determine "null=INVALID_COORD"
-    - determine <server.flag[grid_data/<def[1]>/list_data].map_get[<proc[grid_dataproc_readcoord].context[<def[1]>|<def[2]>].separated_by[,]>].replace[&pipe].with[|]||null>
+    - determine <yaml[grid-data-<def[1]>].read[coords.<def[coord]>]>
 
 
 
 ##############################################
 # Returns the value set at the specific coordinate on the grid, or null if the
 # value isn't set OR if the data cannot be grabbed. Intended as a shortcut to
-# the much heavier alternative "grid_dataproc_get".
+# the slightly heavier (but safer) alternative "grid_dataproc_get".
 #
 # Contexts:
 #     name  : The name of the grid.
@@ -314,7 +357,7 @@ grid_dataprocshort_get:
     type: procedure
     debug: false
     script:
-    - determine <server.flag[grid_data/<def[1]>/list_data].map_get[<proc[grid_dataproc_readcoord].context[<def[1]>|<def[2]>].separated_by[,]>].replace[&pipe].with[|]||null>
+    - determine <yaml[grid-data-<def[1]>].read[coords.<def[2]>]>
 
 
 
@@ -327,7 +370,7 @@ grid_dataproc_listallgrids:
     type: procedure
     debug: false
     script:
-    - determine <server.list_flags.filter[starts_with[grid_data/]].parse[after[/].before[/]].deduplicate||li@>
+    - determine <server.list_files[./grid_data].parse[before[.yml]].include[<yaml.list.filter[starts_with[grid-data-]].parse[after[grid-data-]]>].deduplicate>
 
 
 
@@ -348,7 +391,75 @@ grid_dataproc_listallvalues:
     debug: false
     script:
     - inject grid_dataproc_exists.proc_check
-    - determine <server.flag[grid_data/<def[1]>/list_data].alphanumeric||li@>
+    - define output <list[]>
+    - foreach <yaml[grid-data-<def[1]>].list_keys[coords].alphanumeric||li@>:
+        - define output:->:<def[value]>/<yaml[grid-data-<def[1]>].read[coords.<def[value]>].replace_text[|].with[&pipe]>
+    - determine <def[output]>
+
+
+
+###########################################################
+# Returns an unordered list of all coordinates that contains the specified
+# value.
+#
+# Contexts:
+#     name  : The name of the grid.
+#     value : The value to find.
+#
+#
+
+grid_dataproc_findvalue:
+    type: procedure
+    debug: false
+    script:
+    - inject grid_dataproc_exists.proc_check
+    - define find <def[raw_context].after[|]>
+    - define output <list[]>
+    - foreach <yaml[grid-data-<def[1]>].list_keys[coords]>:
+        - if <yaml[grid-data-<def[1]>].read[coords.<def[value]>]> == <def[find]>:
+            - define output:->:<def[value]>
+    - determine <def[output]>
+
+
+
+###########################################################
+# Returns a list of all adjacent tiles to a coordinate (X,Y), in this order:
+#     X,Y+1/ABOVE_VAL|X+1,Y/RIGHT_VAL|X,Y-1/BELOW_VAL|X-1,Y/LEFT_VAL
+#
+# Or, if the grid is 3D,
+#     X,Y+1,Z/ABOVE_VAL|X+1,Y,Z/RIGHT_VAL|X,Y-1,Z/BELOW_VAL|X-1,Y,Z/LEFT_VAL|X,Y,Z+1/UPPER_VAL|X,Y,Z-1/LOWER_VAL
+#
+# If any of the adjacent coordinates are invalid, then it will be filled in as
+# "null" instead of "X,Y,Z/VALUE".
+#
+# If any of the adjacent coordinates have no value, then it will be filled in
+# as "X,Y,Z/null".
+#
+# Contexts:
+#     name : The name of the grid.
+#
+#
+
+grid_dataproc_getadjacent:
+    type: procedure
+    debug: false
+    script:
+    - inject grid_dataproc_exists.proc_check
+
+    - define base_coord <proc[grid_dataproc_readcoord].context[<def[1]>,<def[2]>].split[,]>
+    - define check_coords <list[<def[base_coord].set[<def[base_coord].get[2].add[1]>].at[2].separated_by[,]>|<def[base_coord].set[<def[base_coord].get[1].add[1]>].at[1].separated_by[,]>|<def[base_coord].set[<def[base_coord].get[2].sub[1]>].at[2].separated_by[,]>|<def[base_coord].set[<def[base_coord].get[1].sub[1]>].at[1]>].separated_by[,]>
+    - if <yaml[grid-data-<def[1]>].read[type]> == "3D":
+        - define check_coords:|:<def[base_coord].set[<def[base_coord].get[3].add[1]>].at[3].separated_by[,]>|<def[base_coord].set[<def[base_coord].get[3].sub[1]>].at[3].separated_by[,]>
+
+    - define output <list[]>
+    - foreach <def[check_coords]>:
+        - define new_coord <proc[grid_dataproc_readcoord].context[<def[1]>,<def[value]>]>
+        - if <def[new_coord]> == null:
+            - define output:->:null
+            - foreach next
+        - define output:->:<def[new_coord]>/<yaml[grid-data-<def[1]>].read[coords.<def[value]>]||null>
+
+    - determine <def[output]>
 
 
 
@@ -367,11 +478,11 @@ grid_dataproc_readcoord:
     - inject grid_dataproc_exists.proc_check
 
     - define coord <def[2].split[,].filter[is_integer].filter[is[OR_MORE].than[0]]>
-    - if <server.flag[grid_data/<def[1]>/type]> == "3D":
-        - if <def[coord].size> < 3:
+    - if <yaml[grid-data-<def[1]>].read[type]> == "3D":
+        - if <def[coord].size> < 3 || <def[coord].get[1]> >= <yaml[grid-data-<def[1]>].read[x]> || <def[coord].get[2]> >= <yaml[grid-data-<def[1]>].read[y]> || <def[coord].get[3]> >= <yaml[grid-data-<def[1]>].read[z]>:
             - determine null
-        - determine <def[coord].get[1].to[3]>
+        - determine <def[coord].get[1].to[3].separated_by[,]>
     - else:
-        - if <def[coord].size> < 2:
+        - if <def[coord].size> < 2 || <def[coord].get[1]> >= <yaml[grid-data-<def[1]>].read[x]> || <def[coord].get[2]> >= <yaml[grid-data-<def[1]>].read[y]>:
             - determine null
-        - determine <def[coord].get[1].to[2]>
+        - determine <def[coord].get[1].to[2].separated_by[,]>
