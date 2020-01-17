@@ -140,16 +140,22 @@ grid_data_set:
         - debug ERROR "Provided coordinate <&dq><def[coord].separated_by[,]><&dq> has <def[coord].size> components, but at least 2 components are required!"
         - stop
 
-    - define type <proc[grid_dataproc_type].context[<def[grid_name]>]>
+    - define is_3d <proc[grid_dataproc_type].context[<def[grid_name]>].is[EQUALS].to[3D]>
 
-    - if <def[type]> == "3D":
+    - if <def[is_3d]>:
         - if <def[coord].size> < 3:
             - debug ERROR "Using a 3D grid <&dq><def[grid_name]><&dq>, but only supplied a 2D coordinate <&dq><def[coord].separated_by[,]><&dq>!"
             - stop
 
+    - define max_x <server.flag[grid_data/<def[grid_name]>/x]>
+    - define max_y <server.flag[grid_data/<def[grid_name]>/y]>
+    - define max_z <server.flag[grid_data/<def[grid_name]>/z]||<def[coord].get[3].add[1]||1>>
+    - if <def[coord].get[1]> >= <def[max_x]> || <def[coord].get[2]> >= <def[max_y]> || ( <def[is_3d]> == "3D" && <def[coord].get[3]||0> >= <def[max_z]> ):
+        - debug ERROR "Attempting to set data for a coordinate beyond the max coordinate point <def[max_x].sub[1]>,<def[max_y].sub[1]><tern[<def[is_3d]>].pass[,<def[max_z]>].fail[]>"
+
     - define data <def[raw_context].after[|].after[|].replace[|].with[&pipe]>
     - define flag_list <server.flag[grid_data/<def[grid_name]>/list_data]||li@>
-    - define coord <def[coord].get[1].to[<def[type].char_at[1]>].separated_by[,]>
+    - define coord <def[coord].get[1].to[<tern[<def[is_3d]>].pass[3].fail[2]>].separated_by[,]>
 
     - if !<def[flag_list].filter[starts_with[<def[coord]>]].is_empty>:
         - define flag_list <def[flag_list].exclude[<def[flag_list].filter[starts_with[<def[coord]>]]>]>
