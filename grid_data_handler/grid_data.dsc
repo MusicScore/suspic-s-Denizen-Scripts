@@ -105,6 +105,7 @@ grid_data_delete:
     definitions: name
     script:
     - if !<proc[grid_dataproc_exists].context[<def[name]||+>]>:
+        - debug DEBUG "A grid <&dq><def[name]||null><&dq> does not exist! Was it already deleted?"
         - stop
     - foreach <server.list_flags.filter[starts_with[grid_data/<def[name]>/]]>:
         - flag server <def[value]>:!
@@ -116,10 +117,10 @@ grid_data_delete:
 # Use "null" or "!" to unset the data value.
 #
 # Definitions/Parameters:
-#     grid_name : The name of the grid to edit.
-#     coord     : The coordinates as a comma-separated list of integers. For
-#                 example, "3,2" for a 2D grid, or "1,10,3" for a 3D grid.
-#     data      : The data to put at the specified coordinate.
+#     name  : The name of the grid to edit.
+#     coord : The coordinates as a comma-separated list of integers. For
+#             example, "3,2" for a 2D grid, or "1,10,3" for a 3D grid.
+#     data  : The data to put at the specified coordinate.
 #
 #
 
@@ -128,41 +129,37 @@ grid_data_set:
     type: task
     debug: false
     speed: 0
-    definitions: grid_name|coord|data
+    definitions: name|coord|data
     script:
-    - if !<proc[grid_dataproc_exists].context[<def[grid_name]||+>]>:
-        - debug ERROR "A grid by the name <&dq><def[grid_name]||null><&dq> does not exist!"
+    - if !<proc[grid_dataproc_exists].context[<def[name]||+>]>:
+        - debug ERROR "A grid by the name <&dq><def[name]||null><&dq> does not exist!"
         - stop
 
-    - define coord <def[coord].split[,].parse[as_decimal].exclude[null]>
+    - define readcoord <proc[grid_dataproc_readcoord].context[<def[name]>|<def[coord]>]>
 
-    - if <def[coord].size> < 2:
-        - debug ERROR "Provided coordinate <&dq><def[coord].separated_by[,]><&dq> has <def[coord].size> components, but at least 2 components are required!"
+    - if <def[readcoord]> == null:
+        - debug ERROR "Could not fetch a <server.flag[grid_data/<def[name]>/type]> coordinate from <def[coord]>!"
         - stop
 
-    - define is_3d <proc[grid_dataproc_type].context[<def[grid_name]>].is[EQUALS].to[3D]>
+    - define is_3d <server.flag[grid_data/<def[name]>/type].is[EQUALS].to[3D]>
 
-    - if <def[is_3d]>:
-        - if <def[coord].size> < 3:
-            - debug ERROR "Using a 3D grid <&dq><def[grid_name]><&dq>, but only supplied a 2D coordinate <&dq><def[coord].separated_by[,]><&dq>!"
-            - stop
+    - define max_x <server.flag[grid_data/<def[name]>/x]>
+    - define max_y <server.flag[grid_data/<def[name]>/y]>
+    - define max_z <server.flag[grid_data/<def[name]>/z]||<def[coord].get[3].add[1]||1>>
 
-    - define max_x <server.flag[grid_data/<def[grid_name]>/x]>
-    - define max_y <server.flag[grid_data/<def[grid_name]>/y]>
-    - define max_z <server.flag[grid_data/<def[grid_name]>/z]||<def[coord].get[3].add[1]||1>>
-    - if <def[coord].get[1]> >= <def[max_x]> || <def[coord].get[2]> >= <def[max_y]> || ( <def[is_3d]> == "3D" && <def[coord].get[3]||0> >= <def[max_z]> ):
+    - if <def[readcoord].get[1]> >= <def[max_x]> || <def[readcoord].get[2]> >= <def[max_y]> || ( <def[is_3d]> == "3D" && <def[readcoord].get[3]||0> >= <def[max_z]> ):
         - debug ERROR "Attempting to set data for a coordinate beyond the max coordinate point <def[max_x].sub[1]>,<def[max_y].sub[1]><tern[<def[is_3d]>].pass[,<def[max_z]>].fail[]>"
 
     - define data <def[raw_context].after[|].after[|].replace[|].with[&pipe]>
-    - define flag_list <server.flag[grid_data/<def[grid_name]>/list_data]||li@>
-    - define coord <def[coord].get[1].to[<tern[<def[is_3d]>].pass[3].fail[2]>].separated_by[,]>
+    - define flag_list <server.flag[grid_data/<def[name]>/list_data]||li@>
+    - define coord <def[readcoord].separated_by[,]>
 
     - if !<def[flag_list].filter[starts_with[<def[coord]>]].is_empty>:
         - define flag_list <def[flag_list].exclude[<def[flag_list].filter[starts_with[<def[coord]>]]>]>
 
     - if !<list[!|null].contains[<def[data]>]>:
         - define flag_list:->:<def[coord]>/<def[data]>
-        - flag server grid_data/<def[grid_name]>/list_data:!|:<def[flag_list]>
+        - flag server grid_data/<def[name]>/list_data:!|:<def[flag_list]>
 
 
 
@@ -281,13 +278,11 @@ grid_dataproc_height:
 # Returns the value set at the specific coordinate on the grid, or:
 #     - null if the value isn't set
 #     - null=INVALID_COORD if the coordinate specified is invalid
-#     - null=INVALID_COORD_FORMAT if the format of the coordinate is faulty
 #
 # Contexts:
-#     name : The name of the grid.
-#     x    : The X component of the coordinate.
-#     y    : The Y component of the coordinate.
-#     z    : The Z component of the coordinate. Required if the grid is 3D.
+#     name  : The name of the grid.
+#     coord : The coordinates as a comma-separated list of integers. For
+#             example, "3,2" for a 2D grid, or "1,10,3" for a 3D grid.
 #
 #
 
@@ -296,13 +291,10 @@ grid_dataproc_get:
     debug: false
     script:
     - inject grid_dataproc_exists.proc_check
-    - if !<def[2].is_integer||false> || <def[2].as_decimal> < 0 || !<def[3].is_integer||false> || <def[3].as_decimal> < 0 || ( <server.flag[grid_data/<def[1]>/type]> == 3D && ( !<def[4].is_integer||false> || <def[4].as_decimal> < 0 ) ):
-        - determine "null=INVALID_COORD_FORMAT"
-
-    - if <def[2]> >= <server.flag[grid_data/<def[1]>/x]> || <def[3]> >= <server.flag[grid_data/<def[1]>/y]> || ( <server.flag[grid_data/<def[1]>/type]> == 3D && <def[4]> >= <server.flag[grid_data/<def[1]>/z]> ):
+    - define coord <proc[grid_dataproc_readcoord].context[<def[1]>|<def[2]>]>
+    - if <def[coord]> == null:
         - determine "null=INVALID_COORD"
-
-    - determine <proc[grid_dataprocshort_get].context[<def[raw_context]>]>
+    - determine <server.flag[grid_data/<def[1]>/list_data].map_get[<proc[grid_dataproc_readcoord].context[<def[1]>|<def[2]>].separated_by[,]>].replace[&pipe].with[|]||null>
 
 
 
@@ -312,10 +304,9 @@ grid_dataproc_get:
 # the much heavier alternative "grid_dataproc_get".
 #
 # Contexts:
-#     name : The name of the grid.
-#     x    : The X component of the coordinate.
-#     y    : The Y component of the coordinate.
-#     z    : The Z component of the coordinate. Required if the grid is 3D.
+#     name  : The name of the grid.
+#     coord : The coordinates as a comma-separated list of integers. For
+#             example, "3,2" for a 2D grid, or "1,10,3" for a 3D grid.
 #
 #
 
@@ -323,9 +314,7 @@ grid_dataprocshort_get:
     type: procedure
     debug: false
     script:
-    - if <server.flag[grid_data/<def[1]>/type]> == 3D:
-        - define coord <def[2]>,<def[3]>,<def[4]>
-    - determine <server.flag[grid_data/<def[1]>/list_data].map_get[<def[coord]||<def[2]>,<def[3]>>].replace[&pipe].with[|]||null>
+    - determine <server.flag[grid_data/<def[1]>/list_data].map_get[<proc[grid_dataproc_readcoord].context[<def[1]>|<def[2]>].separated_by[,]>].replace[&pipe].with[|]||null>
 
 
 
@@ -359,5 +348,30 @@ grid_dataproc_listallvalues:
     debug: false
     script:
     - inject grid_dataproc_exists.proc_check
-
     - determine <server.flag[grid_data/<def[1]>/list_data].alphanumeric||li@>
+
+
+
+###########################################################
+# Returns a string as a valid set of coordinates relative to a grid.
+#
+# Contexts:
+#     name : The name of the grid.
+#
+#
+
+grid_dataproc_readcoord:
+    type: procedure
+    debug: false
+    script:
+    - inject grid_dataproc_exists.proc_check
+
+    - define coord <def[2].split[,].filter[is_integer].filter[is[OR_MORE].than[0]]>
+    - if <server.flag[grid_data/<def[1]>/type]> == "3D":
+        - if <def[coord].size> < 3:
+            - determine null
+        - determine <def[coord].get[1].to[3]>
+    - else:
+        - if <def[coord].size> < 2:
+            - determine null
+        - determine <def[coord].get[1].to[2]>
