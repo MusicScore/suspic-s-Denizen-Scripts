@@ -113,6 +113,7 @@ grid_data_delete:
 
 ###########################################################
 # Sets the data value at a coordinate in a grid.
+# Use "null" or "!" to unset the data value.
 #
 # Definitions/Parameters:
 #     grid_name : The name of the grid to edit.
