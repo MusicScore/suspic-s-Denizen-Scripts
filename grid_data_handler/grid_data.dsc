@@ -147,24 +147,16 @@ grid_data_set:
             - debug ERROR "Using a 3D grid <&dq><def[grid_name]><&dq>, but only supplied a 2D coordinate <&dq><def[coord].separated_by[,]><&dq>!"
             - stop
 
-    - define data <def[raw_context].after[|].after[|]>
+    - define data <def[raw_context].after[|].after[|].replace[|].with[&pipe]>
     - define flag_list <server.flag[grid_data/<def[grid_name]>/list_data]||li@>
-    - define final_pos <proc[grid_dataproc_posfromcoord].context[<def[grid_name]>|<def[coord].after[li@]>]>
+    - define coord <def[coord].get[1].to[<def[type].char_at[1]>].separated_by[,]>
 
+    - if !<def[flag_list].filter[starts_with[<def[coord]>]].is_empty>:
+        - define flag_list <def[flag_list].exclude[<def[flag_list].filter[starts_with[<def[coord]>]]>]>
 
-    - if <list[!|null].contains[<def[data]>]>:
-        - if <def[flag_list].size> < <def[final_pos]>:
-            - stop
-        - define flag_list <def[flag_list].set[null].at[<def[final_pos]>]>
-        - while <def[flag_list].last||null> == null:
-            - define flag_list <def[flag_list].remove[last]>
+    - if !<list[!|null].contains[<def[data]>]>:
+        - define flag_list:->:<def[coord]>/<def[data]>
         - flag server grid_data/<def[grid_name]>/list_data:!|:<def[flag_list]>
-
-    - else:
-        - if <def[flag_list].size> < <def[final_pos]>:
-            - define flag_list <def[flag_list].pad_right[<def[final_pos]>].with[null]>
-
-        - flag server grid_data/<def[grid_name]>/list_data:!|:<def[flag_list].set[<def[data]>].at[<def[final_pos]>]>
 
 
 
@@ -289,7 +281,7 @@ grid_dataproc_height:
 #     name : The name of the grid.
 #     x    : The X component of the coordinate.
 #     y    : The Y component of the coordinate.
-#     z    : The Z component of the coordinate.
+#     z    : The Z component of the coordinate. Required if the grid is 3D.
 #
 #
 
@@ -317,7 +309,7 @@ grid_dataproc_get:
 #     name : The name of the grid.
 #     x    : The X component of the coordinate.
 #     y    : The Y component of the coordinate.
-#     z    : The Z component of the coordinate.
+#     z    : The Z component of the coordinate. Required if the grid is 3D.
 #
 #
 
@@ -325,27 +317,41 @@ grid_dataprocshort_get:
     type: procedure
     debug: false
     script:
-    - define y_off <server.flag[grid_data/<def[1]>/x]>
     - if <server.flag[grid_data/<def[1]>/type]> == 3D:
-        - define z_off <server.flag[grid_data/<def[1]>/y].mul[<def[y_off]>]>
+        - define coord <def[2]>,<def[3]>,<def[4]>
+    - determine <server.flag[grid_data/<def[1]>/list_data].map_get[<def[coord]||<def[2]>,<def[3]>>].replace[&pipe].with[|]||null>
 
-    - determine <server.flag[grid_data/<def[1]>/list_data].get[<proc[grid_dataproc_posfromcoord].context[<def[raw_context]>]>]||null>
+
+
+##############################################
+# Returns a list of all of the grids that the server recognizes.
+#
+#
+
+grid_dataproc_listallgrids:
+    type: procedure
+    debug: false
+    script:
+    - determine <server.list_flags.filter[starts_with[grid_data/]].parse[after[/].before[/]].deduplicate||li@>
 
 
 
 ###########################################################
-# Private helper procedure to calculate the final list position of a coordinate
-# with respect to a specific grid.
+# Returns a map of all of the set values in the specified grid.
+# The map will be in the format "X,Y/value|..." or "X,Y,Z/value|...".
+#
+# For convenience, if a value has a pipe in it, the pipe will automatically be
+# escaped to "&pipe".
+#
+# Contexts:
+#     name : The name of the grid.
 #
 #
 
-grid_dataproc_posfromcoord:
+grid_dataproc_listallvalues:
     type: procedure
     debug: false
     script:
     - inject grid_dataproc_exists.proc_check
-    - define y_off <server.flag[grid_data/<def[1]>/x]>
-    - if <server.flag[grid_data/<def[1]>/type]> == "3D":
-        - define z_off <server.flag[grid_data/<def[1]>/y].mul[<def[y_off]>]>
 
-    - determine <def[2].add[<def[3].mul[<def[y_off]>]>].add[<def[4].mul[<def[z_off]||0>]||0>].add[1]||-1>
+    - determine <server.flag[grid_data/<def[1]>/list_data].alphanumeric||li@>
